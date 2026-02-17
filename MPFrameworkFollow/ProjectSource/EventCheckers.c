@@ -41,6 +41,8 @@
 // actual functionsdefinition
 #include "EventCheckers.h"
 
+#include "PIC32_SPI_HAL.h"
+
 // This is the event checking function sample. It is not intended to be
 // included in the module. It is only here as a sample to guide you in writing
 // your own event checkers
@@ -120,3 +122,23 @@ bool Check4Keystroke(void)
   return false;
 }
 
+bool Check4SPI(void)
+{
+  if (SPIOperate_HasSS1_Risen())
+  {
+    uint8_t newMessage = (uint8_t)SPIOperate_ReadData(SPI_SPI1);
+
+    // Post New Message to SPIFollowService to interpret it and write new data
+    ES_Event_t ThisEvent;
+    ThisEvent.EventType  = ES_SPI_COMPLETE;
+    ThisEvent.EventParam = newMessage;
+    ES_PostAll(ThisEvent);
+
+#ifdef DEBUG_PRINT
+    DB_printf("New SPI Command Event Sent:     0x%x\r\n", (unsigned int)ThisEvent.EventParam);
+#endif
+
+    return true;
+  }
+  return false;
+}
