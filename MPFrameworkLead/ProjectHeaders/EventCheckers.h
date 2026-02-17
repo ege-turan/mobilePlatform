@@ -24,4 +24,7 @@
 
 bool Check4Keystroke(void);
 
+bool Check4Beacon(void);
+bool Check4Tape(void);
+
 #endif /* EventCheckers_H */
