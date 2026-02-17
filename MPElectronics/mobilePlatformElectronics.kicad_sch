@@ -15873,8 +15873,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "4e3ca7f3-5214-4c38-90aa-d56b56a00dcd")
-		(property "Reference" "R20"
-			(at 730.758 98.806 90)
+		(property "Reference" "R103"
+			(at 730.758 99.06 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15882,7 +15882,7 @@
 			)
 		)
 		(property "Value" "1K"
-			(at 730.758 101.346 90)
+			(at 730.758 101.6 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15925,7 +15925,7 @@
 		(instances
 			(project "mobilePlatformElectronics"
 				(path "/bd24c4db-4e36-4117-bd4f-5228ef241da9"
-					(reference "R20")
+					(reference "R103")
 					(unit 1)
 				)
 			)
@@ -18616,7 +18616,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "7fa1ee4e-b851-4444-8869-7d963efb22c1")
-		(property "Reference" "R7"
+		(property "Reference" "R105"
 			(at 624.332 101.6 90)
 			(effects
 				(font
@@ -18668,7 +18668,7 @@
 		(instances
 			(project "mobilePlatformElectronics"
 				(path "/bd24c4db-4e36-4117-bd4f-5228ef241da9"
-					(reference "R7")
+					(reference "R105")
 					(unit 1)
 				)
 			)
@@ -20415,7 +20415,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "a20513e2-a1ab-44d8-a8d8-3721db950548")
-		(property "Reference" "R21"
+		(property "Reference" "R104"
 			(at 758.19 99.06 90)
 			(effects
 				(font
@@ -20467,7 +20467,7 @@
 		(instances
 			(project "mobilePlatformElectronics"
 				(path "/bd24c4db-4e36-4117-bd4f-5228ef241da9"
-					(reference "R21")
+					(reference "R104")
 					(unit 1)
 				)
 			)
@@ -21625,8 +21625,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "b58686cc-5bba-429c-b5fc-c473f10a7bed")
-		(property "Reference" "C22"
-			(at 680.72 115.316 90)
+		(property "Reference" "C103"
+			(at 680.72 115.57 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21634,7 +21634,7 @@
 			)
 		)
 		(property "Value" "0.1uF"
-			(at 680.72 117.856 90)
+			(at 680.72 118.11 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21677,7 +21677,7 @@
 		(instances
 			(project "mobilePlatformElectronics"
 				(path "/bd24c4db-4e36-4117-bd4f-5228ef241da9"
-					(reference "C22")
+					(reference "C103")
 					(unit 1)
 				)
 			)
@@ -26382,7 +26382,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "fad220cf-57dd-4e6b-93ca-a1bde7cf74c1")
-		(property "Reference" "R19"
+		(property "Reference" "R112"
 			(at 689.61 127.5079 0)
 			(effects
 				(font
@@ -26436,7 +26436,7 @@
 		(instances
 			(project "mobilePlatformElectronics"
 				(path "/bd24c4db-4e36-4117-bd4f-5228ef241da9"
-					(reference "R19")
+					(reference "R112")
 					(unit 1)
 				)
 			)
