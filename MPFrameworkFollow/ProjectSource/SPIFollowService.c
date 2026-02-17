@@ -28,19 +28,17 @@
 #include "PIC32_SPI_HAL.h"
 #include <sys/attribs.h>
 
+// #define SPI_TIMER_MS 50 // NOT USED BY FOLLOWER
+
+/*----------------------------- Module Defines ----------------------------*/
 #define DEBUG_PRINT
 #ifdef DEBUG_PRINT
     #include "dbprintf.h"
 #endif
-
 #define SPI1_SS_PIN SPI_RPB15
 #define SPI1_SDO_PIN SPI_RPB13
 #define SPI1_SDI_PIN SPI_RPB11
 #define SPIClkPeriodInNs 10000 // 100 kHz = 10000 ns
-
-// #define SPI_TIMER_MS 50 // NOT USED BY FOLLOWER
-
-/*----------------------------- Module Defines ----------------------------*/
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
@@ -50,6 +48,8 @@
 /*---------------------------- Module Variables ---------------------------*/
 // with the introduction of Gen2, we need a module level Priority variable
 static uint8_t MyPriority;
+
+static uint8_t message2send;
 
 /*------------------------------ Module Code ------------------------------*/
 /****************************************************************************
@@ -100,6 +100,9 @@ bool InitSPIFollowService(uint8_t Priority)
 #ifdef DEBUG_PRINT
   DB_printf("SPI1 Initialized\r\n");
 #endif
+
+  // initialize vairables
+  message2send = 0xFF;
 
   // post the initial transition event
   ThisEvent.EventType = ES_INIT;
@@ -165,29 +168,61 @@ ES_Event_t RunSPIFollowService(ES_Event_t ThisEvent)
     case ES_INIT:
     {
         DB_printf("\rES_INIT received in SPIFollowService, priority: %d\r\n", MyPriority);
+        // Initialize buffer with 0xFF message
+        SPIOperate_SPI1_Send8(message2send);
     }
     break;
+
+    case ES_SPI_COMPLETE:
+    {
+      static uint8_t LastMessage = 0xAA;
+      uint8_t newMessage = ThisEvent.EventParam;
+
+      // check if message different and not bad command
+      if ((newMessage != LastMessage) && (newMessage != 0xAA))
+      {
+        ES_Event_t NewEvent;
+        NewEvent.EventType  = ES_NEW_SPI_CMD_RECEIVED;
+        NewEvent.EventParam = newMessage;
+        ES_PostAll(NewEvent);
+
+        #ifdef DEBUG_PRINT
+        DB_printf("New SPI Command Event Sent:     0x%x\r\n", (unsigned int)NewEvent.EventParam);
+        #endif
+      }
+      LastMessage = newMessage;
+
+      // write the next message to be sent into the buffer
+      SPIOperate_SPI1_Send8(message2send);
+    }
+      break;
+    case ES_NEW_SPI_CMD_SEND:
+    {
+      message2send = (uint8_t)ThisEvent.EventParam;
+    }
+      break;
+
     case ES_NEW_KEY:
     {
       switch (ThisEvent.EventParam) {
         case 'w':
         {
           DB_printf("Received key: w\r\n");
-          SPIOperate_SPI1_Send8(0x09);
+          message2send = 0x09;
           DB_printf("\r0x09: Drive Forward Full Speed\r\n");
         }
           break;
         case 'a':
         {
           DB_printf("Received key: a\r\n");
-          SPIOperate_SPI1_Send8(0x11);
-          DB_printf("\r0x10: Drive Drive Reverse Full Speed\r\n");
+          message2send = 0x11;
+          DB_printf("\r0x11: Drive Drive Reverse Full Speed\r\n");
         }
           break;
         case 's':
         {
           DB_printf("Received key: s\r\n");
-          SPIOperate_SPI1_Send8(0x04);
+          message2send = 0x04;
           DB_printf("\r0x04: Rotate Counter-clockwise by 90 degrees\r\n");
 
         }
@@ -195,14 +230,14 @@ ES_Event_t RunSPIFollowService(ES_Event_t ThisEvent)
         case 'd':
         {
           DB_printf("Received key: d\r\n");
-          SPIOperate_SPI1_Send8(0x02);
+          message2send = 0x02;
           DB_printf("\r0x02: Rotate Clockwise by 90 degrees\r\n");
         }
           break;
         case 'x':
         {
           DB_printf("Received key: x\r\n");
-          SPIOperate_SPI1_Send8(0x00);
+          message2send = 0x00;
           DB_printf("\r0x00: Stop, hold Position, do not move or rotate\r\n");
         }
           break;

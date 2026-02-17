@@ -210,7 +210,7 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                 break;
 
                 // Received a new command to execute from the SPI command generator
-                case ES_NEW_SPI_COMMAND:
+                case ES_NEW_SPI_CMD_RECEIVED:
                 {
                     DB_printf("New SPI Command Event Received: 0x%x\r\n",
                               (unsigned int)ThisEvent.EventParam);
@@ -395,7 +395,7 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                 }
                 break;
 
-                case ES_NEW_SPI_COMMAND:
+                case ES_NEW_SPI_CMD_RECEIVED:
                 {
                     // Go back to FreeState on any new command
                     CurrentState = FreeState;
@@ -424,7 +424,7 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                 }
                 break;
 
-                case ES_NEW_SPI_COMMAND:
+                case ES_NEW_SPI_CMD_RECEIVED:
                 {
                     // Go back to FreeState on any new command
                     CurrentState = FreeState;

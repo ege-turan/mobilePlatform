@@ -28,6 +28,8 @@
 #include "PIC32_SPI_HAL.h"
 #include <sys/attribs.h>
 
+
+/*----------------------------- Module Defines ----------------------------*/
 #define DEBUG_PRINT
 #ifdef DEBUG_PRINT
     #include "dbprintf.h"
@@ -40,8 +42,6 @@
 
 #define SPI_TIMER_MS 50
 
-/*----------------------------- Module Defines ----------------------------*/
-
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
    relevant to the behavior of this service
@@ -50,6 +50,7 @@
 /*---------------------------- Module Variables ---------------------------*/
 // with the introduction of Gen2, we need a module level Priority variable
 static uint8_t MyPriority;
+static uint8_t message2send;
 
 /*------------------------------ Module Code ------------------------------*/
 /****************************************************************************
@@ -101,7 +102,10 @@ bool InitSPILeadService(uint8_t Priority)
   DB_printf("SPI1 Initialized\r\n");
 #endif
 
+  // Initialize timers and variables
   ES_Timer_InitTimer(SPI_TIMER, SPI_TIMER_MS);
+  message2send = 0xAA;
+
   // post the initial transition event
   ThisEvent.EventType = ES_INIT;
   if (ES_PostToService(MyPriority, ThisEvent) == true)
@@ -165,9 +169,14 @@ ES_Event_t RunSPILeadService(ES_Event_t ThisEvent)
     // This event is run once at the end of service initialisation
     case ES_INIT:
     {
-        DB_printf("\rES_INIT received in SPILeadService, priority: %d\r\n", MyPriority);
+      DB_printf("\rES_INIT received in SPILeadService, priority: %d\r\n", MyPriority);
     }
-    break;
+      break;
+    case ES_NEW_SPI_CMD_SEND:
+    {
+      message2send = (uint8_t)ThisEvent.EventParam;
+    }
+      break;
     case ES_TIMEOUT:
     {
       if (ThisEvent.EventParam == SPI_TIMER)
@@ -182,25 +191,24 @@ ES_Event_t RunSPILeadService(ES_Event_t ThisEvent)
           // check if message different and not bad command
           if ((newMessage != LastMessage) && (newMessage != 0xFF))
           {
-            ES_Event_t ThisEvent;
-            ThisEvent.EventType  = ES_NEW_SPI_COMMAND;
-            ThisEvent.EventParam = newMessage;
-            ES_PostAll(ThisEvent);
+            ES_Event_t NewEvent;
+            NewEvent.EventType  = ES_NEW_SPI_CMD_RECEIVED;
+            NewEvent.EventParam = newMessage;
+            ES_PostAll(NewEvent);
 
             #ifdef DEBUG_PRINT
-            DB_printf("New SPI Command Event Sent:     0x%x\r\n", (unsigned int)ThisEvent.EventParam);
+            DB_printf("New SPI Command Event Sent:     0x%x\r\n", (unsigned int)NewEvent.EventParam);
             #endif
-
-            LastMessage = newMessage;
           }
 
           LastMessage = newMessage;
         }
 
         // Always Querry CommandGenerator for new command
-        SPIOperate_SPI1_Send8(0xAA);
+        SPIOperate_SPI1_Send8(message2send);
+
+        ES_Timer_InitTimer(SPI_TIMER, SPI_TIMER_MS); // re-start timer
       }
-      ES_Timer_InitTimer(SPI_TIMER, SPI_TIMER_MS); // re-start timer
     }
       break;
 

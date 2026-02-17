@@ -263,7 +263,9 @@ typedef enum
   // ES_LOCK,
   // ES_UNLOCK,
   ES_NEW_KEY,                /* signals a new key received from terminal */
-  ES_NEW_SPI_COMMAND
+  ES_SPI_COMPLETE,           /* signals that SPI has risen so message received*/
+  ES_NEW_SPI_CMD_SEND,       /* signals what the next sent command should be */
+  ES_NEW_SPI_CMD_RECEIVED    /* signals that a new command was received*/  
 }ES_EventType_t;
 
 /****************************************************************************/
@@ -298,7 +300,7 @@ typedef enum
 
 /****************************************************************************/
 // This is the list of event checking functions
-#define EVENT_CHECK_LIST Check4Keystroke
+#define EVENT_CHECK_LIST Check4Keystroke, Check4SPI
 
 /****************************************************************************/
 // These are the definitions for the post functions to be executed when the

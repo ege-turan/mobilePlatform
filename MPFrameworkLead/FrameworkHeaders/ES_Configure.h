@@ -265,7 +265,8 @@ typedef enum
   ES_NEW_KEY,                /* signals a new key received from terminal */
   ES_BEACON_DETECTED,
   ES_TAPE_DETECTED,
-  ES_NEW_SPI_COMMAND,
+  ES_NEW_SPI_CMD_SEND,
+  ES_NEW_SPI_CMD_RECEIVED
 }ES_EventType_t;
 
 /****************************************************************************/
