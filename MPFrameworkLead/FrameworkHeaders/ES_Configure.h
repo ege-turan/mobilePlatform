@@ -42,11 +42,11 @@
 // services are added in numeric sequence (1,2,3,...) with increasing
 // priorities
 // the header file with the public function prototypes
-#define SERV_0_HEADER "SPIService.h"
+#define SERV_0_HEADER "SPILeadService.h"
 // the name of the Init function
-#define SERV_0_INIT InitSPIService
+#define SERV_0_INIT InitSPILeadService
 // the name of the run function
-#define SERV_0_RUN RunSPIService
+#define SERV_0_RUN RunSPILeadService
 // How big should this services Queue be?
 #define SERV_0_QUEUE_SIZE 5
 
@@ -324,7 +324,7 @@ typedef enum
 #define TIMER12_RESP_FUNC TIMER_UNUSED
 #define TIMER13_RESP_FUNC TIMER_UNUSED
 #define TIMER14_RESP_FUNC PostDCMotorService
-#define TIMER15_RESP_FUNC PostSPIService
+#define TIMER15_RESP_FUNC PostSPILeadService
 
 /****************************************************************************/
 // Give the timer numbers symbolc names to make it easier to move them

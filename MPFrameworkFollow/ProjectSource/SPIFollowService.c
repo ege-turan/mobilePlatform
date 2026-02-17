@@ -23,7 +23,7 @@
 */
 #include "ES_Configure.h"
 #include "ES_Framework.h"
-#include "SPIService.h"
+#include "SPIFollowService.h"
 
 #include "PIC32_SPI_HAL.h"
 #include <sys/attribs.h>
@@ -33,12 +33,12 @@
     #include "dbprintf.h"
 #endif
 
-#define SPI1_SS_PIN SPI_RPB4
+#define SPI1_SS_PIN SPI_RPB15
 #define SPI1_SDO_PIN SPI_RPB13
 #define SPI1_SDI_PIN SPI_RPB11
 #define SPIClkPeriodInNs 10000 // 100 kHz = 10000 ns
 
-#define SPI_TIMER_MS 50
+// #define SPI_TIMER_MS 50 // NOT USED BY FOLLOWER
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -70,7 +70,7 @@ static uint8_t MyPriority;
  Author
      Ege Turan
 ****************************************************************************/
-bool InitSPIService(uint8_t Priority)
+bool InitSPIFollowService(uint8_t Priority)
 {
   ES_Event_t ThisEvent;
 
@@ -79,19 +79,19 @@ bool InitSPIService(uint8_t Priority)
    in here you write your initialization code
    *******************************************/
   clrScrn();
-  DB_printf("\rStarting SPIService: ");
+  DB_printf("\rStarting SPIFollowService: ");
   DB_printf("compiled at %s on %s", __TIME__, __DATE__);
   DB_printf("\n\r");
 
-  SPISetup_SetLeader(SPI_SPI1, SPI_SMP_MID);         // set as leader
-  SPISetup_SetBitTime(SPI_SPI1, SPIClkPeriodInNs);   // 100 kHz = 10000 ns
+  SPISetup_BasicConfig(SPI_SPI1);                    // basic SPI setup
+  SPISetup_SetFollower(SPI_SPI1);                    // set as follower
+  // SPISetup_SetBitTime(SPI_SPI1, SPIClkPeriodInNs);   // 100 kHz = 10000 ns
   SPISetup_SetClockIdleState(SPI_SPI1, SPI_CLK_HI);  // clock idle high
   SPISetup_SetActiveEdge(SPI_SPI1, SPI_SECOND_EDGE); // transmit on active-to-idle edge
   SPISetup_SetXferWidth(SPI_SPI1, SPI_8BIT);         // 8-bit word mode
   SPISetEnhancedBuffer(SPI_SPI1, true);              // enable enhanced buffer
-  SPISetup_MapSSOutput(SPI_SPI1, SPI1_SS_PIN);       // map SS pin
+  SPISetup_MapSSInput(SPI_SPI1, SPI1_SS_PIN);        // map SS pin
   SPISetup_MapSDOutput(SPI_SPI1, SPI1_SDO_PIN);      // map SDO pin
-
   SPISetup_MapSDInput(SPI_SPI1, SPI1_SDI_PIN); // DASO, check this function to map SDI pin
 
   SPISetup_EnableSPI(SPI_SPI1); // enable SPI
@@ -101,7 +101,6 @@ bool InitSPIService(uint8_t Priority)
   DB_printf("SPI1 Initialized\r\n");
 #endif
 
-  ES_Timer_InitTimer(SPI_TIMER, SPI_TIMER_MS);
   // post the initial transition event
   ThisEvent.EventType = ES_INIT;
   if (ES_PostToService(MyPriority, ThisEvent) == true)
@@ -116,7 +115,7 @@ bool InitSPIService(uint8_t Priority)
 
 /****************************************************************************
  Function
-     PostSPIService
+     PostSPIFollowService
 
  Parameters
      EF_Event_t ThisEvent ,the event to post to the queue
@@ -131,14 +130,14 @@ bool InitSPIService(uint8_t Priority)
  Author
      Ege Turan
 ****************************************************************************/
-bool PostSPIService(ES_Event_t ThisEvent)
+bool PostSPIFollowService(ES_Event_t ThisEvent)
 {
   return ES_PostToService(MyPriority, ThisEvent);
 }
 
 /****************************************************************************
  Function
-    RunSPIService
+    RunSPIFollowService
 
  Parameters
    ES_Event_t : the event to process
@@ -153,7 +152,7 @@ bool PostSPIService(ES_Event_t ThisEvent)
  Author
    Ege Turan
 ****************************************************************************/
-ES_Event_t RunSPIService(ES_Event_t ThisEvent)
+ES_Event_t RunSPIFollowService(ES_Event_t ThisEvent)
 {
   ES_Event_t ReturnEvent;
   ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
@@ -165,42 +164,52 @@ ES_Event_t RunSPIService(ES_Event_t ThisEvent)
     // This event is run once at the end of service initialisation
     case ES_INIT:
     {
-        DB_printf("\rES_INIT received in SPIService, priority: %d\r\n", MyPriority);
+        DB_printf("\rES_INIT received in SPIFollowService, priority: %d\r\n", MyPriority);
     }
     break;
-    case ES_TIMEOUT:
+    case ES_NEW_KEY:
     {
-      if (ThisEvent.EventParam == SPI_TIMER)
-      {
-        static uint8_t LastMessage = 0xFF;
-
-        // If previous SPI transfer finished, read its result
-        if (SPIOperate_HasSS1_Risen())
+      switch (ThisEvent.EventParam) {
+        case 'w':
         {
-          uint8_t newMessage = (uint8_t)SPIOperate_ReadData(SPI_SPI1);
-
-          // check if message different and not bad command
-          if ((newMessage != LastMessage) && (newMessage != 0xFF))
-          {
-            ES_Event_t ThisEvent;
-            ThisEvent.EventType  = ES_NEW_SPI_COMMAND;
-            ThisEvent.EventParam = newMessage;
-            ES_PostAll(ThisEvent);
-
-            #ifdef DEBUG_PRINT
-            DB_printf("New SPI Command Event Sent:     0x%x\r\n", (unsigned int)ThisEvent.EventParam);
-            #endif
-
-            LastMessage = newMessage;
-          }
-
-          LastMessage = newMessage;
+          DB_printf("Received key: w\r\n");
+          SPIOperate_SPI1_Send8(0x09);
+          DB_printf("\r0x09: Drive Forward Full Speed\r\n");
         }
+          break;
+        case 'a':
+        {
+          DB_printf("Received key: a\r\n");
+          SPIOperate_SPI1_Send8(0x11);
+          DB_printf("\r0x10: Drive Drive Reverse Full Speed\r\n");
+        }
+          break;
+        case 's':
+        {
+          DB_printf("Received key: s\r\n");
+          SPIOperate_SPI1_Send8(0x04);
+          DB_printf("\r0x04: Rotate Counter-clockwise by 90 degrees\r\n");
 
-        // Always Querry CommandGenerator for new command
-        SPIOperate_SPI1_Send8(0xAA);
+        }
+          break;
+        case 'd':
+        {
+          DB_printf("Received key: d\r\n");
+          SPIOperate_SPI1_Send8(0x02);
+          DB_printf("\r0x02: Rotate Clockwise by 90 degrees\r\n");
+        }
+          break;
+        case 'x':
+        {
+          DB_printf("Received key: x\r\n");
+          SPIOperate_SPI1_Send8(0x00);
+          DB_printf("\r0x00: Stop, hold Position, do not move or rotate\r\n");
+        }
+          break;
+        default:
+          DB_printf("Received key: %c\r\n", ThisEvent.EventParam);
+          break;
       }
-      ES_Timer_InitTimer(SPI_TIMER, SPI_TIMER_MS); // re-start timer
     }
       break;
 
