@@ -13,7 +13,7 @@ build/default/debug/FrameworkSource/ES_Timers.o: \
  FrameworkSource/../FrameworkHeaders/ES_General.h \
  FrameworkSource/../FrameworkHeaders/ES_Timers.h \
  FrameworkSource/../FrameworkHeaders/ES_ServiceHeaders.h \
- ProjectHeaders/SPIService.h FrameworkHeaders/ES_Types.h \
+ ProjectHeaders/SPILeadService.h FrameworkHeaders/ES_Types.h \
  ProjectHeaders/DCMotorService.h FrameworkHeaders/ES_Events.h \
  FrameworkSource/../FrameworkHeaders/ES_General.h \
  FrameworkSource/../FrameworkHeaders/ES_Events.h \
@@ -34,7 +34,7 @@ FrameworkSource/../FrameworkHeaders/ES_PostList.h:
 FrameworkSource/../FrameworkHeaders/ES_General.h:
 FrameworkSource/../FrameworkHeaders/ES_Timers.h:
 FrameworkSource/../FrameworkHeaders/ES_ServiceHeaders.h:
-ProjectHeaders/SPIService.h:
+ProjectHeaders/SPILeadService.h:
 FrameworkHeaders/ES_Types.h:
 ProjectHeaders/DCMotorService.h:
 FrameworkHeaders/ES_Events.h:

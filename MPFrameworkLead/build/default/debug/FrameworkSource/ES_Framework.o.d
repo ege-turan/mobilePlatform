@@ -18,7 +18,7 @@ build/default/debug/FrameworkSource/ES_Framework.o: \
  FrameworkSource/../FrameworkHeaders/ES_General.h \
  FrameworkSource/../FrameworkHeaders/ES_CheckEvents.h \
  FrameworkHeaders/ES_ServiceHeaders.h FrameworkHeaders/ES_Configure.h \
- ProjectHeaders/SPIService.h FrameworkHeaders/ES_Types.h \
+ ProjectHeaders/SPILeadService.h FrameworkHeaders/ES_Types.h \
  ProjectHeaders/DCMotorService.h FrameworkHeaders/ES_Events.h \
  ProjectHeaders/EventCheckWrapper.h ProjectHeaders/EventCheckers.h \
  FrameworkHeaders/ES_Port.h
@@ -41,7 +41,7 @@ FrameworkSource/../FrameworkHeaders/ES_General.h:
 FrameworkSource/../FrameworkHeaders/ES_CheckEvents.h:
 FrameworkHeaders/ES_ServiceHeaders.h:
 FrameworkHeaders/ES_Configure.h:
-ProjectHeaders/SPIService.h:
+ProjectHeaders/SPILeadService.h:
 FrameworkHeaders/ES_Types.h:
 ProjectHeaders/DCMotorService.h:
 FrameworkHeaders/ES_Events.h:

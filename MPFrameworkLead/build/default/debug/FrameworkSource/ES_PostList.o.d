@@ -13,7 +13,7 @@ build/default/debug/FrameworkSource/ES_PostList.o: \
  FrameworkSource/../FrameworkHeaders/ES_Events.h \
  FrameworkSource/../FrameworkHeaders/ES_Configure.h \
  FrameworkSource/../FrameworkHeaders/ES_ServiceHeaders.h \
- ProjectHeaders/SPIService.h FrameworkHeaders/ES_Types.h \
+ ProjectHeaders/SPILeadService.h FrameworkHeaders/ES_Types.h \
  ProjectHeaders/DCMotorService.h FrameworkHeaders/ES_Events.h
 FrameworkSource/../FrameworkHeaders/ES_Port.h:
 FrameworkSource/../FrameworkHeaders/bitdefs.h:
@@ -28,7 +28,7 @@ FrameworkSource/../FrameworkHeaders/ES_PostList.h:
 FrameworkSource/../FrameworkHeaders/ES_Events.h:
 FrameworkSource/../FrameworkHeaders/ES_Configure.h:
 FrameworkSource/../FrameworkHeaders/ES_ServiceHeaders.h:
-ProjectHeaders/SPIService.h:
+ProjectHeaders/SPILeadService.h:
 FrameworkHeaders/ES_Types.h:
 ProjectHeaders/DCMotorService.h:
 FrameworkHeaders/ES_Events.h:
