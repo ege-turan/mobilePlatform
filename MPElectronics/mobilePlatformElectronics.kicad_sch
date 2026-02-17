@@ -6561,6 +6561,16 @@
 		)
 		(uuid "044d2e25-40a8-4324-aaff-0319fc0a8fef")
 	)
+	(text "alternatively: open circuit + 1M to have no Hysteresis"
+		(exclude_from_sim no)
+		(at 824.992 146.558 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+		)
+		(uuid "114621a0-41f2-4248-98a0-692382ebf9e4")
+	)
 	(text "Field Side Indicator"
 		(exclude_from_sim no)
 		(at 726.44 274.828 0)
@@ -26373,7 +26383,7 @@
 		(fields_autoplaced yes)
 		(uuid "fad220cf-57dd-4e6b-93ca-a1bde7cf74c1")
 		(property "Reference" "R19"
-			(at 689.356 127.5079 0)
+			(at 689.61 127.5079 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -26381,8 +26391,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "2K"
-			(at 689.356 130.0479 0)
+		(property "Value" "3K"
+			(at 689.61 130.0479 0)
 			(effects
 				(font
 					(size 1.27 1.27)
