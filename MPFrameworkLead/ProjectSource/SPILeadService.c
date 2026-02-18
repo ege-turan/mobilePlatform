@@ -31,16 +31,14 @@
 
 /*----------------------------- Module Defines ----------------------------*/
 #define DEBUG_PRINT
-#ifdef DEBUG_PRINT
-    #include "dbprintf.h"
-#endif
+#include "dbprintf.h"
 
 #define SPI1_SS_PIN SPI_RPB4
 #define SPI1_SDO_PIN SPI_RPB13
 #define SPI1_SDI_PIN SPI_RPB11
 #define SPIClkPeriodInNs 10000 // 100 kHz = 10000 ns
 
-#define SPI_TIMER_MS 50
+#define SPI_TIMER_MS 20
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
@@ -187,6 +185,7 @@ ES_Event_t RunSPILeadService(ES_Event_t ThisEvent)
         if (SPIOperate_HasSS1_Risen())
         {
           uint8_t newMessage = (uint8_t)SPIOperate_ReadData(SPI_SPI1);
+          // DB_printf("Follower Sent Over SPI:     0x%x\r\n", (unsigned int)newMessage);
 
           // check if message different and not bad command
           if ((newMessage != LastMessage) && (newMessage != 0xFF))
@@ -197,7 +196,7 @@ ES_Event_t RunSPILeadService(ES_Event_t ThisEvent)
             ES_PostAll(NewEvent);
 
             #ifdef DEBUG_PRINT
-            DB_printf("New SPI Command Event Sent:     0x%x\r\n", (unsigned int)NewEvent.EventParam);
+            DB_printf("New SPI from Follower:     0x%x\r\n", (unsigned int)NewEvent.EventParam);
             #endif
           }
 
@@ -208,6 +207,41 @@ ES_Event_t RunSPILeadService(ES_Event_t ThisEvent)
         SPIOperate_SPI1_Send8(message2send);
 
         ES_Timer_InitTimer(SPI_TIMER, SPI_TIMER_MS); // re-start timer
+      }
+    }
+      break;
+
+    case ES_NEW_KEY:
+    {
+      switch (ThisEvent.EventParam) {
+        case '1':
+        {
+          message2send = 0xA1;
+          DB_printf("\rSend 0xA1 over SPI\r\n");
+        }
+          break;
+        case '2':
+        {
+          message2send = 0xA2;
+          DB_printf("\rSend 0xA2 over SPI\r\n");
+        }
+          break;
+        case '3':
+        {
+          message2send = 0xA3;
+          DB_printf("\rSend 0xA3 over SPI\r\n");
+        }
+          break;
+        case '4':
+        {
+          message2send = 0xA4;
+          DB_printf("\rSend 0xA4 over SPI\r\n");
+        }
+          break;
+        
+        default:
+          DB_printf("Key not linked to SPI msg: %c\r\n", ThisEvent.EventParam);
+          break;
       }
     }
       break;

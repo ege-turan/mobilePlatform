@@ -387,6 +387,10 @@ bool SPISetup_MapSSInput(SPI_Module_t WhichModule, SPI_PinMap_t WhichPin)
         // Map SS input
         if (SPI_SPI1 == WhichModule) {
           SS1R = mapPinMap2INTConst[WhichPin];
+          // set up to use INT4 to capture the rising edge of SS
+          INTCONbits.INT4EP = 1;            // set for rising edge sensitivity
+          IFS0CLR = _IFS0_INT4IF_MASK;      // clear any pending flag
+          INT4R = mapPinMap2INTConst[WhichPin];  // map INT4 to SS as well
         } else {
           SS2R = mapPinMap2INTConst[WhichPin];
         }

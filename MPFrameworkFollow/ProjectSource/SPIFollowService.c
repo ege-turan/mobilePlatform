@@ -32,9 +32,7 @@
 
 /*----------------------------- Module Defines ----------------------------*/
 #define DEBUG_PRINT
-#ifdef DEBUG_PRINT
-    #include "dbprintf.h"
-#endif
+#include "dbprintf.h"
 #define SPI1_SS_PIN SPI_RPB15
 #define SPI1_SDO_PIN SPI_RPB13
 #define SPI1_SDI_PIN SPI_RPB11
@@ -97,9 +95,7 @@ bool InitSPIFollowService(uint8_t Priority)
   SPISetup_EnableSPI(SPI_SPI1); // enable SPI
   IFS0CLR = _IFS0_INT4IF_MASK;  // clear INT4IF to avoid false flags
 
-#ifdef DEBUG_PRINT
   DB_printf("SPI1 Initialized\r\n");
-#endif
 
   // initialize vairables
   message2send = 0xFF;
@@ -187,7 +183,7 @@ ES_Event_t RunSPIFollowService(ES_Event_t ThisEvent)
         ES_PostAll(NewEvent);
 
         #ifdef DEBUG_PRINT
-        DB_printf("New SPI Command Event Sent:     0x%x\r\n", (unsigned int)NewEvent.EventParam);
+        DB_printf("New SPI from Leader:     0x%x\r\n", (unsigned int)NewEvent.EventParam);
         #endif
       }
       LastMessage = newMessage;
@@ -212,16 +208,16 @@ ES_Event_t RunSPIFollowService(ES_Event_t ThisEvent)
           DB_printf("\r0x09: Drive Forward Full Speed\r\n");
         }
           break;
-        case 'a':
+        case 's':
         {
-          DB_printf("Received key: a\r\n");
+          DB_printf("Received key: s\r\n");
           message2send = 0x11;
           DB_printf("\r0x11: Drive Drive Reverse Full Speed\r\n");
         }
           break;
-        case 's':
+        case 'a':
         {
-          DB_printf("Received key: s\r\n");
+          DB_printf("Received key: a\r\n");
           message2send = 0x04;
           DB_printf("\r0x04: Rotate Counter-clockwise by 90 degrees\r\n");
 

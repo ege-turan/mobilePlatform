@@ -34,7 +34,7 @@
 /*-------------------------------------------------------------------------*/
 /*---------------------------- Testing Defines ----------------------------*/
 /*-------------------------------------------------------------------------*/
-#define VERBOSE_MODE
+// #define VERBOSE_MODE
 ES_EventType_t LastTestAction;
 
 /*-------------------------------------------------------------------------*/
@@ -212,8 +212,8 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                 // Received a new command to execute from the SPI command generator
                 case ES_NEW_SPI_CMD_RECEIVED:
                 {
-                    DB_printf("New SPI Command Event Received: 0x%x\r\n",
-                              (unsigned int)ThisEvent.EventParam);
+                    // DB_printf("DCService doing SPI Command Event: 0x%x\r\n",
+                    //           (unsigned int)ThisEvent.EventParam);
 
                     // Parse the command and execute the necessary steps
                     switch (ThisEvent.EventParam)
