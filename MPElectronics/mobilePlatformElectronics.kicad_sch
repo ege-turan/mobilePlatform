@@ -6549,7 +6549,7 @@
 		)
 		(uuid fd77d8f5-953c-41f8-b23d-cb1edd2428dc)
 	)
-	(text "High Pass Filter\nfc = 530.5 Hz"
+	(text "High Pass Filter\nfc = 589.5 Hz"
 		(exclude_from_sim no)
 		(at 668.782 90.17 0)
 		(effects
@@ -6731,7 +6731,7 @@
 		)
 		(uuid "5ecb37db-d6d4-498b-99c3-ca680527a45a")
 	)
-	(text "First Stage (Transimpedance) Amplifier"
+	(text "Transimpedance Amplifier (Stage 1)"
 		(exclude_from_sim no)
 		(at 580.136 88.138 0)
 		(effects
@@ -6814,7 +6814,7 @@
 		)
 		(uuid "97803d43-3282-448f-aaa9-a857c0bffbf3")
 	)
-	(text "Second Stage (Noninverting) Amplifier"
+	(text "Noninverting Amplifier (Stage 2)"
 		(exclude_from_sim no)
 		(at 709.676 88.138 0)
 		(effects
@@ -6872,7 +6872,7 @@
 		)
 		(uuid "b2eb1732-9e97-4af8-a10c-5ffdfd6a75fd")
 	)
-	(text "Comparator with Hysteresis"
+	(text "Comparator with Hysteresis (Stage 4)\n"
 		(exclude_from_sim no)
 		(at 796.544 88.138 0)
 		(effects
@@ -12315,7 +12315,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "LM339AN"
+		(property "Value" "MCP6546"
 			(at 831.342 123.9519 0)
 			(effects
 				(font
@@ -17017,7 +17017,7 @@
 				)
 			)
 		)
-		(property "Value" "LM339AN"
+		(property "Value" "MCP6546"
 			(at 839.216 117.602 0)
 			(effects
 				(font
@@ -18624,7 +18624,7 @@
 				)
 			)
 		)
-		(property "Value" "2K"
+		(property "Value" "2K2"
 			(at 624.332 104.14 90)
 			(effects
 				(font
@@ -19795,8 +19795,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "95491a9e-df72-46e2-b8b5-bb5710e4258b")
-		(property "Reference" "R4"
-			(at 854.202 117.6019 0)
+		(property "Reference" "R107"
+			(at 853.44 117.6019 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19805,7 +19805,7 @@
 			)
 		)
 		(property "Value" "3.3K"
-			(at 854.202 120.1419 0)
+			(at 853.44 120.1419 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -19849,7 +19849,7 @@
 		(instances
 			(project "mobilePlatformElectronics"
 				(path "/bd24c4db-4e36-4117-bd4f-5228ef241da9"
-					(reference "R4")
+					(reference "R107")
 					(unit 1)
 				)
 			)
@@ -24732,8 +24732,8 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "e6e1e3d9-0d3f-49d4-9c21-10133a2a1e64")
-		(property "Reference" "R6"
-			(at 816.102 135.382 90)
+		(property "Reference" "R114"
+			(at 816.102 135.89 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24741,7 +24741,7 @@
 			)
 		)
 		(property "Value" "10K"
-			(at 816.102 137.922 90)
+			(at 816.102 138.43 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24784,7 +24784,7 @@
 		(instances
 			(project "mobilePlatformElectronics"
 				(path "/bd24c4db-4e36-4117-bd4f-5228ef241da9"
-					(reference "R6")
+					(reference "R114")
 					(unit 1)
 				)
 			)
@@ -25158,16 +25158,16 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "eb8df57c-f35e-41e8-9bcc-570ebcb60795")
-		(property "Reference" "R5"
-			(at 844.042 135.382 90)
+		(property "Reference" "R115"
+			(at 844.042 135.89 90)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "36K"
-			(at 844.042 137.922 90)
+		(property "Value" "39K"
+			(at 844.042 138.43 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -25210,7 +25210,7 @@
 		(instances
 			(project "mobilePlatformElectronics"
 				(path "/bd24c4db-4e36-4117-bd4f-5228ef241da9"
-					(reference "R5")
+					(reference "R115")
 					(unit 1)
 				)
 			)
@@ -26391,7 +26391,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "3K"
+		(property "Value" "2K7"
 			(at 689.61 130.0479 0)
 			(effects
 				(font
