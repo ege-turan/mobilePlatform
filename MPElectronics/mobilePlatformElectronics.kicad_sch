@@ -12315,7 +12315,7 @@
 				(hide yes)
 			)
 		)
-		(property "Value" "LM339AN"
+		(property "Value" "MCP6546"
 			(at 831.342 123.9519 0)
 			(effects
 				(font
@@ -17017,7 +17017,7 @@
 				)
 			)
 		)
-		(property "Value" "LM339AN"
+		(property "Value" "MCP6546"
 			(at 839.216 117.602 0)
 			(effects
 				(font
