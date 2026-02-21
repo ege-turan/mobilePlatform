@@ -28,7 +28,7 @@
 #include "PIC32_SPI_HAL.h"
 #include <sys/attribs.h>
 
-// #define SPI_TIMER_MS 50 // NOT USED BY FOLLOWER
+// #define SPI_TIMER_MS 20 // NOT USED BY FOLLOWER
 
 /*----------------------------- Module Defines ----------------------------*/
 #define DEBUG_PRINT
@@ -37,6 +37,29 @@
 #define SPI1_SDO_PIN SPI_RPB13
 #define SPI1_SDI_PIN SPI_RPB11
 #define SPIClkPeriodInNs 10000 // 100 kHz = 10000 ns
+
+/* LAB 8 Keyboard COMMANDS */
+#define LAB8_FWD_FULL            0x09 // 'w'
+#define LAB8_REV_FULL            0x11 // 's'
+#define LAB8_ROT_CCW_90          0x04 // 'a'
+#define LAB8_ROT_CW_90           0x02 // 'd'
+#define LAB8_STOP                0x00 // 'x'
+#define LAB8_CW_BEACON           0x20 // 'b'
+/* LEAD2FOLLOW SPI CMDS*/
+#define SPI_LEAD_INITIAL_CMD     0xAA
+#define ES_SPI_INTAKE_ON         0xA1
+#define ES_SPI_DROPOFF_REACHED   0xA2
+#define ES_SPI_BLUE_TEAM         0xA3
+#define ES_SPI_GREEN_TEAM        0xA4
+/* FOLLOW2LEAD SPI CMDS*/
+#define SPI_FOLLOW_INITIAL_CMD   0xFF
+#define ES_SPI_START             0xB1
+#define ES_SPI_INTAKE_INCOMPLETE 0xB2
+#define ES_SPI_LOADED            0xB3
+#define ES_SPI_UNLOADED          0xB4
+#define ES_SPI_UNLOAD_INCOMPLETE 0xB5
+#define ES_SPI_END               0xB6
+
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
@@ -204,37 +227,44 @@ ES_Event_t RunSPIFollowService(ES_Event_t ThisEvent)
         case 'w':
         {
           DB_printf("Received key: w\r\n");
-          message2send = 0x09;
-          DB_printf("\r0x09: Drive Forward Full Speed\r\n");
+          message2send = LAB8_FWD_FULL;
+          DB_printf("\r0x%x: Drive Forward Full Speed\r\n", message2send);
         }
           break;
         case 's':
         {
           DB_printf("Received key: s\r\n");
-          message2send = 0x11;
-          DB_printf("\r0x11: Drive Drive Reverse Full Speed\r\n");
+          message2send = LAB8_REV_FULL;
+          DB_printf("\r0x%x: Drive Drive Reverse Full Speed\r\n", message2send);
         }
           break;
         case 'a':
         {
           DB_printf("Received key: a\r\n");
-          message2send = 0x04;
-          DB_printf("\r0x04: Rotate Counter-clockwise by 90 degrees\r\n");
+          message2send = LAB8_ROT_CCW_90;
+          DB_printf("\r0x%x: Rotate Counter-clockwise by 90 degrees\r\n", message2send);
 
         }
           break;
         case 'd':
         {
           DB_printf("Received key: d\r\n");
-          message2send = 0x02;
-          DB_printf("\r0x02: Rotate Clockwise by 90 degrees\r\n");
+          message2send = LAB8_ROT_CW_90;
+          DB_printf("\r0x%x: Rotate Clockwise by 90 degrees\r\n", message2send);
         }
           break;
         case 'x':
         {
           DB_printf("Received key: x\r\n");
-          message2send = 0x00;
-          DB_printf("\r0x00: Stop, hold Position, do not move or rotate\r\n");
+          message2send = LAB8_STOP;
+          DB_printf("\r0x%x: Stop, hold Position, do not move or rotate\r\n", message2send);
+        }
+          break;
+        case 'b':
+        {
+          DB_printf("Received key: b\r\n");
+          message2send = LAB8_CW_BEACON;
+          DB_printf("\r0x%x: Align with Beacon\r\n", message2send);
         }
           break;
         default:
