@@ -19,8 +19,8 @@ build/default/production/FrameworkSource/ES_Framework.o: \
  FrameworkSource/../FrameworkHeaders/ES_CheckEvents.h \
  FrameworkHeaders/ES_ServiceHeaders.h FrameworkHeaders/ES_Configure.h \
  ProjectHeaders/SPIFollowService.h FrameworkHeaders/ES_Types.h \
- ProjectHeaders/EventCheckWrapper.h ProjectHeaders/EventCheckers.h \
- FrameworkHeaders/ES_Port.h
+ ProjectHeaders/StepperService.h ProjectHeaders/EventCheckWrapper.h \
+ ProjectHeaders/EventCheckers.h FrameworkHeaders/ES_Port.h
 FrameworkSource/../FrameworkHeaders/ES_Configure.h:
 FrameworkSource/../FrameworkHeaders/ES_Framework.h:
 FrameworkSource/../FrameworkHeaders/ES_Types.h:
@@ -42,6 +42,7 @@ FrameworkHeaders/ES_ServiceHeaders.h:
 FrameworkHeaders/ES_Configure.h:
 ProjectHeaders/SPIFollowService.h:
 FrameworkHeaders/ES_Types.h:
+ProjectHeaders/StepperService.h:
 ProjectHeaders/EventCheckWrapper.h:
 ProjectHeaders/EventCheckers.h:
 FrameworkHeaders/ES_Port.h:

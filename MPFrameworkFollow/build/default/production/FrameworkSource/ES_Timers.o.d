@@ -14,6 +14,7 @@ build/default/production/FrameworkSource/ES_Timers.o: \
  FrameworkSource/../FrameworkHeaders/ES_Timers.h \
  FrameworkSource/../FrameworkHeaders/ES_ServiceHeaders.h \
  ProjectHeaders/SPIFollowService.h FrameworkHeaders/ES_Types.h \
+ ProjectHeaders/StepperService.h \
  FrameworkSource/../FrameworkHeaders/ES_General.h \
  FrameworkSource/../FrameworkHeaders/ES_Events.h \
  FrameworkSource/../FrameworkHeaders/ES_PostList.h \
@@ -35,6 +36,7 @@ FrameworkSource/../FrameworkHeaders/ES_Timers.h:
 FrameworkSource/../FrameworkHeaders/ES_ServiceHeaders.h:
 ProjectHeaders/SPIFollowService.h:
 FrameworkHeaders/ES_Types.h:
+ProjectHeaders/StepperService.h:
 FrameworkSource/../FrameworkHeaders/ES_General.h:
 FrameworkSource/../FrameworkHeaders/ES_Events.h:
 FrameworkSource/../FrameworkHeaders/ES_PostList.h:

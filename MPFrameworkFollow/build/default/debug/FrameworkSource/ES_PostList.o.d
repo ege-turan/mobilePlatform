@@ -13,7 +13,8 @@ build/default/debug/FrameworkSource/ES_PostList.o: \
  FrameworkSource/../FrameworkHeaders/ES_Events.h \
  FrameworkSource/../FrameworkHeaders/ES_Configure.h \
  FrameworkSource/../FrameworkHeaders/ES_ServiceHeaders.h \
- ProjectHeaders/SPIFollowService.h FrameworkHeaders/ES_Types.h
+ ProjectHeaders/SPIFollowService.h FrameworkHeaders/ES_Types.h \
+ ProjectHeaders/StepperService.h
 FrameworkSource/../FrameworkHeaders/ES_Port.h:
 FrameworkSource/../FrameworkHeaders/bitdefs.h:
 FrameworkSource/../FrameworkHeaders/Bin_Const.h:
@@ -29,3 +30,4 @@ FrameworkSource/../FrameworkHeaders/ES_Configure.h:
 FrameworkSource/../FrameworkHeaders/ES_ServiceHeaders.h:
 ProjectHeaders/SPIFollowService.h:
 FrameworkHeaders/ES_Types.h:
+ProjectHeaders/StepperService.h:

@@ -8,8 +8,9 @@ build/default/production/ProjectSource/EventCheckers.o: \
  FrameworkHeaders/ES_Timers.h FrameworkHeaders/ES_Events.h \
  FrameworkHeaders/ES_PostList.h FrameworkHeaders/ES_ServiceHeaders.h \
  ProjectHeaders/SPIFollowService.h FrameworkHeaders/ES_Types.h \
- FrameworkHeaders/ES_Port.h ProjectHeaders/EventCheckers.h \
- ProjectHeaders/PIC32_SPI_HAL.h FrameworkHeaders/dbprintf.h
+ ProjectHeaders/StepperService.h FrameworkHeaders/ES_Port.h \
+ ProjectHeaders/EventCheckers.h ProjectHeaders/PIC32_SPI_HAL.h \
+ FrameworkHeaders/dbprintf.h
 FrameworkHeaders/ES_Configure.h:
 FrameworkHeaders/ES_Framework.h:
 FrameworkHeaders/ES_Types.h:
@@ -27,6 +28,7 @@ FrameworkHeaders/ES_PostList.h:
 FrameworkHeaders/ES_ServiceHeaders.h:
 ProjectHeaders/SPIFollowService.h:
 FrameworkHeaders/ES_Types.h:
+ProjectHeaders/StepperService.h:
 FrameworkHeaders/ES_Port.h:
 ProjectHeaders/EventCheckers.h:
 ProjectHeaders/PIC32_SPI_HAL.h:

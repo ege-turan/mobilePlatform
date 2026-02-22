@@ -48,6 +48,7 @@
       <itemPath>ProjectHeaders/PIC32_PWM_Lib.h</itemPath>
       <itemPath>ProjectHeaders/PIC32_SPI_HAL.h</itemPath>
       <itemPath>ProjectHeaders/SPIFollowService.h</itemPath>
+      <itemPath>ProjectHeaders/StepperService.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -68,6 +69,7 @@
       <itemPath>ProjectSource/PIC32_PWM_Lib.c</itemPath>
       <itemPath>ProjectSource/PIC32_SPI_HAL.c</itemPath>
       <itemPath>ProjectSource/SPIFollowService.c</itemPath>
+      <itemPath>ProjectSource/StepperService.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
