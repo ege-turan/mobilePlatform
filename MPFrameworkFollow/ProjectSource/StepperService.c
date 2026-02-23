@@ -36,12 +36,14 @@
 */
 
 /*----------------------------- Module Defines ----------------------------*/
-#define HIGH_PULSE_WIDTH_US 1000.0 // in us
+// use prescaler of 256 to have bigger pulse width range before overflow
+
+#define HIGH_PULSE_WIDTH_US 5000.0 // in us
 #define PWM_FREQ_HZ (1.0/((2.0*HIGH_PULSE_WIDTH_US) * 1e-6)) // in Hz
-#define PWM_PERIOD_TICKS (20000000.0/(2.0*PWM_FREQ_HZ)) // in ticks, with PBCLK = 20 MHz and prescaler of 2
+#define PWM_PERIOD_TICKS (20000000.0/(256.0*PWM_FREQ_HZ)) // in ticks, with PBCLK = 20 MHz and prescaler of 256
 
 #define STEPPER_TIMER _Timer2_
-#define STEPPER_PRESCALER PWM_PS_2
+#define STEPPER_PRESCALER PWM_PS_256
 #define STEPPER_CHANNEL 5
 #define STEPPER_PIN PWM_RPA2
 

@@ -43,6 +43,7 @@
 
 /*---------------------------- Module Functions ---------------------------*/
 static ES_Event_t DuringStandby( ES_Event_t Event);
+static ES_Event_t DuringRunningPlan( ES_Event_t Event);
 
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, though if the top level state machine
@@ -51,6 +52,8 @@ static ES_Event_t DuringStandby( ES_Event_t Event);
 static MasterState_t CurrentState;
 // with the introduction of Gen2, we need a module level Priority var as well
 static uint8_t MyPriority;
+
+static uint8_t PlanIndex = 0;
 
 /*------------------------------ Module Code ------------------------------*/
 /****************************************************************************
@@ -134,6 +137,7 @@ ES_Event_t RunMasterSM( ES_Event_t CurrentEvent )
     switch ( CurrentState )
    {
        case STANDBY :       // If current state is state one
+       {
          // Execute During function for state one. ES_ENTRY & ES_EXIT are
          // processed here allow the lowere level state machines to re-map
          // or consume the event
@@ -143,17 +147,24 @@ ES_Event_t RunMasterSM( ES_Event_t CurrentEvent )
          {
             switch (CurrentEvent.EventType)
             {
-               case ES_LOCK : //If event is event one
+               case ES_SPI_START : //If event is event one
                   // Execute action function for state one : event one
-                  NextState = STATE_TWO;//Decide what the next state will be
+                  NextState = RUNNING_PLAN;//Decide what the next state will be
                   // for internal transitions, skip changing MakeTransition
                   MakeTransition = true; //mark that we are taking a transition
-                  // if transitioning to a state with history change kind of entry
-                  EntryEventKind.EventType = ES_ENTRY_HISTORY;
+                //   // if transitioning to a state with history change kind of entry
+                //   EntryEventKind.EventType = ES_ENTRY_HISTORY;
                   break;
                 // repeat cases as required for relevant events
             }
          }
+        }
+         break;
+
+       case RUNNING_PLAN :
+        {
+            CurrentEvent = DuringRunningPlan(CurrentEvent);
+        }
          break;
       // repeat state pattern as required for other states
     }
@@ -195,7 +206,7 @@ void StartMasterSM ( ES_Event_t CurrentEvent )
 {
   // if there is more than 1 state to the top level machine you will need 
   // to initialize the state variable
-  CurrentState = STATE_ONE;
+  CurrentState = STANDBY;
   // now we need to let the Run function init the lower level state machines
   // use LocalEvent to keep the compiler from complaining about unused var
   RunMasterSM(CurrentEvent);
@@ -229,6 +240,44 @@ MasterState_t  QueryTopHSMTemplateSM ( void )
  ***************************************************************************/
 
 static ES_Event_t DuringStandby( ES_Event_t Event)
+{
+    ES_Event_t ReturnEvent = Event; // assme no re-mapping or comsumption
+
+    // process ES_ENTRY, ES_ENTRY_HISTORY & ES_EXIT events
+    if ( (Event.EventType == ES_ENTRY) ||
+         (Event.EventType == ES_ENTRY_HISTORY) )
+    {
+        // implement any entry actions required for this state machine
+        
+        // after that start any lower level machines that run in this state
+        //StartLowerLevelSM( Event );
+        // repeat the StartxxxSM() functions for concurrent state machines
+        // on the lower level
+    }
+    else if ( Event.EventType == ES_EXIT )
+    {
+        // on exit, give the lower levels a chance to clean up first
+        //RunLowerLevelSM(Event);
+        // repeat for any concurrently running state machines
+        // now do any local exit functionality
+      
+    }else
+    // do the 'during' function for this state
+    {
+        // run any lower level state machine
+        // ReturnEvent = RunLowerLevelSM(Event);
+      
+        // repeat for any concurrent lower level machines
+      
+        // do any activity that is repeated as long as we are in this state
+    }
+    // return either Event, if you don't want to allow the lower level machine
+    // to remap the current event, or ReturnEvent if you do want to allow it.
+    return(ReturnEvent);
+}
+
+
+static ES_Event_t DuringRunningPlan( ES_Event_t Event)
 {
     ES_Event_t ReturnEvent = Event; // assme no re-mapping or comsumption
 
