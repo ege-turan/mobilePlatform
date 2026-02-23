@@ -219,6 +219,14 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                 }
                 break;
 
+                case ES_MOTORS_OFF:
+                {
+                    _StopRobot();
+                    #ifdef VERBOSE_MODE
+                    DB_printf("\rES_MOTORS_OFF received, stopping robot\r\n");
+                    #endif
+                }
+
                 // Received a new command to execute from the SPI command generator
                 case ES_NEW_SPI_CMD_RECEIVED:
                 {

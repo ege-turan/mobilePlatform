@@ -148,14 +148,30 @@ ES_Event_t RunMasterSM( ES_Event_t CurrentEvent )
             switch (CurrentEvent.EventType)
             {
                case ES_SPI_START : //If event is event one
+                  PlanIndex = 0;               // set plan to 0
                   // Execute action function for state one : event one
                   NextState = RUNNING_PLAN;//Decide what the next state will be
                   // for internal transitions, skip changing MakeTransition
                   MakeTransition = true; //mark that we are taking a transition
                 //   // if transitioning to a state with history change kind of entry
-                //   EntryEventKind.EventType = ES_ENTRY_HISTORY;
+                  EntryEventKind.EventType = ES_ENTRY_HISTORY;
                   break;
                 // repeat cases as required for relevant events
+               case ES_SPI_LOADED:
+                  PlanIndex++;
+                  NextState = RUNNING_PLAN;
+                  MakeTransition = true;
+                  EntryEventKind.EventType = ES_ENTRY_HISTORY;
+                  break;
+               case ES_SPI_UNLOADED:
+                  PlanIndex++;
+                  NextState = RUNNING_PLAN;
+                  MakeTransition = true;
+                  EntryEventKind.EventType = ES_ENTRY_HISTORY;
+                  break;
+                
+                default:
+                    break;
             }
          }
         }
@@ -164,6 +180,23 @@ ES_Event_t RunMasterSM( ES_Event_t CurrentEvent )
        case RUNNING_PLAN :
         {
             CurrentEvent = DuringRunningPlan(CurrentEvent);
+         //process any events
+         if ( CurrentEvent.EventType != ES_NO_EVENT ) //If an event is active
+         {
+            switch (CurrentEvent.EventType)
+            {
+               case ES_SPI_DONE:
+                  PlanIndex++;
+                  NextState = RUNNING_PLAN;
+                  MakeTransition = true;
+                  EntryEventKind.EventType = ES_ENTRY_HISTORY;
+                  break;
+                
+                // repeat cases as required for relevant events
+                default:
+                    break;
+            }
+         }
         }
          break;
       // repeat state pattern as required for other states
@@ -248,7 +281,10 @@ static ES_Event_t DuringStandby( ES_Event_t Event)
          (Event.EventType == ES_ENTRY_HISTORY) )
     {
         // implement any entry actions required for this state machine
-        
+        // Turn motors off
+        ES_Event_t ThisEvent;
+        ThisEvent.EventType = ES_MOTORS_OFF;
+        PostDCMotorService(ThisEvent);
         // after that start any lower level machines that run in this state
         //StartLowerLevelSM( Event );
         // repeat the StartxxxSM() functions for concurrent state machines
