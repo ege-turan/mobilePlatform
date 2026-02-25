@@ -6864,7 +6864,7 @@
 	)
 	(text "Vbias = 1.67V"
 		(exclude_from_sim no)
-		(at 901.954 114.808 0)
+		(at 899.414 112.776 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -7509,6 +7509,16 @@
 			(type default)
 		)
 		(uuid "0adfca4c-9704-447b-b1aa-2d09111d45dc")
+	)
+	(wire
+		(pts
+			(xy 899.668 114.554) (xy 910.336 114.554)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0c00565d-9eec-4e28-9021-ee6bad4a3376")
 	)
 	(wire
 		(pts
@@ -8719,6 +8729,16 @@
 			(type default)
 		)
 		(uuid "821e1d5a-3a4b-409e-87c0-beadd63e51ae")
+	)
+	(wire
+		(pts
+			(xy 899.668 114.554) (xy 899.668 115.824)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "82ffe61a-8fd3-45be-b8c2-ab0ec402a512")
 	)
 	(wire
 		(pts
@@ -14694,6 +14714,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 899.668 123.444 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "39703281-5bff-457e-94d0-8dc33c781a1b")
+		(property "Reference" "#PWR019"
+			(at 899.668 129.794 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 899.668 128.524 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 899.668 123.444 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 899.668 123.444 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 899.668 123.444 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4503a96f-a546-4e02-9a16-990bb14406a4")
+		)
+		(instances
+			(project "mobilePlatformElectronics"
+				(path "/bd24c4db-4e36-4117-bd4f-5228ef241da9"
+					(reference "#PWR019")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "ME218_BaseLib:Photo_NPN")
 		(at 555.498 113.792 0)
 		(unit 1)
@@ -18624,7 +18710,7 @@
 				)
 			)
 		)
-		(property "Value" "2K2"
+		(property "Value" "200K"
 			(at 624.332 104.14 90)
 			(effects
 				(font
@@ -19804,7 +19890,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "3.3K"
+		(property "Value" "10K"
 			(at 853.44 120.1419 0)
 			(effects
 				(font
@@ -23029,6 +23115,73 @@
 			(project "mobilePlatformElectronics"
 				(path "/bd24c4db-4e36-4117-bd4f-5228ef241da9"
 					(reference "SW2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "ME218_BaseLib:Cap")
+		(at 899.668 119.634 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "d18f0884-645f-459b-8eb2-1f25c58cd224")
+		(property "Reference" "C23"
+			(at 905.764 119.126 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "10uF"
+			(at 903.478 119.38 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 900.6332 123.444 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 899.668 119.634 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 899.668 119.634 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "2"
+			(uuid "de47153b-1d84-4b53-b4f7-a08278dce979")
+		)
+		(pin "1"
+			(uuid "c9e9b064-91a0-44c0-9a6f-2b20df36e21d")
+		)
+		(instances
+			(project "mobilePlatformElectronics"
+				(path "/bd24c4db-4e36-4117-bd4f-5228ef241da9"
+					(reference "C23")
 					(unit 1)
 				)
 			)
