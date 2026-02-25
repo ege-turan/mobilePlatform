@@ -42,6 +42,7 @@
 #include "EventCheckers.h"
 
 #include "PIC32_SPI_HAL.h"
+#include "dbprintf.h"
 
 // This is the event checking function sample. It is not intended to be
 // included in the module. It is only here as a sample to guide you in writing
@@ -134,9 +135,7 @@ bool Check4SPI(void)
     ThisEvent.EventParam = newMessage;
     ES_PostAll(ThisEvent);
 
-#ifdef DEBUG_PRINT
-    DB_printf("New SPI Command Event Sent:     0x%x\r\n", (unsigned int)ThisEvent.EventParam);
-#endif
+    // DB_printf("SPI msg from Leader:     0x%x\r\n", (unsigned int)ThisEvent.EventParam);
 
     return true;
   }

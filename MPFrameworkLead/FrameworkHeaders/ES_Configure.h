@@ -263,10 +263,23 @@ typedef enum
   // ES_LOCK,
   // ES_UNLOCK,
   ES_NEW_KEY,                /* signals a new key received from terminal */
+  /* Driving Motors related events*/
   ES_BEACON_DETECTED,
   ES_TAPE_DETECTED,
+  ES_MOTORS_OFF,
+  /* SPI related events */
   ES_NEW_SPI_CMD_SEND,
-  ES_NEW_SPI_CMD_RECEIVED
+  ES_NEW_SPI_CMD_RECEIVED,
+  ES_SPI_INTAKE_ON,
+  ES_SPI_DROPOFF_REACHED,
+  ES_SPI_BLUE_TEAM,
+  ES_SPI_GREEN_TEAM,
+  ES_SPI_START,
+  ES_SPI_INTAKE_INCOMPLETE,
+  ES_SPI_LOADED,
+  ES_SPI_UNLOADED,
+  ES_SPI_UNLOAD_INCOMPLETE,
+  ES_SPI_END
 }ES_EventType_t;
 
 /****************************************************************************/

@@ -34,7 +34,7 @@
 /*-------------------------------------------------------------------------*/
 /*---------------------------- Testing Defines ----------------------------*/
 /*-------------------------------------------------------------------------*/
-#define VERBOSE_MODE
+// #define VERBOSE_MODE
 ES_EventType_t LastTestAction;
 
 /*-------------------------------------------------------------------------*/
@@ -95,6 +95,16 @@ typedef enum
 // TODO maybe lower the duty cycle for more precision??
 #define R45DEG_100DUTY_DELAY_MS 500  // TODO tune this to be better approx. value
 #define R90DEG_100DUTY_DELAY_MS 1000 // TODO tune this to be better approx. value
+
+/* LAB 8 Keyboard COMMANDS */
+#define LAB8_FWD_FULL   0x09 // 'w'
+#define LAB8_REV_FULL   0x11 // 's'
+#define LAB8_ROT_CCW_90 0x04 // 'a'
+#define LAB8_ROT_CW_90  0x02 // 'd'
+#define LAB8_STOP       0x00 // 'x'
+#define LAB8_CW_BEACON  0x20 // 'b'
+
+
 
 // #define TESTING_MODE // Set to 1 to enter testing mode on init
 
@@ -209,17 +219,25 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                 }
                 break;
 
+                case ES_MOTORS_OFF:
+                {
+                    _StopRobot();
+                    #ifdef VERBOSE_MODE
+                    DB_printf("\rES_MOTORS_OFF received, stopping robot\r\n");
+                    #endif
+                }
+
                 // Received a new command to execute from the SPI command generator
                 case ES_NEW_SPI_CMD_RECEIVED:
                 {
-                    DB_printf("New SPI Command Event Received: 0x%x\r\n",
-                              (unsigned int)ThisEvent.EventParam);
+                    // DB_printf("DCService doing SPI Command Event: 0x%x\r\n",
+                    //           (unsigned int)ThisEvent.EventParam);
 
                     // Parse the command and execute the necessary steps
                     switch (ThisEvent.EventParam)
                     {
                         // Stop hold position, do not move or rotate
-                        case 0x00:
+                        case LAB8_STOP:
                         {
                             _StopRobot();
                             #ifdef VERBOSE_MODE
@@ -229,7 +247,7 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                         break;
 
                         // Rotate Clockwise by 90 degrees (allows 6 sec. to complete)
-                        case 0x02:
+                        case LAB8_ROT_CW_90:
                         {
                             // Set the robot rotating clockwise and start a timer which will tell the
                             // robot to stop when it expires
@@ -255,7 +273,7 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                         break;
 
                         // Rotate Counter-clockwise by 90 degrees (allows 6 sec. to complete)
-                        case 0x04:
+                        case LAB8_ROT_CCW_90:
                         {
                             // Set the robot rotating counter-clockwise and start a timer which will
                             // tell the robot to stop when it expires
@@ -291,7 +309,7 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                         break;
 
                         // Drive forward full speed
-                        case 0x09:
+                        case LAB8_FWD_FULL:
                         {
                             _DriveForward100();
                             #ifdef VERBOSE_MODE
@@ -311,7 +329,7 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                         break;
 
                         // Drive in reverse full speed
-                        case 0x11:
+                        case LAB8_REV_FULL:
                         {
                             _DriveReverse100();
                             #ifdef VERBOSE_MODE
@@ -321,7 +339,7 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                         break;
 
                         // Align with beacon (allows 5 sec. to complete)
-                        case 0x20:
+                        case LAB8_CW_BEACON:
                         {
                             // Start Rotating clockwise (arbitrary), transition to LookingForBeacon state
                             _RotateForBeacon();

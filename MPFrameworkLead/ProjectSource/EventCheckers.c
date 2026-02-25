@@ -41,6 +41,8 @@
 // actual functionsdefinition
 #include "EventCheckers.h"
 
+#include "dbprintf.h"
+
 // This is the event checking function sample. It is not intended to be
 // included in the module. It is only here as a sample to guide you in writing
 // your own event checkers
@@ -144,6 +146,7 @@ typedef union
 
 #define BEACON_FREQ 1427 // in Hz
 #define BEACON_TOL 25     // in Hz
+// #define DEBUG_PRINT
 
 bool Check4Beacon(void)
 {
