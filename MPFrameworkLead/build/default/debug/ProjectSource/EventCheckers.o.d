@@ -8,8 +8,9 @@ build/default/debug/ProjectSource/EventCheckers.o: \
  FrameworkHeaders/ES_Timers.h FrameworkHeaders/ES_Events.h \
  FrameworkHeaders/ES_PostList.h FrameworkHeaders/ES_ServiceHeaders.h \
  ProjectHeaders/SPILeadService.h FrameworkHeaders/ES_Types.h \
- ProjectHeaders/DCMotorService.h FrameworkHeaders/ES_Port.h \
- ProjectHeaders/EventCheckers.h ProjectHeaders/PIC32_IC_Lib.h
+ ProjectHeaders/DCMotorService.h ProjectHeaders/BeaconService.h \
+ ProjectHeaders/TopHSMPathPlanner.h FrameworkHeaders/ES_Port.h \
+ ProjectHeaders/EventCheckers.h FrameworkHeaders/dbprintf.h
 FrameworkHeaders/ES_Configure.h:
 FrameworkHeaders/ES_Framework.h:
 FrameworkHeaders/ES_Types.h:
@@ -28,6 +29,8 @@ FrameworkHeaders/ES_ServiceHeaders.h:
 ProjectHeaders/SPILeadService.h:
 FrameworkHeaders/ES_Types.h:
 ProjectHeaders/DCMotorService.h:
+ProjectHeaders/BeaconService.h:
+ProjectHeaders/TopHSMPathPlanner.h:
 FrameworkHeaders/ES_Port.h:
 ProjectHeaders/EventCheckers.h:
-ProjectHeaders/PIC32_IC_Lib.h:
+FrameworkHeaders/dbprintf.h:

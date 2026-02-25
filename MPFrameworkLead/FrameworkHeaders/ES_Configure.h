@@ -34,7 +34,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 2
+#define NUM_SERVICES 4
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -64,33 +64,33 @@
 // the name of the run function
 #define SERV_1_RUN RunDCMotorService
 // How big should this services Queue be?
-#define SERV_1_QUEUE_SIZE 3
+#define SERV_1_QUEUE_SIZE 5
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 2
 #if NUM_SERVICES > 2
 // the header file with the public function prototypes
-#define SERV_2_HEADER "TestHarnessService2.h"
+#define SERV_2_HEADER "BeaconService.h"
 // the name of the Init function
-#define SERV_2_INIT InitTestHarnessService2
+#define SERV_2_INIT InitBeaconService
 // the name of the run function
-#define SERV_2_RUN RunTestHarnessService2
+#define SERV_2_RUN RunBeaconService
 // How big should this services Queue be?
-#define SERV_2_QUEUE_SIZE 3
+#define SERV_2_QUEUE_SIZE 5
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 3
 #if NUM_SERVICES > 3
 // the header file with the public function prototypes
-#define SERV_3_HEADER "TestHarnessService3.h"
+#define SERV_3_HEADER "TopHSMPathPlanner.h"
 // the name of the Init function
-#define SERV_3_INIT InitTestHarnessService3
+#define SERV_3_INIT InitMasterSM
 // the name of the run function
-#define SERV_3_RUN RunTestHarnessService3
+#define SERV_3_RUN RunMasterSM
 // How big should this services Queue be?
-#define SERV_3_QUEUE_SIZE 3
+#define SERV_3_QUEUE_SIZE 5
 #endif
 
 /****************************************************************************/
@@ -259,17 +259,25 @@ typedef enum
   ES_INIT,                  /* used to transition from initial pseudo-state */
   ES_TIMEOUT,               /* signals that the timer has expired */
   ES_SHORT_TIMEOUT,         /* signals that a short timer has expired */
+  ES_ENTRY,                 /* signals a ES entry */
+  ES_ENTRY_HISTORY,         /* signals a ES entry with history */
+  ES_EXIT,                  /* signals a ES exit */
   /* User-defined events start here */
   // ES_LOCK,
   // ES_UNLOCK,
   ES_NEW_KEY,                /* signals a new key received from terminal */
   /* Driving Motors related events*/
+  ES_MOTOR_PRIMITIVE,
   ES_BEACON_DETECTED,
   ES_TAPE_DETECTED,
+  ES_LINE_PIVOT_L,         /* When the left pivot tape detector is on the tape*/
+  ES_LINE_PIVOT_R,         /* When the right pivot tape detector is on the tape*/
+  ES_CENTERED,           /* When the two front tape detectors are on the tape*/
   ES_MOTORS_OFF,
   /* SPI related events */
   ES_NEW_SPI_CMD_SEND,
   ES_NEW_SPI_CMD_RECEIVED,
+  /* Check this SPI commands, I think they can just be params of the above 2 */
   ES_SPI_INTAKE_ON,
   ES_SPI_DROPOFF_REACHED,
   ES_SPI_BLUE_TEAM,
@@ -279,7 +287,16 @@ typedef enum
   ES_SPI_LOADED,
   ES_SPI_UNLOADED,
   ES_SPI_UNLOAD_INCOMPLETE,
-  ES_SPI_END
+  ES_SPI_END,
+  /* HSM Events */
+  ES_START_PLAN,
+  ES_PLAN_DONE,
+  ES_STEP_COMPLETE,
+  /* Global Events */
+  ES_LIMIT_SWITCH,
+  ES_SIDE_FOUND,
+  ES_TEAM_BLUE,
+  ES_TEAM_GREEN
 }ES_EventType_t;
 
 /****************************************************************************/
@@ -314,7 +331,7 @@ typedef enum
 
 /****************************************************************************/
 // This is the list of event checking functions
-#define EVENT_CHECK_LIST Check4Keystroke, Check4Beacon, Check4Tape
+#define EVENT_CHECK_LIST Check4Keystroke, Check4Tape
 
 /****************************************************************************/
 // These are the definitions for the post functions to be executed when the
@@ -336,7 +353,7 @@ typedef enum
 #define TIMER10_RESP_FUNC TIMER_UNUSED
 #define TIMER11_RESP_FUNC TIMER_UNUSED
 #define TIMER12_RESP_FUNC TIMER_UNUSED
-#define TIMER13_RESP_FUNC TIMER_UNUSED
+#define TIMER13_RESP_FUNC PostBeaconService
 #define TIMER14_RESP_FUNC PostDCMotorService
 #define TIMER15_RESP_FUNC PostSPILeadService
 
@@ -349,6 +366,7 @@ typedef enum
 
 #define SPI_TIMER 15
 #define RotateRobotTimer 14
+#define BeaconDetectTimer 13
 
 
 #endif /* ES_CONFIGURE_H */

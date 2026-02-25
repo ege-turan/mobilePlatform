@@ -59,6 +59,11 @@
 */
 #include "HSMDriverFromTo.h"
 
+#include "TopHSMPathPlanner.h"
+#include "DCMotorService.h"
+#include "SPILeadService.h"
+#include "BeaconService.h"
+#include "PlansAndSteps.h"
 /*----------------------------- Module Defines ----------------------------*/
 // define constants for the states for this machine
 // and any other local defines
@@ -77,6 +82,7 @@ static ES_Event_t DuringRunningStep( ES_Event_t Event);
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well
 static TemplateState_t CurrentState;
+static uint16_t StepCounter; // example of a state variable that is not an enum
 
 /*------------------------------ Module Code ------------------------------*/
 /****************************************************************************
@@ -96,7 +102,7 @@ static TemplateState_t CurrentState;
  Author
    J. Edward Carryer, 2/11/05, 10:45AM
 ****************************************************************************/
-ES_Event_t RunHSMDriverFromTo( ES_Event_t CurrentEvent )
+ES_Event_t RunDriverFromToSM( ES_Event_t CurrentEvent )
 {
    bool MakeTransition = false;/* are we making a state transition? */
    TemplateState_t NextState = CurrentState;
@@ -105,23 +111,24 @@ ES_Event_t RunHSMDriverFromTo( ES_Event_t CurrentEvent )
 
    switch ( CurrentState )
    {
-       case STATE_ONE :       // If current state is state one
+       case STANDBY :       // If current state is state one
          // Execute During function for state one. ES_ENTRY & ES_EXIT are
          // processed here allow the lower level state machines to re-map
          // or consume the event
-         ReturnEvent = CurrentEvent = DuringStateOne(CurrentEvent);
+         ReturnEvent = CurrentEvent = DuringStandby(CurrentEvent);
          //process any events
          if ( CurrentEvent.EventType != ES_NO_EVENT ) //If an event is active
          {
             switch (CurrentEvent.EventType)
             {
-               case ES_LOCK : //If event is event one
+               case ES_START_PLAN : //If event is event one
                   // Execute action function for state one : event one
-                  NextState = STATE_TWO;//Decide what the next state will be
+                  NextState = RUNNING_STEP;//Decide what the next state will be
+                  StepCounter = 0; // initialize step counter
                   // for internal transitions, skip changing MakeTransition
                   MakeTransition = true; //mark that we are taking a transition
                   // if transitioning to a state with history change kind of entry
-                  EntryEventKind.EventType = ES_ENTRY_HISTORY;
+                  EntryEventKind.EventType = ES_ENTRY;
                   // optionally, consume or re-map this event for the upper
                   // level state machine
                   ReturnEvent.EventType = ES_NO_EVENT;
@@ -130,6 +137,24 @@ ES_Event_t RunHSMDriverFromTo( ES_Event_t CurrentEvent )
             }
          }
        break;
+       case RUNNING_STEP :
+         ReturnEvent = CurrentEvent = DuringRunningStep(CurrentEvent);
+         //process any events
+         if ( CurrentEvent.EventType != ES_NO_EVENT ) //If an event is active
+         {
+            switch (CurrentEvent.EventType)
+            {
+               case ES_STEP_COMPLETE : //If event is event one
+                  // Execute action function for state one : event one
+                  NextState = STANDBY;//Decide what the next state will be
+                  // for internal transitions, skip changing MakeTransition
+                  MakeTransition = true; //mark that we are taking a transition
+                  // if transitioning to a state with history change kind of entry
+                  EntryEventKind.EventType = ES_ENTRY;
+                  break;
+                // repeat cases as required for relevant events
+            }
+         }
       // repeat state pattern as required for other states
     }
     //   If we are making a state transition
@@ -137,19 +162,19 @@ ES_Event_t RunHSMDriverFromTo( ES_Event_t CurrentEvent )
     {
        //   Execute exit function for current state
        CurrentEvent.EventType = ES_EXIT;
-       RunTemplateSM(CurrentEvent);
+       RunDriverFromToSM(CurrentEvent);
 
        CurrentState = NextState; //Modify state variable
 
        //   Execute entry function for new state
        // this defaults to ES_ENTRY
-       RunTemplateSM(EntryEventKind);
+       RunDriverFromToSM(EntryEventKind);
      }
      return(ReturnEvent);
 }
 /****************************************************************************
  Function
-     StartTemplateSM
+     StartDriverFromToSM
 
  Parameters
      None
@@ -164,7 +189,7 @@ ES_Event_t RunHSMDriverFromTo( ES_Event_t CurrentEvent )
  Author
      J. Edward Carryer, 2/18/99, 10:38AM
 ****************************************************************************/
-void StartHSMDriverFromTo ( ES_Event_t CurrentEvent )
+void StartDriverFromToSM ( ES_Event_t CurrentEvent )
 {
    // to implement entry to a history state or directly to a substate
    // you can modify the initialization of the CurrentState variable
@@ -175,12 +200,13 @@ void StartHSMDriverFromTo ( ES_Event_t CurrentEvent )
         CurrentState = ENTRY_STATE;
    }
    // call the entry function (if any) for the ENTRY_STATE
-   RunHSMDriverFromTo(CurrentEvent);
+   RunDriverFromToSM(CurrentEvent);
+   StepCounter = 0; // initialize variable
 }
 
 /****************************************************************************
  Function
-     QueryHSMDriverFromTo
+     QueryDriverFromToSM
 
  Parameters
      None
@@ -195,7 +221,7 @@ void StartHSMDriverFromTo ( ES_Event_t CurrentEvent )
  Author
      J. Edward Carryer, 2/11/05, 10:38AM
 ****************************************************************************/
-TemplateState_t QueryHSMDriverFromTo ( void )
+TemplateState_t QueryDriverFromToSM ( void )
 {
    return(CurrentState);
 }

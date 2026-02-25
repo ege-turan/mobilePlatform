@@ -28,6 +28,7 @@
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 #include "PIC32_PWM_Lib.h"
+#include "PIC32_IC_Lib.h"
 #include "dbprintf.h"
 #include <sys/attribs.h>
 
@@ -52,27 +53,33 @@ typedef enum
 typedef enum
 {
     // Set to output compare channels 1 and 3
-    Motor1ChannelOC = 1,
+    Motor1ChannelOC = 2,
     Motor2ChannelOC = 3,
 } MotorChannel_t;
 
 // Define the tris bits (input/output)
-#define MOTOR_1_PWM_PIN_TRIS (TRISBbits.TRISB15)
-#define MOTOR_2_PWM_PIN_TRIS (TRISAbits.TRISA3)
-#define MOTOR_1_DIR_PIN_TRIS (TRISAbits.TRISA1)
-#define MOTOR_2_DIR_PIN_TRIS (TRISAbits.TRISA4)
+#define MOTOR_1_PWM_PIN_TRIS (TRISBbits.TRISB8)
+#define MOTOR_2_PWM_PIN_TRIS (TRISBbits.TRISB10)
+#define MOTOR_1_DIR_PIN_TRIS (TRISBbits.TRISB9)
+#define MOTOR_2_DIR_PIN_TRIS (TRISBbits.TRISB12)
 
-// Define the analog select for the pins which allow this
-#define MOTOR_1_PWM_PIN_ANSEL (ANSELBbits.ANSB15)
-#define MOTOR_1_DIR_PIN_ANSEL (ANSELAbits.ANSA1)
+// // Define the analog select for the pins which allow this
+// #define MOTOR_1_PWM_PIN_ANSEL (ANSELBbits.ANSB8)
+// #define MOTOR_1_DIR_PIN_ANSEL (ANSELBbits.ANSB9)
+// #define MOTOR_2_PWM_PIN_ANSEL (ANSELBbits.ANSB10)
+#define MOTOR_2_DIR_PIN_ANSEL (ANSELBbits.ANSB12)
 
 // Define the lat bits (write)
-#define MOTOR_1_DIR_PIN_WRITE (LATAbits.LATA1)
-#define MOTOR_2_DIR_PIN_WRITE (LATAbits.LATA4)
+#define MOTOR_1_DIR_PIN_WRITE (LATBbits.LATB9)
+#define MOTOR_2_DIR_PIN_WRITE (LATBbits.LATB12)
 
-// Constants relating to output compare module 1
-#define OC1_PIN_SELECT (RPB15Rbits.RPB15R)
-#define OC1_PERIPHERAL (0b0101)
+// Define pine names for PWM_Setup_MapChannelToOutputPin
+#define Motor1PWMPinName PWM_RPB8
+#define Motor2PWMPinName PWM_RPB10
+
+// // Constants relating to output compare module 1
+// #define OC1_PIN_SELECT (RPB15Rbits.RPB15R)
+// #define OC1_PERIPHERAL (0b0101)
 
 // TIMERS:
 // This is the period of the PWM in timer ticks - for Timer2
@@ -104,6 +111,12 @@ typedef enum
 #define LAB8_STOP       0x00 // 'x'
 #define LAB8_CW_BEACON  0x20 // 'b'
 
+/* Primitive Commands */
+#define DRIVE_ROT_CW 1
+#define DRIVE_ROT_CCW 2
+#define DRIVE_FWD 3
+#define DRIVE_REV 4
+#define DRIVE_STOP 5
 
 
 // #define TESTING_MODE // Set to 1 to enter testing mode on init
@@ -219,19 +232,25 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                 }
                 break;
 
-                case ES_MOTORS_OFF:
+                case ES_MOTORS_OFF: _StopRobot(); break;
+
+                case ES_MOTOR_PRIMITIVE:
                 {
-                    _StopRobot();
-                    #ifdef VERBOSE_MODE
-                    DB_printf("\rES_MOTORS_OFF received, stopping robot\r\n");
-                    #endif
+                    switch (ThisEvent.EventParam)
+                    {
+                        case DRIVE_STOP: _StopRobot(); break;
+                        case DRIVE_FWD: _DriveForward100(); break;
+                        case DRIVE_REV: _DriveReverse100(); break;
+                        case DRIVE_ROT_CW: _RotateRobotCW(); break;
+                        case DRIVE_ROT_CCW: _RotateRobotCCW(); break;
+                        default: break;
+                    }
                 }
 
                 // Received a new command to execute from the SPI command generator
                 case ES_NEW_SPI_CMD_RECEIVED:
                 {
-                    // DB_printf("DCService doing SPI Command Event: 0x%x\r\n",
-                    //           (unsigned int)ThisEvent.EventParam);
+                    // DB_printf("DCService doing SPI Command Event: 0x%x\r\n", (unsigned int)ThisEvent.EventParam);
 
                     // Parse the command and execute the necessary steps
                     switch (ThisEvent.EventParam)
@@ -590,20 +609,22 @@ void _InitMotorPWM()
     PWM_Setup_AssignChannelToTimer(Motor2ChannelOC, _Timer2_);
 
     // Assign output compares for both pwm channels to respective pins
-    PWM_Setup_MapChannelToOutputPin(Motor1ChannelOC, PWM_RPB15);
-    PWM_Setup_MapChannelToOutputPin(Motor2ChannelOC, PWM_RPA3);
+    PWM_Setup_MapChannelToOutputPin(Motor1ChannelOC, Motor1PWMPinName);
+    PWM_Setup_MapChannelToOutputPin(Motor2ChannelOC, Motor2PWMPinName);
 
-    // Initialize pins
-    MOTOR_1_PWM_PIN_ANSEL = 0;
-    MOTOR_1_DIR_PIN_ANSEL = 0;
+    // // Initialize pins to digital output
+    // MOTOR_1_PWM_PIN_ANSEL = 0;
+    // MOTOR_1_DIR_PIN_ANSEL = 0;
+    // MOTOR_2_PWM_PIN_ANSEL = 0;
+    MOTOR_2_DIR_PIN_ANSEL = 0;
     MOTOR_1_PWM_PIN_TRIS  = 0;
     MOTOR_2_PWM_PIN_TRIS  = 0;
     MOTOR_1_DIR_PIN_TRIS  = 0;
     MOTOR_2_DIR_PIN_TRIS  = 0;
 
     // Map Pins to OC modules
-    PWM_Setup_MapChannelToOutputPin(Motor1ChannelOC, PWM_RPB15);
-    PWM_Setup_MapChannelToOutputPin(Motor2ChannelOC, PWM_RPA3);
+    PWM_Setup_MapChannelToOutputPin(Motor1ChannelOC, Motor1PWMPinName);
+    PWM_Setup_MapChannelToOutputPin(Motor2ChannelOC, Motor2PWMPinName);
 }
 
 /*-------------------------------------------------------------------------*/

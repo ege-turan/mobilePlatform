@@ -15,6 +15,7 @@ build/default/debug/FrameworkSource/ES_Timers.o: \
  FrameworkSource/../FrameworkHeaders/ES_ServiceHeaders.h \
  ProjectHeaders/SPILeadService.h FrameworkHeaders/ES_Types.h \
  ProjectHeaders/DCMotorService.h FrameworkHeaders/ES_Events.h \
+ ProjectHeaders/BeaconService.h ProjectHeaders/TopHSMPathPlanner.h \
  FrameworkSource/../FrameworkHeaders/ES_General.h \
  FrameworkSource/../FrameworkHeaders/ES_Events.h \
  FrameworkSource/../FrameworkHeaders/ES_PostList.h \
@@ -38,6 +39,8 @@ ProjectHeaders/SPILeadService.h:
 FrameworkHeaders/ES_Types.h:
 ProjectHeaders/DCMotorService.h:
 FrameworkHeaders/ES_Events.h:
+ProjectHeaders/BeaconService.h:
+ProjectHeaders/TopHSMPathPlanner.h:
 FrameworkSource/../FrameworkHeaders/ES_General.h:
 FrameworkSource/../FrameworkHeaders/ES_Events.h:
 FrameworkSource/../FrameworkHeaders/ES_PostList.h:

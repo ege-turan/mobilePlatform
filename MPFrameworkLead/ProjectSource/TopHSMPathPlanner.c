@@ -38,11 +38,15 @@
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 #include "TopHSMPathPlanner.h"
+#include "HSMDriverFromTo.h"
+#include "DCMotorService.h"
+#include "SPILeadService.h"
+#include "BeaconService.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
 /*---------------------------- Module Functions ---------------------------*/
-static ES_Event_t DuringStandby( ES_Event_t Event);
+static ES_Event_t DuringStandbyPlanner( ES_Event_t Event);
 static ES_Event_t DuringRunningPlan( ES_Event_t Event);
 
 /*---------------------------- Module Variables ---------------------------*/
@@ -136,40 +140,43 @@ ES_Event_t RunMasterSM( ES_Event_t CurrentEvent )
 
     switch ( CurrentState )
    {
-       case STANDBY :       // If current state is state one
+       case STANDBY_PLANNER :       // If current state is state one
        {
          // Execute During function for state one. ES_ENTRY & ES_EXIT are
          // processed here allow the lowere level state machines to re-map
          // or consume the event
-         CurrentEvent = DuringStandby(CurrentEvent);
+         CurrentEvent = DuringStandbyPlanner(CurrentEvent);
          //process any events
          if ( CurrentEvent.EventType != ES_NO_EVENT ) //If an event is active
          {
             switch (CurrentEvent.EventType)
             {
-               case ES_SPI_START : //If event is event one
-                  PlanIndex = 0;               // set plan to 0
-                  // Execute action function for state one : event one
-                  NextState = RUNNING_PLAN;//Decide what the next state will be
-                  // for internal transitions, skip changing MakeTransition
-                  MakeTransition = true; //mark that we are taking a transition
-                //   // if transitioning to a state with history change kind of entry
-                  EntryEventKind.EventType = ES_ENTRY_HISTORY;
-                  break;
+                case ES_NEW_SPI_CMD_RECEIVED:
+                {
+                    switch(CurrentEvent.EventParam)
+                    {
+                        case CMD_SPI_START:
+                            PlanIndex = 0;
+                            EntryEventKind.EventParam = PlanIndex;
+                            NextState = RUNNING_PLAN;
+                            MakeTransition = true;
+                            EntryEventKind.EventType = ES_ENTRY;
+                            break;
+                        case CMD_SPI_LOADED:
+                        case CMD_SPI_UNLOADED:
+                            PlanIndex++;
+                            EntryEventKind.EventParam = PlanIndex;
+                            NextState = RUNNING_PLAN;
+                            MakeTransition = true;
+                            EntryEventKind.EventType = ES_ENTRY;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                break;
                 // repeat cases as required for relevant events
-               case ES_SPI_LOADED:
-                  PlanIndex++;
-                  NextState = RUNNING_PLAN;
-                  MakeTransition = true;
-                  EntryEventKind.EventType = ES_ENTRY_HISTORY;
-                  break;
-               case ES_SPI_UNLOADED:
-                  PlanIndex++;
-                  NextState = RUNNING_PLAN;
-                  MakeTransition = true;
-                  EntryEventKind.EventType = ES_ENTRY_HISTORY;
-                  break;
-                
+
                 default:
                     break;
             }
@@ -185,11 +192,10 @@ ES_Event_t RunMasterSM( ES_Event_t CurrentEvent )
          {
             switch (CurrentEvent.EventType)
             {
-               case ES_SPI_DONE:
-                  PlanIndex++;
-                  NextState = RUNNING_PLAN;
+               case ES_PLAN_DONE:
+                  NextState = STANDBY_PLANNER;
                   MakeTransition = true;
-                  EntryEventKind.EventType = ES_ENTRY_HISTORY;
+                  EntryEventKind.EventType = ES_ENTRY;
                   break;
                 
                 // repeat cases as required for relevant events
@@ -198,6 +204,9 @@ ES_Event_t RunMasterSM( ES_Event_t CurrentEvent )
             }
          }
         }
+         break;
+
+       default :
          break;
       // repeat state pattern as required for other states
     }
@@ -239,7 +248,7 @@ void StartMasterSM ( ES_Event_t CurrentEvent )
 {
   // if there is more than 1 state to the top level machine you will need 
   // to initialize the state variable
-  CurrentState = STANDBY;
+  CurrentState = STANDBY_PLANNER;
   // now we need to let the Run function init the lower level state machines
   // use LocalEvent to keep the compiler from complaining about unused var
   RunMasterSM(CurrentEvent);
@@ -248,7 +257,7 @@ void StartMasterSM ( ES_Event_t CurrentEvent )
 
 /****************************************************************************
  Function
-     QueryTopHSMTemplateSM
+     QueryTopHSMPathPlannerSM
 
  Parameters
      None
@@ -263,7 +272,7 @@ void StartMasterSM ( ES_Event_t CurrentEvent )
  Author
      J. Edward Carryer, 2/05/22, 10:30AM
 ****************************************************************************/
-MasterState_t  QueryTopHSMTemplateSM ( void )
+MasterState_t  QueryTopHSMPathPlannerSM ( void )
 {
    return(CurrentState);
 }
@@ -272,7 +281,7 @@ MasterState_t  QueryTopHSMTemplateSM ( void )
  private functions
  ***************************************************************************/
 
-static ES_Event_t DuringStandby( ES_Event_t Event)
+static ES_Event_t DuringStandbyPlanner( ES_Event_t Event)
 {
     ES_Event_t ReturnEvent = Event; // assme no re-mapping or comsumption
 
@@ -324,7 +333,8 @@ static ES_Event_t DuringRunningPlan( ES_Event_t Event)
         // implement any entry actions required for this state machine
         
         // after that start any lower level machines that run in this state
-        //StartLowerLevelSM( Event );
+        ES_Event_t StartPlanEvent = { ES_START_PLAN, PlanIndex };
+        StartDriverFromToSM( StartPlanEvent );
         // repeat the StartxxxSM() functions for concurrent state machines
         // on the lower level
     }
@@ -339,7 +349,7 @@ static ES_Event_t DuringRunningPlan( ES_Event_t Event)
     // do the 'during' function for this state
     {
         // run any lower level state machine
-        // ReturnEvent = RunLowerLevelSM(Event);
+        ReturnEvent = RunDriverFromToSM(Event);
       
         // repeat for any concurrent lower level machines
       

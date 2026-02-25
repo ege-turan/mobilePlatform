@@ -14,7 +14,8 @@ build/default/debug/FrameworkSource/ES_PostList.o: \
  FrameworkSource/../FrameworkHeaders/ES_Configure.h \
  FrameworkSource/../FrameworkHeaders/ES_ServiceHeaders.h \
  ProjectHeaders/SPILeadService.h FrameworkHeaders/ES_Types.h \
- ProjectHeaders/DCMotorService.h FrameworkHeaders/ES_Events.h
+ ProjectHeaders/DCMotorService.h FrameworkHeaders/ES_Events.h \
+ ProjectHeaders/BeaconService.h ProjectHeaders/TopHSMPathPlanner.h
 FrameworkSource/../FrameworkHeaders/ES_Port.h:
 FrameworkSource/../FrameworkHeaders/bitdefs.h:
 FrameworkSource/../FrameworkHeaders/Bin_Const.h:
@@ -32,3 +33,5 @@ ProjectHeaders/SPILeadService.h:
 FrameworkHeaders/ES_Types.h:
 ProjectHeaders/DCMotorService.h:
 FrameworkHeaders/ES_Events.h:
+ProjectHeaders/BeaconService.h:
+ProjectHeaders/TopHSMPathPlanner.h:

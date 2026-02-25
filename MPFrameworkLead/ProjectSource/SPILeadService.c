@@ -33,34 +33,13 @@
 #define DEBUG_PRINT
 #include "dbprintf.h"
 
-#define SPI1_SS_PIN SPI_RPB4
+#define SPI1_SS_PIN SPI_RPB15
 #define SPI1_SDO_PIN SPI_RPB13
 #define SPI1_SDI_PIN SPI_RPB11
 #define SPIClkPeriodInNs 10000 // 100 kHz = 10000 ns
 
 #define SPI_TIMER_MS 20
 
-/* LAB 8 Keyboard COMMANDS */
-#define LAB8_FWD_FULL             0x09 // 'w'
-#define LAB8_REV_FULL             0x11 // 's'
-#define LAB8_ROT_CCW_90           0x04 // 'a'
-#define LAB8_ROT_CW_90            0x02 // 'd'
-#define LAB8_STOP                 0x00 // 'x'
-#define LAB8_CW_BEACON            0x20 // 'b'
-/* LEAD2FOLLOW SPI CMDS*/
-#define CMD_SPI_LEAD_INITIAL      0xAA
-#define CMD_SPI_INTAKE_ON         0xA1
-#define CMD_SPI_DROPOFF_REACHED   0xA2
-#define CMD_SPI_BLUE_TEAM         0xA3
-#define CMD_SPI_GREEN_TEAM        0xA4
-/* FOLLOW2LEAD SPI CMDS*/
-#define CMD_SPI_FOLLOW_INITIAL    0xFF
-#define CMD_SPI_START             0xB1
-#define CMD_SPI_INTAKE_INCOMPLETE 0xB2
-#define CMD_SPI_LOADED            0xB3
-#define CMD_SPI_UNLOADED          0xB4
-#define CMD_SPI_UNLOAD_INCOMPLETE 0xB5
-#define CMD_SPI_END               0xB6
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
@@ -124,7 +103,7 @@ bool InitSPILeadService(uint8_t Priority)
 
   // Initialize timers and variables
   ES_Timer_InitTimer(SPI_TIMER, SPI_TIMER_MS);
-  message2send = SPI_LEAD_INITIAL_CMD;
+  message2send = CMD_SPI_LEAD_INITIAL;
 
   // post the initial transition event
   ThisEvent.EventType = ES_INIT;
@@ -238,26 +217,26 @@ ES_Event_t RunSPILeadService(ES_Event_t ThisEvent)
       switch (ThisEvent.EventParam) {
         case '1':
         {
-          message2send = 0xA1;
-          DB_printf("\rSend 0xA1 over SPI\r\n");
+          message2send = 0xD1;
+          DB_printf("\rSend 0xD1 over SPI\r\n");
         }
           break;
         case '2':
         {
-          message2send = 0xA2;
-          DB_printf("\rSend 0xA2 over SPI\r\n");
+          message2send = 0xD2;
+          DB_printf("\rSend 0xD2 over SPI\r\n");
         }
           break;
         case '3':
         {
-          message2send = 0xA3;
-          DB_printf("\rSend 0xA3 over SPI\r\n");
+          message2send = 0xD3;
+          DB_printf("\rSend 0xD3 over SPI\r\n");
         }
           break;
         case '4':
         {
-          message2send = 0xA4;
-          DB_printf("\rSend 0xA4 over SPI\r\n");
+          message2send = 0xD4;
+          DB_printf("\rSend 0xD4 over SPI\r\n");
         }
           break;
         
