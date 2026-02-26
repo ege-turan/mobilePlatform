@@ -9,6 +9,7 @@ build/default/production/ProjectSource/EventCheckers.o: \
  FrameworkHeaders/ES_PostList.h FrameworkHeaders/ES_ServiceHeaders.h \
  ProjectHeaders/SPILeadService.h FrameworkHeaders/ES_Types.h \
  ProjectHeaders/DCMotorService.h ProjectHeaders/BeaconService.h \
+ ProjectHeaders/TopHSMPathPlanner.h ProjectHeaders/KeyboardService.h \
  FrameworkHeaders/ES_Port.h ProjectHeaders/EventCheckers.h \
  FrameworkHeaders/dbprintf.h
 FrameworkHeaders/ES_Configure.h:
@@ -30,6 +31,8 @@ ProjectHeaders/SPILeadService.h:
 FrameworkHeaders/ES_Types.h:
 ProjectHeaders/DCMotorService.h:
 ProjectHeaders/BeaconService.h:
+ProjectHeaders/TopHSMPathPlanner.h:
+ProjectHeaders/KeyboardService.h:
 FrameworkHeaders/ES_Port.h:
 ProjectHeaders/EventCheckers.h:
 FrameworkHeaders/dbprintf.h:

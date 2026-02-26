@@ -112,11 +112,7 @@ typedef enum
 #define LAB8_CCW_BEACON 0x20 // 'b'
 
 /* Primitive Commands */
-#define DRIVE_ROT_CW 1
-#define DRIVE_ROT_CCW 2
-#define DRIVE_FWD 3
-#define DRIVE_REV 4
-#define DRIVE_STOP 5
+#include "PlansAndSteps.h"
 
 
 // #define TESTING_MODE // Set to 1 to enter testing mode on init
@@ -135,6 +131,7 @@ void _RotateRobotCW();
 void _RotateRobotCCW();
 void _RotateForBeacon();
 
+bool DCMotor_ExecutePrimitive(PrimitiveCmd_t cmd);
 /*-------------------------------------------------------------------------*/
 /*---------------------------- Module Variables ---------------------------*/
 /*-------------------------------------------------------------------------*/
@@ -162,7 +159,6 @@ bool InitDCMotorService(uint8_t Priority)
     MyPriority = Priority;
 
     // Announce initialisation of DCMotorService
-    clrScrn();
     DB_printf("\rStarting DCMotorService: ");
     DB_printf("compiled at %s on %s", __TIME__, __DATE__);
     DB_printf("\n\r");
@@ -234,18 +230,7 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
 
                 case ES_MOTORS_OFF: _StopRobot(); break;
 
-                case ES_MOTOR_PRIMITIVE:
-                {
-                    switch (ThisEvent.EventParam)
-                    {
-                        case DRIVE_STOP: _StopRobot(); break;
-                        case DRIVE_FWD: _DriveForward100(); break;
-                        case DRIVE_REV: _DriveReverse100(); break;
-                        case DRIVE_ROT_CW: _RotateRobotCW(); break;
-                        case DRIVE_ROT_CCW: _RotateRobotCCW(); break;
-                        default: break;
-                    }
-                }
+                case ES_MOTOR_PRIMITIVE: DCMotor_ExecutePrimitive(ThisEvent.EventParam); break;
 
                 // Received a new command to execute from the SPI command generator
                 case ES_NEW_SPI_CMD_RECEIVED:
@@ -762,6 +747,21 @@ void _RotateForBeacon()
     _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*1/4, Forward);
 } // TESTED
 
+
+
+bool DCMotor_ExecutePrimitive(PrimitiveCmd_t cmd) {
+    switch(cmd) {
+        case RotateCW:        _RotateRobotCW(); break;
+        case RotateCCW:       _RotateRobotCCW(); break;
+        case Forwards:        _DriveForward100(); break;
+        case Forwards_slow:   _DriveForward50(); break;
+        case Backwards:       _DriveReverse100(); break;
+        case Backwards_slow:  _DriveReverse50(); break;
+        case Stop:            _StopRobot(); break;
+        default: return false; // unknown primitive
+    }
+    return true;
+}
 /*-------------------------------------------------------------------------*/
 /*------------------------- Private Test Functions ------------------------*/
 /*-------------------------------------------------------------------------*/

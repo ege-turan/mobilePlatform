@@ -54,7 +54,7 @@
 #define BEACON_TIMER_MS 50 // in ms, how often to check for beacon presence
 
 
-#define VERBOSE_BEACON
+// #define VERBOSE_BEACON
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
    relevant to the behavior of this service
@@ -276,7 +276,7 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
             DB_printf("Side Found! %s\r\n", (sideDetected == BEACON_G) ? "GREEN" : "BLUE");
             #endif
           }
-          if (CurrentBeaconState == BEACON_R) //TODO NAMES ARE WRON R and G CHECK!
+          if (CurrentBeaconState == BEACON_G)
           {
             DB_printf("Green Sequence Detected: ");
             ES_Event_t NewEvent;

@@ -53,6 +53,7 @@
       <itemPath>ProjectHeaders/HSMDriverFromTo.h</itemPath>
       <itemPath>ProjectHeaders/TopHSMPathPlanner.h</itemPath>
       <itemPath>ProjectHeaders/PlansAndSteps.h</itemPath>
+      <itemPath>ProjectHeaders/KeyboardService.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -77,6 +78,8 @@
       <itemPath>ProjectSource/BeaconService.c</itemPath>
       <itemPath>ProjectSource/HSMDriverFromTo.c</itemPath>
       <itemPath>ProjectSource/TopHSMPathPlanner.c</itemPath>
+      <itemPath>ProjectSource/PlansAndSteps.c</itemPath>
+      <itemPath>ProjectSource/KeyboardService.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>

@@ -1,105 +1,105 @@
 Archive member included to satisfy reference by file (symbol)
 
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-bootstrap-exception-handler.o)
-                              C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o (_bootstrap_exception_handler)
+                              C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o (_bootstrap_exception_handler)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-on-reset.o)
-                              C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o (_on_reset)
+                              C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o (_on_reset)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-on-bootstrap.o)
-                              C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o (_on_bootstrap)
+                              C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o (_on_bootstrap)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-nmi-handler.o)
-                              C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o (_nmi_handler)
+                              C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o (_nmi_handler)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(xc32_uart.o)
                               build/default/debug/FrameworkSource/terminal.o (__XC_UART)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(pic32_data_init_core.o)
-                              C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o (__pic32_data_init)
+                              C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o (__pic32_data_init)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(general-exception.o)
-                              C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o (_general_exception_context)
+                              C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o (_general_exception_context)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector1.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_1)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_1)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector2.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_2)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_2)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector3.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_3)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_3)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector4.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_4)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_4)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector5.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_5)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_5)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector6.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_6)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_6)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector7.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_7)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_7)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector8.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_8)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_8)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector9.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_9)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_9)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector10.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_10)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_10)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector11.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_11)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_11)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector12.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_12)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_12)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector13.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_13)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_13)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector14.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_14)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_14)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector15.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_15)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_15)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector16.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_16)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_16)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector17.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_17)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_17)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector18.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_18)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_18)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector19.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_19)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_19)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector20.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_20)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_20)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector21.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_21)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_21)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector22.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_22)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_22)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector23.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_23)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_23)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector24.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_24)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_24)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector25.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_25)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_25)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector26.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_26)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_26)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector27.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_27)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_27)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector28.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_28)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_28)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector29.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_29)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_29)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector30.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_30)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_30)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector31.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_31)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_31)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector32.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_32)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_32)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector33.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_33)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_33)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector34.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_34)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_34)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector35.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_35)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_35)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector36.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_36)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_36)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector37.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_37)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_37)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector38.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_38)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_38)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector39.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_39)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_39)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector40.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_40)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_40)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector41.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_41)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_41)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector42.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_42)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_42)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(vector43.o)
-                              C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o (__vector_dispatch_43)
+                              C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o (__vector_dispatch_43)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-general-exception-handler.o)
                               C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(general-exception.o) (_general_exception_handler)
 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(defaultinterrupt.o)
@@ -469,7 +469,7 @@ Microchip PIC32 Memory-Usage Report By Module
          528           0           0         528         210    data_init                             data_init
          516           0           0         516         204    __fmt_x.o                             libc-musl.a
          500           0           0         500         1f4    _floatdidf.o                          libe.a
-         492           0           0         492         1ec    ccHOb0jT.o                            C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+         492           0           0         492         1ec    ccQPs6m0.o                            C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
          392           0           0         392         188    __pop_int.o                           libc-musl.a
          376           0           0         376         178    __stdio_close.o                       libc-musl.a
          352           0           0         352         160    dpcmp.o                               libm.a
@@ -650,19 +650,19 @@ Discarded input sections
  .MIPS.abiflags
                 0x00000000       0x18 build/default/debug/ProjectSource/StepperService.o
  .pdr           0x00000000       0x80 build/default/debug/ProjectSource/StepperService.o
- .reginfo       0x00000000       0x18 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+ .reginfo       0x00000000       0x18 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
  .MIPS.abiflags
-                0x00000000       0x18 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
- .pdr           0x00000000       0xa0 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
- .reginfo       0x00000000       0x18 C:\Users\sabog\AppData\Local\Temp\ccycTMYk.o
+                0x00000000       0x18 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
+ .pdr           0x00000000       0xa0 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
+ .reginfo       0x00000000       0x18 C:\Users\sabog\AppData\Local\Temp\ccVN2MDi.o
  .MIPS.abiflags
-                0x00000000       0x18 C:\Users\sabog\AppData\Local\Temp\ccycTMYk.o
- .pdr           0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccycTMYk.o
- .reginfo       0x00000000       0x18 C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o
+                0x00000000       0x18 C:\Users\sabog\AppData\Local\Temp\ccVN2MDi.o
+ .pdr           0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccVN2MDi.o
+ .reginfo       0x00000000       0x18 C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o
  .MIPS.abiflags
-                0x00000000       0x18 C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o
- .pdr           0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o
- .discard       0x00000000       0xb0 C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o
+                0x00000000       0x18 C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o
+ .pdr           0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o
+ .discard       0x00000000       0xb0 C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o
  .reginfo       0x00000000       0x18 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\software-debug-break.o
  .MIPS.abiflags
                 0x00000000       0x18 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\software-debug-break.o
@@ -1694,9 +1694,9 @@ LOAD build/default/debug/ProjectSource/StepperService.o
                 0x00000001                        __MPLAB_DEBUG = 0x1
                 0x00000001                        __DEBUG = 0x1
                 0x00000100                        _min_heap_size = 0x100
-LOAD C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
-LOAD C:\Users\sabog\AppData\Local\Temp\ccycTMYk.o
-LOAD C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o
+LOAD C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
+LOAD C:\Users\sabog\AppData\Local\Temp\ccVN2MDi.o
+LOAD C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o
 LOAD C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\software-debug-break.o
 LOAD C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\pic32_software_reset.o
 LOAD C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1\libgcc.a
@@ -1758,16 +1758,16 @@ END GROUP
 
 .reset          0xbfc00000      0x178
  *(.reset)
- .reset         0xbfc00000        0x8 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+ .reset         0xbfc00000        0x8 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
                 0xbfc00000                _reset
  *(.reset.startup)
  .reset.startup
-                0xbfc00008      0x170 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+                0xbfc00008      0x170 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
                 0xbfc00008                _startup
 
 .bev_excpt      0xbfc00380       0x10
  *(.bev_handler)
- .bev_handler   0xbfc00380       0x10 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+ .bev_handler   0xbfc00380       0x10 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
 
 .dbg_excpt      0xbfc00480        0x0
                 0xbfc00480                        . = (. + DEFINED (_DEBUGGER)?0x8:0x0)
@@ -1777,7 +1777,7 @@ END GROUP
 
 .app_excpt      0x9d03f180       0x10
  *(.gen_handler)
- .gen_handler   0x9d03f180       0x10 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+ .gen_handler   0x9d03f180       0x10 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
 
 .vector_0       0x9d03f200        0x8
  *(.vector_0)
@@ -2553,7 +2553,7 @@ END GROUP
  .debug_aranges
                 0x00000218       0x20 build/default/debug/ProjectSource/StepperService.o
  .debug_aranges
-                0x00000238       0x40 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+                0x00000238       0x40 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
  .debug_aranges
                 0x00000278       0x20 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\software-debug-break.o
  .debug_aranges
@@ -2690,7 +2690,7 @@ END GROUP
  .debug_info    0x00004a3e     0x1474 build/default/debug/ProjectSource/PIC32_SPI_HAL.o
  .debug_info    0x00005eb2      0x527 build/default/debug/ProjectSource/SPIFollowService.o
  .debug_info    0x000063d9      0x612 build/default/debug/ProjectSource/StepperService.o
- .debug_info    0x000069eb       0x69 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+ .debug_info    0x000069eb       0x69 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
  .debug_info    0x00006a54       0x40 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\software-debug-break.o
  .debug_info    0x00006a94       0x72 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-bootstrap-exception-handler.o)
  .debug_info    0x00006b06       0x40 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-on-reset.o)
@@ -2768,7 +2768,7 @@ END GROUP
  .debug_abbrev  0x00001454      0x251 build/default/debug/ProjectSource/PIC32_SPI_HAL.o
  .debug_abbrev  0x000016a5      0x18f build/default/debug/ProjectSource/SPIFollowService.o
  .debug_abbrev  0x00001834      0x1de build/default/debug/ProjectSource/StepperService.o
- .debug_abbrev  0x00001a12       0x1f C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+ .debug_abbrev  0x00001a12       0x1f C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
  .debug_abbrev  0x00001a31       0x30 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\software-debug-break.o
  .debug_abbrev  0x00001a61       0x7d C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-bootstrap-exception-handler.o)
  .debug_abbrev  0x00001ade       0x30 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-on-reset.o)
@@ -2846,7 +2846,7 @@ END GROUP
  .debug_line    0x00001a73      0x691 build/default/debug/ProjectSource/PIC32_SPI_HAL.o
  .debug_line    0x00002104      0x24a build/default/debug/ProjectSource/SPIFollowService.o
  .debug_line    0x0000234e      0x204 build/default/debug/ProjectSource/StepperService.o
- .debug_line    0x00002552      0x131 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+ .debug_line    0x00002552      0x131 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
  .debug_line    0x00002683       0xb1 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\software-debug-break.o
  .debug_line    0x00002734       0xe2 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-bootstrap-exception-handler.o)
  .debug_line    0x00002816       0xa5 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-on-reset.o)
@@ -2999,7 +2999,7 @@ END GROUP
  .debug_str     0x00004f4e      0xbb9 build/default/debug/ProjectSource/PIC32_SPI_HAL.o
  .debug_str     0x00004f4e      0x738 build/default/debug/ProjectSource/SPIFollowService.o
  .debug_str     0x00004f4e      0x780 build/default/debug/ProjectSource/StepperService.o
- .debug_str     0x00004f4e      0x12d C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+ .debug_str     0x00004f4e      0x12d C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
  .debug_str     0x00004f4e      0x2cd C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\software-debug-break.o
  .debug_str     0x00004f4e      0x318 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-bootstrap-exception-handler.o)
  .debug_str     0x00004f4e      0x2b7 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-on-reset.o)
@@ -3146,7 +3146,7 @@ END GROUP
 .debug_ranges   0x00000000      0x730
  *.elf(.debug_ranges)
  *(.debug_ranges)
- .debug_ranges  0x00000000       0x38 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+ .debug_ranges  0x00000000       0x38 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
  .debug_ranges  0x00000038       0x10 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\software-debug-break.o
  .debug_ranges  0x00000048       0x10 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-bootstrap-exception-handler.o)
  .debug_ranges  0x00000058       0x10 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-on-reset.o)
@@ -3242,11 +3242,11 @@ END GROUP
  .gnu.attributes
                 0x00000110       0x10 build/default/debug/ProjectSource/StepperService.o
  .gnu.attributes
-                0x00000120       0x10 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+                0x00000120       0x10 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
  .gnu.attributes
-                0x00000130       0x10 C:\Users\sabog\AppData\Local\Temp\ccycTMYk.o
+                0x00000130       0x10 C:\Users\sabog\AppData\Local\Temp\ccVN2MDi.o
  .gnu.attributes
-                0x00000140       0x10 C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o
+                0x00000140       0x10 C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o
  .gnu.attributes
                 0x00000150       0x10 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\software-debug-break.o
  .gnu.attributes
@@ -3504,9 +3504,9 @@ LOAD data_init
  .note          0x00000228       0x18 build/default/debug/ProjectSource/PIC32_SPI_HAL.o
  .note          0x00000240       0x18 build/default/debug/ProjectSource/SPIFollowService.o
  .note          0x00000258       0x18 build/default/debug/ProjectSource/StepperService.o
- .note          0x00000270       0x18 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
- .note          0x00000288       0x18 C:\Users\sabog\AppData\Local\Temp\ccycTMYk.o
- .note          0x000002a0       0x18 C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o
+ .note          0x00000270       0x18 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
+ .note          0x00000288       0x18 C:\Users\sabog\AppData\Local\Temp\ccVN2MDi.o
+ .note          0x000002a0       0x18 C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o
  .note          0x000002b8       0x18 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\software-debug-break.o
  .note          0x000002d0       0x18 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\pic32_software_reset.o
  .note          0x000002e8       0x18 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\libpic32.a(default-bootstrap-exception-handler.o)
@@ -3985,13 +3985,13 @@ LOAD data_init
  .data          0x00000000        0x0 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\software-debug-break.o
 
 .data%z112      0x00000000        0x0
- .data          0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o
+ .data          0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o
 
 .data%z113      0x00000000        0x0
- .data          0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccycTMYk.o
+ .data          0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccVN2MDi.o
 
 .data%z114      0x00000000        0x0
- .data          0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+ .data          0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
 
 .data%z115      0x00000000        0x0
  .data          0x00000000        0x0 build/default/debug/ProjectSource/StepperService.o
@@ -4393,13 +4393,13 @@ LOAD data_init
  .bss           0x00000000        0x0 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\software-debug-break.o
 
 .bss%z244       0x00000000        0x0
- .bss           0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o
+ .bss           0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o
 
 .bss%z245       0x00000000        0x0
- .bss           0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccycTMYk.o
+ .bss           0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccVN2MDi.o
 
 .bss%z246       0x00000000        0x0
- .bss           0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+ .bss           0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
 
 .bss%z247       0x00000000        0x0
  .bss           0x00000000        0x0 build/default/debug/ProjectSource/StepperService.o
@@ -4803,7 +4803,7 @@ LOAD data_init
 .text.main_entry
                 0x9d00a3ec       0x54
  .text.main_entry
-                0x9d00a3ec       0x54 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+                0x9d00a3ec       0x54 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
                 0x9d00a420                __crt0_exit
 
 .text.fflush    0x9d00a440       0x54
@@ -5376,13 +5376,13 @@ LOAD data_init
  .text          0x00000000        0x0 C:/Program Files/Microchip/xc32/v5.00/bin/bin/../../lib/gcc/pic32m/13.2.1/../../../../pic32m/lib\software-debug-break.o
 
 .text%z364      0x00000000        0x0
- .text          0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\cc5jH0Q3.o
+ .text          0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccQch8UP.o
 
 .text%z365      0x00000000        0x0
- .text          0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccycTMYk.o
+ .text          0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccVN2MDi.o
 
 .text%z366      0x00000000        0x0
- .text          0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccHOb0jT.o
+ .text          0x00000000        0x0 C:\Users\sabog\AppData\Local\Temp\ccQPs6m0.o
 
 .text%z367      0x00000000        0x0
  .text          0x00000000        0x0 build/default/debug/FrameworkSource/ES_PostList.o

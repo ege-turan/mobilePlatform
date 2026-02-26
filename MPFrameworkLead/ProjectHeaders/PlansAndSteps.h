@@ -6,9 +6,15 @@
 
 typedef enum {
     RotateCW,
+    RotateCW_count,
     RotateCCW,
+    RotateCCW_count,
     Forwards,
+    Forwards_slow,
+    Forwards_count,
     Backwards,
+    Backwards_slow,
+    Backwards_count,
     Stop
 } PrimitiveCmd_t;
 
@@ -21,7 +27,8 @@ typedef struct {
 typedef enum {
     PLAN_STARTPOS2LOADINGDOCK = 0,
     PLAN_LOADINGDOCK2BUCKET1,
-    PLAN_COUNT
+    /* NUM_PLANS tells how many plans there are. Line below goes last always */
+    NUM_PLANS
 } PlanIndex_t;
 
 typedef struct {
@@ -29,7 +36,6 @@ typedef struct {
     uint16_t NumSteps;
 } Plan_t;
 
-/* Extern declarations only */
-extern const Plan_t AllPlans[PLAN_COUNT];
+extern const Plan_t Plans[NUM_PLANS];
 
 #endif /* PLANS_AND_STEPS_H */
