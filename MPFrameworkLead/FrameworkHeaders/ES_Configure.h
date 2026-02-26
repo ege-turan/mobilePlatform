@@ -34,7 +34,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 4
+#define NUM_SERVICES 3
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -292,6 +292,7 @@ typedef enum
   ES_START_PLAN,
   ES_PLAN_DONE,
   ES_STEP_COMPLETE,
+  ES_BEACON_DISPENSER,
   /* Global Events */
   ES_LIMIT_SWITCH,
   ES_SIDE_FOUND,

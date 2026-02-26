@@ -44,7 +44,7 @@
 #define LAB8_ROT_CCW_90           0x04 // 'a'
 #define LAB8_ROT_CW_90            0x02 // 'd'
 #define LAB8_STOP                 0x00 // 'x'
-#define LAB8_CW_BEACON            0x20 // 'b'
+#define LAB8_CCW_BEACON            0x20 // 'b'
 /* LEAD2FOLLOW SPI CMDS*/
 #define CMD_SPI_LEAD_INITIAL      0xAA
 #define CMD_SPI_INTAKE_ON         0xA1
@@ -263,7 +263,7 @@ ES_Event_t RunSPIFollowService(ES_Event_t ThisEvent)
         case 'b':
         {
           DB_printf("Received key: b\r\n");
-          message2send = LAB8_CW_BEACON;
+          message2send = LAB8_CCW_BEACON;
           DB_printf("\r0x%x: Align with Beacon\r\n", message2send);
         }
           break;

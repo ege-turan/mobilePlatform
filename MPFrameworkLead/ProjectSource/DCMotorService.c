@@ -109,7 +109,7 @@ typedef enum
 #define LAB8_ROT_CCW_90 0x04 // 'a'
 #define LAB8_ROT_CW_90  0x02 // 'd'
 #define LAB8_STOP       0x00 // 'x'
-#define LAB8_CW_BEACON  0x20 // 'b'
+#define LAB8_CCW_BEACON 0x20 // 'b'
 
 /* Primitive Commands */
 #define DRIVE_ROT_CW 1
@@ -358,7 +358,7 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                         break;
 
                         // Align with beacon (allows 5 sec. to complete)
-                        case LAB8_CW_BEACON:
+                        case LAB8_CCW_BEACON:
                         {
                             // Start Rotating clockwise (arbitrary), transition to LookingForBeacon state
                             _RotateForBeacon();
@@ -425,9 +425,9 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
             {
                 // Stop the robot when the robot is pointing at the beacon and transition
                 // back to FreeState.
-                case ES_BEACON_DETECTED:
+                case ES_BEACON_DISPENSER:
                 {
-                    _StopRobot();
+                    _DriveForward100();
                     CurrentState = FreeState;
                 }
                 break;
@@ -755,11 +755,11 @@ void _RotateRobotCCW()
 void _RotateForBeacon()
 {
 #ifdef VERBOSE_MODE
-    DB_printf("\rCommand Received: _RotateRobotCCW\r\n");
+    DB_printf("\rCommand Received: _RotateForBeacon\r\n");
 #endif
 
-    _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS*3/4, Forward);
-    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*3/4, Reverse);
+    _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS*1/4, Reverse);
+    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*1/4, Forward);
 } // TESTED
 
 /*-------------------------------------------------------------------------*/

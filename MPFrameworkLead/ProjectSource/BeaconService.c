@@ -79,10 +79,10 @@ typedef union
 } TimeUnion;
 
 
-#define SEQ_LENGTH 4
+#define SEQ_LENGTH 3
 
-static const uint8_t GreenSequence[SEQ_LENGTH] = {BEACON_B, BEACON_L, BEACON_R, BEACON_G};
-static const uint8_t BlueSequence[SEQ_LENGTH]  = {BEACON_G, BEACON_R, BEACON_L, BEACON_B};
+static const uint8_t GreenSequence[SEQ_LENGTH] = {BEACON_L, BEACON_R, BEACON_G}; // Assumes CCW rotation
+static const uint8_t BlueSequence[SEQ_LENGTH]  = {BEACON_R, BEACON_L, BEACON_B}; // Assumes CCW rotation
 static uint8_t BeaconBuffer[SEQ_LENGTH];
 static uint8_t BufferIndex = 0;
 static bool BufferFilled = false;
@@ -243,6 +243,12 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
           #ifdef VERBOSE_BEACON
           DB_printf("Beacon Detected! Freq: %u Hz. State: %u\r\n", (unsigned int)CurrentBeaconFreq, CurrentBeaconState);
           #endif
+          if (CurrentBeaconState == BEACON_G || CurrentBeaconState == BEACON_B)
+          {
+            ES_Event_t NewEvent;
+            NewEvent.EventType = ES_BEACON_DISPENSER;
+            ES_PostAll(NewEvent);
+          }
         } else
         {
           #ifdef VERBOSE_BEACON
@@ -250,7 +256,7 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
           #endif
         }
 
-        if ((CurrentBeaconState != 0) && (CurrentBeaconState != LastBeaconState))
+        if ((CurrentBeaconState != 0))// && (CurrentBeaconState != LastBeaconState))
         {
           uint8_t sideDetected;
           if (CheckSideSequence(CurrentBeaconState, &sideDetected))
@@ -270,12 +276,18 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
             DB_printf("Side Found! %s\r\n", (sideDetected == BEACON_G) ? "GREEN" : "BLUE");
             #endif
           }
-          else
+          if (CurrentBeaconState == BEACON_R) //TODO NAMES ARE WRON R and G CHECK!
           {
-            // No side detected yet, post raw beacon
+            DB_printf("Green Sequence Detected: ");
             ES_Event_t NewEvent;
-            NewEvent.EventType = ES_BEACON_DETECTED;
-            NewEvent.EventParam = CurrentBeaconState;
+            NewEvent.EventType = ES_BEACON_DISPENSER;
+            ES_PostAll(NewEvent);
+          }
+          else if (CurrentBeaconState == BEACON_B)
+          {
+            DB_printf("Blue Sequence Detected: ");
+            ES_Event_t NewEvent;
+            NewEvent.EventType = ES_BEACON_DISPENSER;
             ES_PostAll(NewEvent);
           }
         }
