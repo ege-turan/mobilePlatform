@@ -124,6 +124,9 @@ bool Check4Keystroke(void)
 
 
 /* EVERYTHING BELOW HERE WAS FROM LAB 8*/
+
+/* Beacon Part Moved to separate service*/
+/*
 #include "PIC32_IC_Lib.h"
 #include <sys/attribs.h>
 #include <xc.h>
@@ -254,6 +257,8 @@ void __ISR(_TIMER_3_VECTOR, IPL6SOFT) Timer3ISR(void)
     }
     return;
 }
+*/
+
 
 #define TAPE_ANSEL ANSELAbits.ANSA0
 #define TAPE_TRIS TRISAbits.TRISA0

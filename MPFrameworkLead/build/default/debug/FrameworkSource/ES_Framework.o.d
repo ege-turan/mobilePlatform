@@ -20,8 +20,9 @@ build/default/debug/FrameworkSource/ES_Framework.o: \
  FrameworkHeaders/ES_ServiceHeaders.h FrameworkHeaders/ES_Configure.h \
  ProjectHeaders/SPILeadService.h FrameworkHeaders/ES_Types.h \
  ProjectHeaders/DCMotorService.h FrameworkHeaders/ES_Events.h \
- ProjectHeaders/EventCheckWrapper.h ProjectHeaders/EventCheckers.h \
- FrameworkHeaders/ES_Port.h
+ ProjectHeaders/BeaconService.h ProjectHeaders/TopHSMPathPlanner.h \
+ ProjectHeaders/KeyboardService.h ProjectHeaders/EventCheckWrapper.h \
+ ProjectHeaders/EventCheckers.h FrameworkHeaders/ES_Port.h
 FrameworkSource/../FrameworkHeaders/ES_Configure.h:
 FrameworkSource/../FrameworkHeaders/ES_Framework.h:
 FrameworkSource/../FrameworkHeaders/ES_Types.h:
@@ -45,6 +46,9 @@ ProjectHeaders/SPILeadService.h:
 FrameworkHeaders/ES_Types.h:
 ProjectHeaders/DCMotorService.h:
 FrameworkHeaders/ES_Events.h:
+ProjectHeaders/BeaconService.h:
+ProjectHeaders/TopHSMPathPlanner.h:
+ProjectHeaders/KeyboardService.h:
 ProjectHeaders/EventCheckWrapper.h:
 ProjectHeaders/EventCheckers.h:
 FrameworkHeaders/ES_Port.h:

@@ -59,24 +59,39 @@
 */
 #include "HSMDriverFromTo.h"
 
+#include "TopHSMPathPlanner.h"
+#include "DCMotorService.h"
+#include "SPILeadService.h"
+#include "BeaconService.h"
+#include "PlansAndSteps.h"
+
+#include "dbprintf.h"
+
 /*----------------------------- Module Defines ----------------------------*/
 // define constants for the states for this machine
 // and any other local defines
 
-#define ENTRY_STATE STANDBY
+#define ENTRY_STATE STANDBY_STEP
+
+#define VERBOSE_DRIVER
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this machine, things like during
    functions, entry & exit functions.They should be functions relevant to the
    behavior of this state machine
 */
-static ES_Event_t DuringStandby( ES_Event_t Event);
+static ES_Event_t DuringStandbyStep( ES_Event_t Event);
 static ES_Event_t DuringRunningStep( ES_Event_t Event);
+
+static void DoStepActions(void);
 
 
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well
 static TemplateState_t CurrentState;
+static uint16_t StepCounter; 
+static const Plan_t *ActivePlan = NULL;
+static PlanIndex_t CurrentPlanIndex;
 
 /*------------------------------ Module Code ------------------------------*/
 /****************************************************************************
@@ -96,7 +111,7 @@ static TemplateState_t CurrentState;
  Author
    J. Edward Carryer, 2/11/05, 10:45AM
 ****************************************************************************/
-ES_Event_t RunHSMDriverFromTo( ES_Event_t CurrentEvent )
+ES_Event_t RunDriverFromToSM( ES_Event_t CurrentEvent )
 {
    bool MakeTransition = false;/* are we making a state transition? */
    TemplateState_t NextState = CurrentState;
@@ -105,23 +120,30 @@ ES_Event_t RunHSMDriverFromTo( ES_Event_t CurrentEvent )
 
    switch ( CurrentState )
    {
-       case STATE_ONE :       // If current state is state one
+       case STANDBY_STEP :       // If current state is state one
          // Execute During function for state one. ES_ENTRY & ES_EXIT are
          // processed here allow the lower level state machines to re-map
          // or consume the event
-         ReturnEvent = CurrentEvent = DuringStateOne(CurrentEvent);
+         ReturnEvent = CurrentEvent = DuringStandbyStep(CurrentEvent);
          //process any events
          if ( CurrentEvent.EventType != ES_NO_EVENT ) //If an event is active
          {
             switch (CurrentEvent.EventType)
             {
-               case ES_LOCK : //If event is event one
+               case ES_START_PLAN : //If event is event one
+                #ifdef VERBOSE_DRIVER
+                DB_printf("[Driver ] Received:     ES_START_PLAN");
+                #endif
                   // Execute action function for state one : event one
-                  NextState = STATE_TWO;//Decide what the next state will be
+                  CurrentPlanIndex = (PlanIndex_t)CurrentEvent.EventParam;
+                  ActivePlan = &Plans[CurrentPlanIndex];
+
+                  NextState = RUNNING_STEP;//Decide what the next state will be
+                  StepCounter = 0; // initialize step counter
                   // for internal transitions, skip changing MakeTransition
                   MakeTransition = true; //mark that we are taking a transition
                   // if transitioning to a state with history change kind of entry
-                  EntryEventKind.EventType = ES_ENTRY_HISTORY;
+                  EntryEventKind.EventType = ES_ENTRY;
                   // optionally, consume or re-map this event for the upper
                   // level state machine
                   ReturnEvent.EventType = ES_NO_EVENT;
@@ -130,6 +152,34 @@ ES_Event_t RunHSMDriverFromTo( ES_Event_t CurrentEvent )
             }
          }
        break;
+       case RUNNING_STEP :
+         ReturnEvent = CurrentEvent = DuringRunningStep(CurrentEvent);
+         //process any events
+         if ( CurrentEvent.EventType != ES_NO_EVENT ) //If an event is active
+         {
+            switch (CurrentEvent.EventType)
+            {
+               case ES_STEP_DONE : //If event is event one
+                  // Execute action function for state one : event one
+                  NextState = RUNNING_STEP;//Decide what the next state will be
+                  // for internal transitions, skip changing MakeTransition
+                  MakeTransition = false; //mark that we are taking a transition
+                  // if transitioning to a state with history change kind of entry
+                  EntryEventKind.EventType = ES_ENTRY;
+                  break;
+               case ES_PLAN_DONE :
+                    #ifdef VERBOSE_DRIVER
+                    DB_printf("[Driver] Received Plan %u Done\r\n", (unsigned int)CurrentPlanIndex);
+                    #endif
+                  NextState = STANDBY_STEP;
+                  MakeTransition = true;
+                  EntryEventKind.EventType = ES_ENTRY;
+                  break;
+               default:
+                  break;
+                // repeat cases as required for relevant events
+            }
+         }
       // repeat state pattern as required for other states
     }
     //   If we are making a state transition
@@ -137,19 +187,19 @@ ES_Event_t RunHSMDriverFromTo( ES_Event_t CurrentEvent )
     {
        //   Execute exit function for current state
        CurrentEvent.EventType = ES_EXIT;
-       RunTemplateSM(CurrentEvent);
+       RunDriverFromToSM(CurrentEvent);
 
        CurrentState = NextState; //Modify state variable
 
        //   Execute entry function for new state
        // this defaults to ES_ENTRY
-       RunTemplateSM(EntryEventKind);
+       RunDriverFromToSM(EntryEventKind);
      }
      return(ReturnEvent);
 }
 /****************************************************************************
  Function
-     StartTemplateSM
+     StartDriverFromToSM
 
  Parameters
      None
@@ -164,7 +214,7 @@ ES_Event_t RunHSMDriverFromTo( ES_Event_t CurrentEvent )
  Author
      J. Edward Carryer, 2/18/99, 10:38AM
 ****************************************************************************/
-void StartHSMDriverFromTo ( ES_Event_t CurrentEvent )
+void StartDriverFromToSM ( ES_Event_t CurrentEvent )
 {
    // to implement entry to a history state or directly to a substate
    // you can modify the initialization of the CurrentState variable
@@ -174,13 +224,18 @@ void StartHSMDriverFromTo ( ES_Event_t CurrentEvent )
    {
         CurrentState = ENTRY_STATE;
    }
+   // announce
+    DB_printf("\rStarting HSMDriverFromTo: ");
+    DB_printf("compiled at %s on %s", __TIME__, __DATE__);
+    DB_printf("\n\r");
    // call the entry function (if any) for the ENTRY_STATE
-   RunHSMDriverFromTo(CurrentEvent);
+   RunDriverFromToSM(CurrentEvent);
+   StepCounter = 0; // initialize variable
 }
 
 /****************************************************************************
  Function
-     QueryHSMDriverFromTo
+     QueryDriverFromToSM
 
  Parameters
      None
@@ -195,7 +250,7 @@ void StartHSMDriverFromTo ( ES_Event_t CurrentEvent )
  Author
      J. Edward Carryer, 2/11/05, 10:38AM
 ****************************************************************************/
-TemplateState_t QueryHSMDriverFromTo ( void )
+TemplateState_t QueryDriverFromToSM ( void )
 {
    return(CurrentState);
 }
@@ -204,7 +259,7 @@ TemplateState_t QueryHSMDriverFromTo ( void )
  private functions
  ***************************************************************************/
 
-static ES_Event_t DuringStandby( ES_Event_t Event)
+static ES_Event_t DuringStandbyStep( ES_Event_t Event)
 {
     ES_Event_t ReturnEvent = Event; // assume no re-mapping or consumption
 
@@ -213,6 +268,9 @@ static ES_Event_t DuringStandby( ES_Event_t Event)
          (Event.EventType == ES_ENTRY_HISTORY) )
     {
         // implement any entry actions required for this state machine
+        ES_Event_t ThisEvent;
+        ThisEvent.EventType = ES_MOTORS_OFF;
+        PostDCMotorService(ThisEvent);
         
         // after that start any lower level machines that run in this state
         //StartLowerLevelSM( Event );
@@ -251,7 +309,9 @@ static ES_Event_t DuringRunningStep( ES_Event_t Event)
          (Event.EventType == ES_ENTRY_HISTORY) )
     {
         // implement any entry actions required for this state machine
-        
+        /* Execute the first step */
+        DoStepActions();
+
         // after that start any lower level machines that run in this state
         //StartLowerLevelSM( Event );
         // repeat the StartxxxSM() functions for concurrent state machines
@@ -269,6 +329,19 @@ static ES_Event_t DuringRunningStep( ES_Event_t Event)
     {
         // run any lower level state machine
         // ReturnEvent = RunLowerLevelSM(Event);
+        if (Event.EventType == ActivePlan->Steps[StepCounter].StoppingCondition)
+        {
+          StepCounter++;
+          if (StepCounter >= ActivePlan->NumSteps)
+          {
+            // All steps done, post step complete to this SM to transition
+            ReturnEvent.EventType = ES_PLAN_DONE;
+          } else
+          {
+            DoStepActions();
+            ReturnEvent.EventType = ES_NO_EVENT;
+          }
+        }
       
         // repeat for any concurrent lower level machines
       
@@ -277,4 +350,31 @@ static ES_Event_t DuringRunningStep( ES_Event_t Event)
     // return either Event, if you don't want to allow the lower level machine
     // to remap the current event, or ReturnEvent if you do want to allow it.
     return(ReturnEvent);
+}
+
+
+static void DoStepActions (void)
+{
+    /* Send Primitive CMD to DCMotorService*/
+    // ANNOUNCE WHAT PLAN, STEP, MotorPrimitive, StopCondition and Event2Post HERE
+    #ifdef VERBOSE_DRIVER
+    DB_printf("\r[Driver] Plan: %u, Step: %u, Primitive: %u, StopCondition: %u, Event2Post: %u\n",
+        (unsigned int)CurrentPlanIndex,
+        (unsigned int)StepCounter,
+        (unsigned int)ActivePlan->Steps[StepCounter].PrimitiveCmd,
+        (unsigned int)ActivePlan->Steps[StepCounter].StoppingCondition,
+        (unsigned int)ActivePlan->Steps[StepCounter].PostEvent
+    );
+    #endif
+    ES_Event_t MotorCmdEvent;
+    MotorCmdEvent.EventType = ES_MOTOR_PRIMITIVE;
+    MotorCmdEvent.EventParam = ActivePlan->Steps[StepCounter].PrimitiveCmd; // Add parameters if needed
+    PostDCMotorService(MotorCmdEvent);
+    /* Post Event Sent on Entry */
+    if (ES_NO_EVENT != ActivePlan->Steps[StepCounter].PostEvent)
+    {
+        ES_Event_t Event2Post;
+        Event2Post.EventType = ActivePlan->Steps[StepCounter].PostEvent;
+        ES_PostAll(Event2Post);
+    }
 }

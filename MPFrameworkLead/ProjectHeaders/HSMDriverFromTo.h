@@ -10,7 +10,7 @@
 
 // typedefs for the states
 // State definitions for use with the query function
-typedef enum { STANDBY, RUNNING_STEP } TemplateState_t ;
+typedef enum { STANDBY_STEP, RUNNING_STEP } TemplateState_t ;
 
 
 // Public Function Prototypes

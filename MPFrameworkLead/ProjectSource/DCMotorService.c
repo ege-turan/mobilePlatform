@@ -28,6 +28,7 @@
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 #include "PIC32_PWM_Lib.h"
+#include "PIC32_IC_Lib.h"
 #include "dbprintf.h"
 #include <sys/attribs.h>
 
@@ -52,27 +53,33 @@ typedef enum
 typedef enum
 {
     // Set to output compare channels 1 and 3
-    Motor1ChannelOC = 1,
+    Motor1ChannelOC = 2,
     Motor2ChannelOC = 3,
 } MotorChannel_t;
 
 // Define the tris bits (input/output)
-#define MOTOR_1_PWM_PIN_TRIS (TRISBbits.TRISB15)
-#define MOTOR_2_PWM_PIN_TRIS (TRISAbits.TRISA3)
-#define MOTOR_1_DIR_PIN_TRIS (TRISAbits.TRISA1)
-#define MOTOR_2_DIR_PIN_TRIS (TRISAbits.TRISA4)
+#define MOTOR_1_PWM_PIN_TRIS (TRISBbits.TRISB8)
+#define MOTOR_2_PWM_PIN_TRIS (TRISBbits.TRISB10)
+#define MOTOR_1_DIR_PIN_TRIS (TRISBbits.TRISB9)
+#define MOTOR_2_DIR_PIN_TRIS (TRISBbits.TRISB12)
 
-// Define the analog select for the pins which allow this
-#define MOTOR_1_PWM_PIN_ANSEL (ANSELBbits.ANSB15)
-#define MOTOR_1_DIR_PIN_ANSEL (ANSELAbits.ANSA1)
+// // Define the analog select for the pins which allow this
+// #define MOTOR_1_PWM_PIN_ANSEL (ANSELBbits.ANSB8)
+// #define MOTOR_1_DIR_PIN_ANSEL (ANSELBbits.ANSB9)
+// #define MOTOR_2_PWM_PIN_ANSEL (ANSELBbits.ANSB10)
+#define MOTOR_2_DIR_PIN_ANSEL (ANSELBbits.ANSB12)
 
 // Define the lat bits (write)
-#define MOTOR_1_DIR_PIN_WRITE (LATAbits.LATA1)
-#define MOTOR_2_DIR_PIN_WRITE (LATAbits.LATA4)
+#define MOTOR_1_DIR_PIN_WRITE (LATBbits.LATB9)
+#define MOTOR_2_DIR_PIN_WRITE (LATBbits.LATB12)
 
-// Constants relating to output compare module 1
-#define OC1_PIN_SELECT (RPB15Rbits.RPB15R)
-#define OC1_PERIPHERAL (0b0101)
+// Define pine names for PWM_Setup_MapChannelToOutputPin
+#define Motor1PWMPinName PWM_RPB8
+#define Motor2PWMPinName PWM_RPB10
+
+// // Constants relating to output compare module 1
+// #define OC1_PIN_SELECT (RPB15Rbits.RPB15R)
+// #define OC1_PERIPHERAL (0b0101)
 
 // TIMERS:
 // This is the period of the PWM in timer ticks - for Timer2
@@ -102,8 +109,10 @@ typedef enum
 #define LAB8_ROT_CCW_90 0x04 // 'a'
 #define LAB8_ROT_CW_90  0x02 // 'd'
 #define LAB8_STOP       0x00 // 'x'
-#define LAB8_CW_BEACON  0x20 // 'b'
+#define LAB8_CCW_BEACON 0x20 // 'b'
 
+/* Primitive Commands */
+#include "PlansAndSteps.h"
 
 
 // #define TESTING_MODE // Set to 1 to enter testing mode on init
@@ -122,6 +131,7 @@ void _RotateRobotCW();
 void _RotateRobotCCW();
 void _RotateForBeacon();
 
+bool DCMotor_ExecutePrimitive(PrimitiveCmd_t cmd);
 /*-------------------------------------------------------------------------*/
 /*---------------------------- Module Variables ---------------------------*/
 /*-------------------------------------------------------------------------*/
@@ -149,7 +159,6 @@ bool InitDCMotorService(uint8_t Priority)
     MyPriority = Priority;
 
     // Announce initialisation of DCMotorService
-    clrScrn();
     DB_printf("\rStarting DCMotorService: ");
     DB_printf("compiled at %s on %s", __TIME__, __DATE__);
     DB_printf("\n\r");
@@ -219,19 +228,14 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                 }
                 break;
 
-                case ES_MOTORS_OFF:
-                {
-                    _StopRobot();
-                    #ifdef VERBOSE_MODE
-                    DB_printf("\rES_MOTORS_OFF received, stopping robot\r\n");
-                    #endif
-                }
+                case ES_MOTORS_OFF: _StopRobot(); break;
+
+                case ES_MOTOR_PRIMITIVE: DCMotor_ExecutePrimitive(ThisEvent.EventParam); break;
 
                 // Received a new command to execute from the SPI command generator
                 case ES_NEW_SPI_CMD_RECEIVED:
                 {
-                    // DB_printf("DCService doing SPI Command Event: 0x%x\r\n",
-                    //           (unsigned int)ThisEvent.EventParam);
+                    // DB_printf("DCService doing SPI Command Event: 0x%x\r\n", (unsigned int)ThisEvent.EventParam);
 
                     // Parse the command and execute the necessary steps
                     switch (ThisEvent.EventParam)
@@ -339,7 +343,7 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                         break;
 
                         // Align with beacon (allows 5 sec. to complete)
-                        case LAB8_CW_BEACON:
+                        case LAB8_CCW_BEACON:
                         {
                             // Start Rotating clockwise (arbitrary), transition to LookingForBeacon state
                             _RotateForBeacon();
@@ -406,9 +410,9 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
             {
                 // Stop the robot when the robot is pointing at the beacon and transition
                 // back to FreeState.
-                case ES_BEACON_DETECTED:
+                case ES_BEACON_DISPENSER:
                 {
-                    _StopRobot();
+                    _DriveForward100();
                     CurrentState = FreeState;
                 }
                 break;
@@ -590,20 +594,22 @@ void _InitMotorPWM()
     PWM_Setup_AssignChannelToTimer(Motor2ChannelOC, _Timer2_);
 
     // Assign output compares for both pwm channels to respective pins
-    PWM_Setup_MapChannelToOutputPin(Motor1ChannelOC, PWM_RPB15);
-    PWM_Setup_MapChannelToOutputPin(Motor2ChannelOC, PWM_RPA3);
+    PWM_Setup_MapChannelToOutputPin(Motor1ChannelOC, Motor1PWMPinName);
+    PWM_Setup_MapChannelToOutputPin(Motor2ChannelOC, Motor2PWMPinName);
 
-    // Initialize pins
-    MOTOR_1_PWM_PIN_ANSEL = 0;
-    MOTOR_1_DIR_PIN_ANSEL = 0;
+    // // Initialize pins to digital output
+    // MOTOR_1_PWM_PIN_ANSEL = 0;
+    // MOTOR_1_DIR_PIN_ANSEL = 0;
+    // MOTOR_2_PWM_PIN_ANSEL = 0;
+    MOTOR_2_DIR_PIN_ANSEL = 0;
     MOTOR_1_PWM_PIN_TRIS  = 0;
     MOTOR_2_PWM_PIN_TRIS  = 0;
     MOTOR_1_DIR_PIN_TRIS  = 0;
     MOTOR_2_DIR_PIN_TRIS  = 0;
 
     // Map Pins to OC modules
-    PWM_Setup_MapChannelToOutputPin(Motor1ChannelOC, PWM_RPB15);
-    PWM_Setup_MapChannelToOutputPin(Motor2ChannelOC, PWM_RPA3);
+    PWM_Setup_MapChannelToOutputPin(Motor1ChannelOC, Motor1PWMPinName);
+    PWM_Setup_MapChannelToOutputPin(Motor2ChannelOC, Motor2PWMPinName);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -734,13 +740,28 @@ void _RotateRobotCCW()
 void _RotateForBeacon()
 {
 #ifdef VERBOSE_MODE
-    DB_printf("\rCommand Received: _RotateRobotCCW\r\n");
+    DB_printf("\rCommand Received: _RotateForBeacon\r\n");
 #endif
 
-    _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS*3/4, Forward);
-    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*3/4, Reverse);
+    _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS*1/4, Reverse);
+    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*1/4, Forward);
 } // TESTED
 
+
+
+bool DCMotor_ExecutePrimitive(PrimitiveCmd_t cmd) {
+    switch(cmd) {
+        case RotateCW:        _RotateRobotCW(); break;
+        case RotateCCW:       _RotateRobotCCW(); break;
+        case Forwards:        _DriveForward100(); break;
+        case Forwards_slow:   _DriveForward50(); break;
+        case Backwards:       _DriveReverse100(); break;
+        case Backwards_slow:  _DriveReverse50(); break;
+        case Stop:            _StopRobot(); break;
+        default: return false; // unknown primitive
+    }
+    return true;
+}
 /*-------------------------------------------------------------------------*/
 /*------------------------- Private Test Functions ------------------------*/
 /*-------------------------------------------------------------------------*/
