@@ -232,170 +232,6 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
 
                 case ES_MOTOR_PRIMITIVE: DCMotor_ExecutePrimitive(ThisEvent.EventParam); break;
 
-                // Received a new command to execute from the SPI command generator
-                case ES_NEW_SPI_CMD_RECEIVED:
-                {
-                    // DB_printf("DCService doing SPI Command Event: 0x%x\r\n", (unsigned int)ThisEvent.EventParam);
-
-                    // Parse the command and execute the necessary steps
-                    switch (ThisEvent.EventParam)
-                    {
-                        // Stop hold position, do not move or rotate
-                        case LAB8_STOP:
-                        {
-                            _StopRobot();
-                            #ifdef VERBOSE_MODE
-                            DB_printf("\r0x00: Stop, hold Position, do not move or rotate\r\n");
-                            #endif
-                        }
-                        break;
-
-                        // Rotate Clockwise by 90 degrees (allows 6 sec. to complete)
-                        case LAB8_ROT_CW_90:
-                        {
-                            // Set the robot rotating clockwise and start a timer which will tell the
-                            // robot to stop when it expires
-                            _RotateRobotCW();
-                            ES_Timer_InitTimer(RotateRobotTimer, R90DEG_100DUTY_DELAY_MS);
-                            #ifdef VERBOSE_MODE
-                            DB_printf("\r0x02: Rotate Clockwise by 90 degrees\r\n");
-                            #endif
-                        }
-                        break;
-
-                        // Rotate Clockwise by 45 degrees (allows 3 sec. to complete)
-                        case 0x03:
-                        {
-                            // Set the robot rotating clockwise and start a timer which will tell the
-                            // robot to stop when it expires
-                            _RotateRobotCW();
-                            ES_Timer_InitTimer(RotateRobotTimer, R45DEG_100DUTY_DELAY_MS);
-                            #ifdef VERBOSE_MODE
-                            DB_printf("\r0x03: Rotate Clockwise by 45 degrees\r\n");
-                            #endif
-                        }
-                        break;
-
-                        // Rotate Counter-clockwise by 90 degrees (allows 6 sec. to complete)
-                        case LAB8_ROT_CCW_90:
-                        {
-                            // Set the robot rotating counter-clockwise and start a timer which will
-                            // tell the robot to stop when it expires
-                            _RotateRobotCCW();
-                            ES_Timer_InitTimer(RotateRobotTimer, R90DEG_100DUTY_DELAY_MS);
-                            #ifdef VERBOSE_MODE
-                            DB_printf("\r0x04: Rotate Counter-clockwise by 90 degrees\r\n");
-                            #endif
-                        }
-                        break;
-
-                        // Rotate Counter-clockwise by 45 degrees (allows 3 sec. to complete)
-                        case 0x05:
-                        {
-                            // Set the robot rotating counter-clockwise and start a timer which will
-                            // tell the robot to stop when it expires
-                            _RotateRobotCCW();
-                            ES_Timer_InitTimer(RotateRobotTimer, R45DEG_100DUTY_DELAY_MS);
-                            #ifdef VERBOSE_MODE
-                            DB_printf("\r0x05: Rotate Counter-clockwise by 45 degrees\r\n");
-                            #endif
-                        }
-                        break;
-
-                        // Drive forward half speed
-                        case 0x08:
-                        {
-                            _DriveForward50();
-                            #ifdef VERBOSE_MODE
-                            DB_printf("\r0x08: Drive Forward Half Speed\r\n");
-                            #endif
-                        }
-                        break;
-
-                        // Drive forward full speed
-                        case LAB8_FWD_FULL:
-                        {
-                            _DriveForward100();
-                            #ifdef VERBOSE_MODE
-                            DB_printf("\r0x09: Drive Forward Full Speed\r\n");
-                            #endif
-                        }
-                        break;
-
-                        // Drive in reverse half speed
-                        case 0x10:
-                        {
-                            _DriveReverse50();
-                            #ifdef VERBOSE_MODE
-                            DB_printf("\r0x10: Drive Reverse Half Speed\r\n");
-                            #endif
-                        }
-                        break;
-
-                        // Drive in reverse full speed
-                        case LAB8_REV_FULL:
-                        {
-                            _DriveReverse100();
-                            #ifdef VERBOSE_MODE
-                            DB_printf("\r0x11: Drive Reverse Full Speed\r\n");
-                            #endif
-                        }
-                        break;
-
-                        // Align with beacon (allows 5 sec. to complete)
-                        case LAB8_CCW_BEACON:
-                        {
-                            // Start Rotating clockwise (arbitrary), transition to LookingForBeacon state
-                            _RotateForBeacon();
-                            CurrentState = LookingForBeacon;
-                            #ifdef VERBOSE_MODE
-                            DB_printf("\r0x20: Align with Beacon\r\n");
-                            #endif
-                        }
-                        break;
-
-                        // Drive forward until tape detected.
-                        case 0x40:
-                        {
-                            // Drive forward at full speed (arbitrary), transition to LookingForTape state
-                            _DriveForward100();
-                            CurrentState = LookingForTape;
-                            #ifdef VERBOSE_MODE
-                            DB_printf("\r0x40: Drive Forward until Tape Detected\r\n");
-                            #endif
-                        }
-                        break;
-                    }
-                }
-                break;
-
-                // Triggered whenever a timer in the Events and Services framework expires
-                case ES_TIMEOUT:
-                {
-                    switch (ThisEvent.EventParam)
-                    {
-                        // Stop the robot when this timer fires; the robot is done rotating
-                        case RotateRobotTimer:
-                        {
-                            _StopRobot();
-                        }
-                        break;
-                    }
-                }
-                break;
-
-                // Keyboard event to go to testing state
-                #ifdef TESTING_MODE
-                case ES_NEW_KEY:
-                {
-                    CurrentState = TestingState;
-                    #ifdef VERBOSE_MODE
-                    DB_printf("\rES_NEW_KEY: Entering Testing State\r\n");
-                    #endif
-                    
-                }
-                break;
-                #endif
                 default:
                     break;
             }
@@ -758,6 +594,24 @@ bool DCMotor_ExecutePrimitive(PrimitiveCmd_t cmd) {
         case Backwards:       _DriveReverse100(); break;
         case Backwards_slow:  _DriveReverse50(); break;
         case Stop:            _StopRobot(); break;
+        
+        // Line following and encoder count course correction
+        case Forwards_line_mid:
+            PostDriveCorrectionService((ES_Event_t){ES_START_LINE_FWD_MID});
+            break;
+
+        case Backwards_line:
+            PostDriveCorrectionService((ES_Event_t){ES_START_LINE_REV});
+            break;
+
+        case Forwards_count_mid:
+            PostDriveCorrectionService((ES_Event_t){ES_START_ENC_FWD_MID});
+            break;
+
+        case Backwards_count_mid:
+            PostDriveCorrectionService((ES_Event_t){ES_START_ENC_REV_MID});
+            break;
+
         default: return false; // unknown primitive
     }
     return true;

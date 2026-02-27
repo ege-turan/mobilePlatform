@@ -9,12 +9,21 @@ typedef enum {
     RotateCW_count,
     RotateCCW,
     RotateCCW_count,
+
     Forwards,
     Forwards_slow,
     Forwards_count,
+    Forwards_count_mid,
+    Forwards_line,
+    Forwards_line_mid,
+
     Backwards,
     Backwards_slow,
     Backwards_count,
+    Backwards_count_mid,
+    Backwards_line,
+    Backwards_line_mid,
+
     Stop
 } PrimitiveCmd_t;
 
