@@ -41,6 +41,15 @@
 #define LINE_KI 1
 #define LINE_I_MAX 100      // smaller integral cap for line sensor PID
 
+/* ==== Timer-based line following ===== */
+
+#define LINE_UPDATE_HZ      500     // 2 ms loop
+#define T4_PRESCALE_BITS    0b111   // 1:256
+#define T4_PRESCALE         256
+#define PBCLK_RATE          20000000L
+
+#define T4_PERIOD ((PBCLK_RATE / T4_PRESCALE) / LINE_UPDATE_HZ - 1)
+
 // Encoder interrupts
 #define ENC_L_PORT  PORTAbits.RA0
 #define ENC_R_PORT  PORTAbits.RA1
@@ -57,6 +66,9 @@ static int32_t PI_Controller(int32_t error);
 static void ResetDriveControl(void);
 static void CheckMidpointStop(void);
 static void InitDriveCorrectionInterrupts(void);
+
+static void SetupLineTimer(void);
+static int32_t Line_PI_Controller(int32_t error);
 
 /*---------------------------- Module Variables ---------------------------*/
 // with the introduction of Gen2, we need a module level Priority variable
@@ -188,6 +200,30 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
             UseMidStop = true;
             CurrentState = DC_EncRevMid;
             break;
+
+        case ES_START_LINE_FWD:
+            ResetDriveControl();
+            UseMidStop = false;
+            CurrentState = DC_LineFwdMid;
+            break;
+
+        case ES_START_LINE_REV:
+            ResetDriveControl();
+            UseMidStop = false;
+            CurrentState = DC_LineRevMid;
+            break;
+
+        case ES_START_LINE_FWD_MID:
+            ResetDriveControl();
+            UseMidStop = true;
+            CurrentState = DC_LineFwdMid;
+            break;
+
+        case ES_START_LINE_REV_MID:
+            ResetDriveControl();
+            UseMidStop = true;
+            CurrentState = DC_LineRevMid;
+            break;
     }
 
   switch(CurrentState)    // apply control loop
@@ -244,28 +280,35 @@ void __ISR(_EXTERNAL_1_VECTOR, IPL5SOFT) _EncoderR_ISR(void)
 }
 
 // Line-following ISR mini PID
-void __ISR(_EXTERNAL_2_VECTOR, IPL5SOFT) _LineR_ISR(void)
+void __ISR(_TIMER_4_VECTOR, IPL4SOFT) Line_Timer_ISR(void)
 {
-    IFS0bits.INT2IF = 0;
+    IFS0bits.T4IF = 0;
 
-    LineError = 1; // right side off line
-    LineIntegral += LineError;
-    if(LineIntegral > LINE_I_MAX) LineIntegral = LINE_I_MAX;
+    if(CurrentState != DC_LineFwdMid &&
+       CurrentState != DC_LineRevMid)
+        return;
 
-    int32_t trim = LINE_KP * LineError + LINE_KI * LineIntegral;
-    DCMotor_ApplyTrim(trim, Forward);
-}
+    int32_t trim = 0;
 
-void __ISR(_EXTERNAL_3_VECTOR, IPL5SOFT) _LineL_ISR(void)
-{
-    IFS0bits.INT3IF = 0;
+    uint8_t L = LINE_L_PORT;
+    uint8_t R = LINE_R_PORT;
 
-    LineError = -1; // left side off line
-    LineIntegral += LineError;
-    if(LineIntegral < -LINE_I_MAX) LineIntegral = -LINE_I_MAX;
+    if(!L && R)
+        LineError = +1;
 
-    int32_t trim = LINE_KP * LineError + LINE_KI * LineIntegral;
-    DCMotor_ApplyTrim(trim, Forward);
+    else if(L && !R)
+        LineError = -1;
+
+    else
+        LineError = 0;
+
+    trim = Line_PI_Controller(LineError);
+
+    if(CurrentState == DC_LineFwdMid)
+        DCMotor_ApplyTrim(trim, Forward);
+
+    else if(CurrentState == DC_LineRevMid)
+        DCMotor_ApplyTrim(trim, Reverse);
 }
 
 /***************************************************************************
@@ -281,6 +324,31 @@ static int32_t PI_Controller(int32_t error)
     return KP * error + KI * Integral;
 }
 
+static int32_t Line_PI_Controller(int32_t error)
+{
+    if(error != 0) LineIntegral += error;
+
+    if(LineIntegral > LINE_I_MAX) LineIntegral = LINE_I_MAX;
+    if(LineIntegral < -LINE_I_MAX) LineIntegral = -LINE_I_MAX;
+
+    return LINE_KP * error + LINE_KI * LineIntegral;
+}
+
+static void SetupLineTimer(void)
+{
+    T4CON = 0;
+    T4CONbits.TCKPS = T4_PRESCALE_BITS;
+
+    PR4  = T4_PERIOD;
+    TMR4 = 0;
+
+    IPC4bits.T4IP = 4;
+    IFS0bits.T4IF = 0;
+    IEC0bits.T4IE = 1;
+
+    T4CONbits.TON = 1;
+}
+
 static void ResetDriveControl(void)
 {
     Integral = 0;
@@ -289,12 +357,20 @@ static void ResetDriveControl(void)
     EncCountR = 0;
     MidCount = 0;
     UseMidStop = false;
+
+    LineIntegral = 0;
+    LineError = 0;
 }
 
 static void CheckMidpointStop(void)
 {
-    if(UseMidStop && MidCount >= MIDPOINT_COUNT)
+    int32_t avg = (EncCountL + EncCountR) >> 1;
+
+    if(UseMidStop && avg >= MIDPOINT_COUNT)
     {
+        UseMidStop = false;   // prevent retrigger
+        MidCount = 0;
+
         ES_Event_t stop = {ES_MOTORS_OFF};
         PostDCMotorService(stop);
 
@@ -305,6 +381,8 @@ static void CheckMidpointStop(void)
 
 static void InitDriveCorrectionInterrupts(void)
 {
+    SetupLineTimer();
+
     // Disable analog on RA0-RA3
     ANSELAbits.ANSA0 = 0;
     ANSELAbits.ANSA1 = 0;
@@ -329,17 +407,6 @@ static void InitDriveCorrectionInterrupts(void)
     IFS0bits.INT1IF = 0;
     IEC0bits.INT1IE = 1;
 
-    // ---- Line Sensor INTs ----
-
-    // INT2 -> RA2 (Right Line)
-    INTCONbits.INT2EP = 0;
-    IFS0bits.INT2IF = 0;
-    IEC0bits.INT2IE = 1;
-
-    // INT3 -> RA3 (Left Line)
-    INTCONbits.INT3EP = 0;
-    IFS0bits.INT3IF = 0;
-    IEC0bits.INT3IE = 1;
 }
 
 /*------------------------------- Footnotes -------------------------------*/
