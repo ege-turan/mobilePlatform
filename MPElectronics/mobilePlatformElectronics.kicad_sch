@@ -7047,12 +7047,6 @@
 		(uuid "3d7f33bd-4adc-47a5-a4a7-9bf8a169dc3a")
 	)
 	(junction
-		(at 463.296 308.356)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "3dbf7cd1-e4f0-4a14-a6df-4a86790c8f18")
-	)
-	(junction
 		(at 303.53 344.932)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -7353,10 +7347,6 @@
 	(no_connect
 		(at 122.682 103.124)
 		(uuid "b61b9862-a6ba-448d-9ffa-da5c6f7094ad")
-	)
-	(no_connect
-		(at 123.698 308.356)
-		(uuid "b7785e7d-58c4-439d-9ac6-c6457a8a749c")
 	)
 	(no_connect
 		(at 354.584 121.412)
@@ -8019,16 +8009,6 @@
 			(type default)
 		)
 		(uuid "387c179f-4462-4db1-b73f-573b14b00dff")
-	)
-	(wire
-		(pts
-			(xy 485.14 303.276) (xy 463.296 303.276)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "391dc314-0204-408a-97ba-7c9051bed05c")
 	)
 	(wire
 		(pts
@@ -8842,6 +8822,16 @@
 	)
 	(wire
 		(pts
+			(xy 482.6 303.276) (xy 485.14 303.276)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "888e3099-cfbe-4615-82e6-b2c2c7a5a4a9")
+	)
+	(wire
+		(pts
 			(xy 339.09 339.852) (xy 370.84 339.852)
 		)
 		(stroke
@@ -9652,16 +9642,6 @@
 	)
 	(wire
 		(pts
-			(xy 463.296 303.276) (xy 463.296 308.356)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d247c72c-b5ce-424d-bf68-7ad1c5325e5b")
-	)
-	(wire
-		(pts
 			(xy 687.578 132.588) (xy 687.578 135.89)
 		)
 		(stroke
@@ -10019,6 +9999,16 @@
 			(type default)
 		)
 		(uuid "ef136e72-6e9a-48fc-8cd0-89d88fdd99c3")
+	)
+	(wire
+		(pts
+			(xy 133.604 308.356) (xy 123.698 308.356)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f00bf3d1-9b15-4a57-b93e-e5246f98aa98")
 	)
 	(wire
 		(pts
@@ -10994,6 +10984,28 @@
 			)
 		)
 	)
+	(global_label "M_FEEDER_EN"
+		(shape input)
+		(at 133.604 308.356 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "674944be-1fc6-4b75-90ca-3bf7d7794002")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 149.5309 308.356 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "Vref"
 		(shape output)
 		(at 687.578 135.89 270)
@@ -11777,6 +11789,28 @@
 		(uuid "d274a003-69bb-4ef6-81f5-0bb638688c65")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
 			(at 129.6633 293.116 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "M_FEEDER_EN"
+		(shape output)
+		(at 482.6 303.276 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d7b11d92-a56d-4d81-9d0c-37894219434f")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 466.6731 303.276 0)
 			(effects
 				(font
 					(size 1.27 1.27)
