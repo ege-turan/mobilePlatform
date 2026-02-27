@@ -42,13 +42,6 @@ ES_EventType_t LastTestAction;
 /*----------------------------- Module Defines ----------------------------*/
 /*-------------------------------------------------------------------------*/
 
-// Used to set the direction pin to Hi or Lo
-typedef enum
-{
-    Forward = 0,
-    Reverse = 1,
-} MotorDir_t;
-
 // Used to initialise the PWM and also to select motor to command
 typedef enum
 {
@@ -597,25 +590,43 @@ bool DCMotor_ExecutePrimitive(PrimitiveCmd_t cmd) {
         
         // Line following and encoder count course correction
         case Forwards_line_mid:
-            PostDriveCorrectionService((ES_Event_t){ES_START_LINE_FWD_MID});
+            ES_PostAll((ES_Event_t){ES_START_LINE_FWD_MID});
             break;
 
         case Backwards_line:
-            PostDriveCorrectionService((ES_Event_t){ES_START_LINE_REV});
+            ES_PostAll((ES_Event_t){ES_START_LINE_REV});
             break;
 
         case Forwards_count_mid:
-            PostDriveCorrectionService((ES_Event_t){ES_START_ENC_FWD_MID});
+            ES_PostAll((ES_Event_t){ES_START_ENC_FWD_MID});
             break;
 
         case Backwards_count_mid:
-            PostDriveCorrectionService((ES_Event_t){ES_START_ENC_REV_MID});
+            ES_PostAll((ES_Event_t){ES_START_ENC_REV_MID});
             break;
 
         default: return false; // unknown primitive
     }
     return true;
 }
+
+// For course-correction
+void DCMotor_ApplyTrim(int32_t trim, MotorDir_t dir)
+{
+    uint32_t base = PWM_PERIOD_TICKS;
+
+    int32_t left  = base - trim;
+    int32_t right = base + trim;
+
+    if(left < 0) left = 0;
+    if(right < 0) right = 0;
+    if(left > PWM_PERIOD_TICKS) left = PWM_PERIOD_TICKS;
+    if(right > PWM_PERIOD_TICKS) right = PWM_PERIOD_TICKS;
+
+    _DriveMotor(Motor1ChannelOC, left, dir);
+    _DriveMotor(Motor2ChannelOC, right, dir);
+}
+
 /*-------------------------------------------------------------------------*/
 /*------------------------- Private Test Functions ------------------------*/
 /*-------------------------------------------------------------------------*/

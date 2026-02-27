@@ -21,8 +21,9 @@ build/default/production/FrameworkSource/ES_Framework.o: \
  ProjectHeaders/SPILeadService.h FrameworkHeaders/ES_Types.h \
  ProjectHeaders/DCMotorService.h FrameworkHeaders/ES_Events.h \
  ProjectHeaders/BeaconService.h ProjectHeaders/TopHSMPathPlanner.h \
- ProjectHeaders/KeyboardService.h ProjectHeaders/EventCheckWrapper.h \
- ProjectHeaders/EventCheckers.h FrameworkHeaders/ES_Port.h
+ ProjectHeaders/KeyboardService.h ProjectHeaders/DriveCorrectionService.h \
+ ProjectHeaders/EventCheckWrapper.h ProjectHeaders/EventCheckers.h \
+ FrameworkHeaders/ES_Port.h
 
 FrameworkSource/../FrameworkHeaders/ES_Configure.h:
 
@@ -75,6 +76,8 @@ ProjectHeaders/BeaconService.h:
 ProjectHeaders/TopHSMPathPlanner.h:
 
 ProjectHeaders/KeyboardService.h:
+
+ProjectHeaders/DriveCorrectionService.h:
 
 ProjectHeaders/EventCheckWrapper.h:
 

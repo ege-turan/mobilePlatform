@@ -19,3 +19,13 @@ typedef enum
 bool InitDCMotorService(uint8_t Priority);
 bool PostDCMotorService(ES_Event_t ThisEvent);
 ES_Event_t RunDCMotorService(ES_Event_t ThisEvent);
+
+// Used to set the direction pin to Hi or Lo
+typedef enum
+{
+    Forward = 0,
+    Reverse = 1,
+} MotorDir_t;
+
+// Helper
+void DCMotor_ApplyTrim(int32_t trim, MotorDir_t dir);

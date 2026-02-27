@@ -16,7 +16,7 @@ build/default/production/FrameworkSource/ES_PostList.o: \
  ProjectHeaders/SPILeadService.h FrameworkHeaders/ES_Types.h \
  ProjectHeaders/DCMotorService.h FrameworkHeaders/ES_Events.h \
  ProjectHeaders/BeaconService.h ProjectHeaders/TopHSMPathPlanner.h \
- ProjectHeaders/KeyboardService.h
+ ProjectHeaders/KeyboardService.h ProjectHeaders/DriveCorrectionService.h
 
 FrameworkSource/../FrameworkHeaders/ES_Port.h:
 
@@ -57,3 +57,5 @@ ProjectHeaders/BeaconService.h:
 ProjectHeaders/TopHSMPathPlanner.h:
 
 ProjectHeaders/KeyboardService.h:
+
+ProjectHeaders/DriveCorrectionService.h:

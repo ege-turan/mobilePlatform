@@ -16,7 +16,7 @@ build/default/production/FrameworkSource/ES_Timers.o: \
  ProjectHeaders/SPILeadService.h FrameworkHeaders/ES_Types.h \
  ProjectHeaders/DCMotorService.h FrameworkHeaders/ES_Events.h \
  ProjectHeaders/BeaconService.h ProjectHeaders/TopHSMPathPlanner.h \
- ProjectHeaders/KeyboardService.h \
+ ProjectHeaders/KeyboardService.h ProjectHeaders/DriveCorrectionService.h \
  FrameworkSource/../FrameworkHeaders/ES_General.h \
  FrameworkSource/../FrameworkHeaders/ES_Events.h \
  FrameworkSource/../FrameworkHeaders/ES_PostList.h \
@@ -63,6 +63,8 @@ ProjectHeaders/BeaconService.h:
 ProjectHeaders/TopHSMPathPlanner.h:
 
 ProjectHeaders/KeyboardService.h:
+
+ProjectHeaders/DriveCorrectionService.h:
 
 FrameworkSource/../FrameworkHeaders/ES_General.h:
 

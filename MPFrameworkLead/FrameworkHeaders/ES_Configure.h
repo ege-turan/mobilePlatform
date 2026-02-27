@@ -34,7 +34,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 5
+#define NUM_SERVICES 6
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -48,7 +48,7 @@
 // the name of the run function
 #define SERV_0_RUN RunSPILeadService
 // How big should this services Queue be?
-#define SERV_0_QUEUE_SIZE 5
+#define SERV_0_QUEUE_SIZE 6
 
 /****************************************************************************/
 // The following sections are used to define the parameters for each of the
@@ -110,11 +110,11 @@
 // These are the definitions for Service 5
 #if NUM_SERVICES > 5
 // the header file with the public function prototypes
-#define SERV_5_HEADER "TestHarnessService5.h"
+#define SERV_5_HEADER "DriveCorrectionService.h"
 // the name of the Init function
-#define SERV_5_INIT InitTestHarnessService5
+#define SERV_5_INIT InitDriveCorrectionService
 // the name of the run function
-#define SERV_5_RUN RunTestHarnessService5
+#define SERV_5_RUN RunDriveCorrectionService
 // How big should this services Queue be?
 #define SERV_5_QUEUE_SIZE 3
 #endif
@@ -275,6 +275,19 @@ typedef enum
   ES_CENTERED,             /* When the two front tape detectors are on the tape*/
   ES_MOTORS_OFF,
   ES_COUNT_DONE,
+  /* Drive Course Correct */
+  ES_START_LINE_FWD,
+  ES_START_LINE_REV,
+  ES_START_ENC_FWD,
+  ES_START_ENC_REV,
+  ES_START_LINE_FWD_MID,
+  ES_START_LINE_REV_MID,
+  ES_START_ENC_FWD_MID,
+  ES_START_ENC_REV_MID,
+  ES_LINE_L_DETECTED,
+  ES_LINE_R_DETECTED,
+  ES_ENCODER_TICK_L,
+  ES_ENCODER_TICK_R,
   /* SPI related events */
   ES_NEW_SPI_CMD_SEND,
   ES_NEW_SPI_CMD_RECEIVED,
