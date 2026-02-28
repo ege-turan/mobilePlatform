@@ -190,4 +190,55 @@ OperatorState_t QueryOperatorFSM(void)
 /***************************************************************************
  private functions
  ***************************************************************************/
+static void InitOperatorInterrupts(void)
+{
+    __builtin_disable_interrupts();
+
+    // ---- Disable analog on cargo input pins ----
+    ANSELBbits.ANSB8 = 0;   // DIN_CARGO_IN
+    ANSELBbits.ANSB9 = 0;   // DIN_CARGO_OUT
+
+    // ---- Set inputs ----
+    TRISBbits.TRISB8 = 1;   // DIN_CARGO_IN
+    TRISBbits.TRISB9 = 1;   // DIN_CARGO_OUT
+
+    // ---- Map pins to external interrupts ----
+    // PRB8 -> INT3
+    INT3Rbits.INT3R = 0b0010;   // check your datasheet: RB8 -> INT3
+    // PRB9 -> INT1
+    INT1Rbits.INT1R = 0b0011;   // check your datasheet: RB9 -> INT1
+
+    // ---- Configure interrupts ----
+    // INT1 -> Cargo OUT (falling edge)
+    INTCONbits.INT1EP = 1;   // falling edge
+    IFS0bits.INT1IF = 0;     // clear flag
+    IEC0bits.INT1IE = 1;     // enable interrupt
+    IPC1bits.INT1IP = 5;     // priority 5
+
+    // INT3 -> Cargo IN (rising edge)
+    INTCONbits.INT3EP = 0;   // rising edge
+    IFS0bits.INT3IF = 0;     // clear flag
+    IEC0bits.INT3IE = 1;     // enable interrupt
+    IPC3bits.INT3IP = 5;     // priority 5
+
+    __builtin_enable_interrupts();
+}
+
+ /***************************************************************************
+ ISR (Interrupt Service Routine)
+ ***************************************************************************/
+// TODO: Fix this to use INT1 at #define DIN_CARGO_OUT at PRB9 at falling edge to post an ES_CARGO_OUT event to OperatorFSM and INT3 at #define DIN_CARGO_IN at PRB8 at rising edge to post ES_CARGO_IN to OperatorFSM 
+void __ISR(_EXTERNAL_0_VECTOR, IPL5SOFT) _EncoderL_ISR(void)
+{
+    IFS0bits.INT0IF = 0;
+    EncCountL++;
+    if(UseMidStop) MidCount++;
+}
+
+void __ISR(_EXTERNAL_1_VECTOR, IPL5SOFT) _EncoderR_ISR(void)
+{
+    IFS0bits.INT1IF = 0;
+    EncCountR++;
+    if(UseMidStop) MidCount++;
+}
 
