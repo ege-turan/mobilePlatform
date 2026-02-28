@@ -256,14 +256,14 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
 /***************************************************************************
  ISR (Interrupt Service Routine)
  ***************************************************************************/
-void __ISR(_EXTERNAL_4_VECTOR, IPL5SOFT) EncoderL_ISR(void)
+void __ISR(_EXTERNAL_4_VECTOR, IPL5SOFT) _EncoderL_ISR(void)
 {
     IFS0bits.INT4IF = 0;
     EncCountL++;
     if(UseMidStop) MidCount++;
 }
 
-void __ISR(_EXTERNAL_3_VECTOR, IPL5SOFT) EncoderR_ISR(void)
+void __ISR(_EXTERNAL_3_VECTOR, IPL5SOFT) _EncoderR_ISR(void)
 {
     IFS0bits.INT3IF = 0;
     EncCountR++;
@@ -271,7 +271,7 @@ void __ISR(_EXTERNAL_3_VECTOR, IPL5SOFT) EncoderR_ISR(void)
 }
 
 // Line-following ISR mini PID
-void __ISR(_TIMER_4_VECTOR, IPL4SOFT) Line_Timer_ISR(void)
+void __ISR(_TIMER_4_VECTOR, IPL4SOFT) _Line_Timer_ISR(void)
 {
     IFS0bits.T4IF = 0;
 
