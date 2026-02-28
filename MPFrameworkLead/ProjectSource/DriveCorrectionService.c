@@ -112,21 +112,12 @@ bool InitDriveCorrectionService(uint8_t Priority)
   ES_Event_t ThisEvent;
 
   MyPriority = Priority;
-  CurrentState = DC_Idle;  
+  CurrentState = DC_Idle;
 
-  // Set up the interrupts
   InitDriveCorrectionInterrupts();
 
-  // post the initial transition event
   ThisEvent.EventType = ES_INIT;
-  if (ES_PostToService(MyPriority, ThisEvent) == true)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  return ES_PostToService(MyPriority, ThisEvent);
 }
 
 /****************************************************************************
@@ -265,14 +256,14 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
 /***************************************************************************
  ISR (Interrupt Service Routine)
  ***************************************************************************/
-void __ISR(_EXTERNAL_0_VECTOR, IPL5SOFT) _EncoderL_ISR(void)
+void __ISR(_EXTERNAL_0_VECTOR, IPL5SOFT) EncoderL_ISR(void)
 {
     IFS0bits.INT0IF = 0;
     EncCountL++;
     if(UseMidStop) MidCount++;
 }
 
-void __ISR(_EXTERNAL_1_VECTOR, IPL5SOFT) _EncoderR_ISR(void)
+void __ISR(_EXTERNAL_1_VECTOR, IPL5SOFT) EncoderR_ISR(void)
 {
     IFS0bits.INT1IF = 0;
     EncCountR++;
@@ -288,26 +279,21 @@ void __ISR(_TIMER_4_VECTOR, IPL4SOFT) Line_Timer_ISR(void)
        CurrentState != DC_LineRevMid)
         return;
 
-    int32_t trim = 0;
-
     uint8_t L = LINE_L_PORT;
     uint8_t R = LINE_R_PORT;
 
     if(!L && R)
         LineError = +1;
-
     else if(L && !R)
         LineError = -1;
-
     else
         LineError = 0;
 
-    trim = Line_PI_Controller(LineError);
+    int32_t trim = Line_PI_Controller(LineError);
 
     if(CurrentState == DC_LineFwdMid)
         DCMotor_ApplyTrim(trim, Forward);
-
-    else if(CurrentState == DC_LineRevMid)
+    else
         DCMotor_ApplyTrim(trim, Reverse);
 }
 
@@ -343,6 +329,8 @@ static void SetupLineTimer(void)
     TMR4 = 0;
 
     IPC4bits.T4IP = 4;
+    IPC4bits.T4IS = 0;
+
     IFS0bits.T4IF = 0;
     IEC0bits.T4IE = 1;
 
