@@ -142,17 +142,55 @@ bool Check4SPI(void)
   return false;
 }
 
+/****************************************************************************
+ Start button event checker
+****************************************************************************/
+
+#define BUTTON_IN     PORTAbits.RA3   // Button input line on RA3
+
+#define DEBUG_BUTTON       // enable for debug prints
+
+#ifdef DEBUG_BUTTON
+    #include "dbprintf.h"
+#endif
+
+
+/****************************************************************************
+ Function
+     Check4StartButton
+
+ Parameters
+     None
+
+ Returns
+     bool: true if an event was posted, false otherwise
+
+ Description
+     Checks the button state for changes. Posts ES_BUTTON_UP or ES_BUTTON_DOWN
+     events to the Operator FSM when a change is detected.
+
+ Author
+     Ege Turan
+****************************************************************************/
 bool Check4StartButton(void)
 {
+    bool ReturnVal = false;
 
-}
+    static uint8_t LastButtonState = 1;                   // assume button is not initially pressed
+    uint8_t CurrentButtonState = BUTTON_IN;
 
-bool Check4CargoIn(void)
-{
-  
-}
+    if (CurrentButtonState != LastButtonState) {
+#ifdef DEBUG_BUTTON
+        DB_printf("Button (RA3=%d) -> TOGGLE posted\n", CurrentButtonState);
+#endif
 
-bool Check4CargoOut(void)
-{
-  
+        ES_Event_t ThisEvent;
+        ReturnVal = true;
+        ThisEvent.EventType  = ES_START_DOWN;
+        ThisEvent.EventParam = CurrentButtonState;        // no additional parameter needed, include CurrentButtonState for debugging
+        PostOperatorFSM(ThisEvent);                       // post event to Laser FSM
+    }
+
+    LastButtonState = CurrentButtonState; // update last state
+    return ReturnVal;
 }
