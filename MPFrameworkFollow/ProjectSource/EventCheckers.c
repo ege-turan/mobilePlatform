@@ -141,3 +141,18 @@ bool Check4SPI(void)
   }
   return false;
 }
+
+bool Check4StartButton(void)
+{
+
+}
+
+bool Check4CargoIn(void)
+{
+  
+}
+
+bool Check4CargoOut(void)
+{
+  
+}

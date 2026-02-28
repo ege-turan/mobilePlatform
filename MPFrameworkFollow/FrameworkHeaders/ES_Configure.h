@@ -34,7 +34,7 @@
 /****************************************************************************/
 // This macro determines that nuber of services that are *actually* used in
 // a particular application. It will vary in value from 1 to MAX_NUM_SERVICES
-#define NUM_SERVICES 2
+#define NUM_SERVICES 6
 
 /****************************************************************************/
 // These are the definitions for Service 0, the lowest priority service.
@@ -48,7 +48,7 @@
 // the name of the run function
 #define SERV_0_RUN RunSPIFollowService
 // How big should this services Queue be?
-#define SERV_0_QUEUE_SIZE 5
+#define SERV_0_QUEUE_SIZE 10
 
 /****************************************************************************/
 // The following sections are used to define the parameters for each of the
@@ -64,59 +64,59 @@
 // the name of the run function
 #define SERV_1_RUN RunStepperService
 // How big should this services Queue be?
-#define SERV_1_QUEUE_SIZE 3
+#define SERV_1_QUEUE_SIZE 10
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 2
 #if NUM_SERVICES > 2
 // the header file with the public function prototypes
-#define SERV_2_HEADER "TestHarnessService2.h"
+#define SERV_2_HEADER "OperatorFSM.h"
 // the name of the Init function
-#define SERV_2_INIT InitTestHarnessService2
+#define SERV_2_INIT InitOperatorFSM
 // the name of the run function
-#define SERV_2_RUN RunTestHarnessService2
+#define SERV_2_RUN RunOperatorFSM
 // How big should this services Queue be?
-#define SERV_2_QUEUE_SIZE 3
+#define SERV_2_QUEUE_SIZE 10
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 3
 #if NUM_SERVICES > 3
 // the header file with the public function prototypes
-#define SERV_3_HEADER "TestHarnessService3.h"
+#define SERV_3_HEADER "DropoffLoweringArmFSM.h"
 // the name of the Init function
-#define SERV_3_INIT InitTestHarnessService3
+#define SERV_3_INIT InitDropoffLoweringArmFSM
 // the name of the run function
-#define SERV_3_RUN RunTestHarnessService3
+#define SERV_3_RUN RunDropoffLoweringArmFSM
 // How big should this services Queue be?
-#define SERV_3_QUEUE_SIZE 3
+#define SERV_3_QUEUE_SIZE 10
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 4
 #if NUM_SERVICES > 4
 // the header file with the public function prototypes
-#define SERV_4_HEADER "TestHarnessService4.h"
+#define SERV_4_HEADER "IntakeService.h"
 // the name of the Init function
-#define SERV_4_INIT InitTestHarnessService4
+#define SERV_4_INIT InitIntakeService
 // the name of the run function
-#define SERV_4_RUN RunTestHarnessService4
+#define SERV_4_RUN RunIntakeService
 // How big should this services Queue be?
-#define SERV_4_QUEUE_SIZE 3
+#define SERV_4_QUEUE_SIZE 10
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 5
 #if NUM_SERVICES > 5
 // the header file with the public function prototypes
-#define SERV_5_HEADER "TestHarnessService5.h"
+#define SERV_5_HEADER "FieldSideServoService.h"
 // the name of the Init function
-#define SERV_5_INIT InitTestHarnessService5
+#define SERV_5_INIT InitFieldSideServoService
 // the name of the run function
-#define SERV_5_RUN RunTestHarnessService5
+#define SERV_5_RUN RunFieldSideServoService
 // How big should this services Queue be?
-#define SERV_5_QUEUE_SIZE 3
+#define SERV_5_QUEUE_SIZE 10
 #endif
 
 /****************************************************************************/
@@ -265,7 +265,12 @@ typedef enum
   ES_NEW_KEY,                /* signals a new key received from terminal */
   ES_SPI_COMPLETE,           /* signals that SPI has risen so message received*/
   ES_NEW_SPI_CMD_SEND,       /* signals what the next sent command should be */
-  ES_NEW_SPI_CMD_RECEIVED    /* signals that a new command was received*/  
+  ES_NEW_SPI_CMD_RECEIVED,   /* signals that a new command was received*/  
+  ES_CARGO_IN_RISE,
+  ES_CARGO_IN_FALL,
+  ES_CARGO_OUT_RISE,
+  ES_CARGO_OUT_FALL,
+  ES_START_DOWN
 }ES_EventType_t;
 
 /****************************************************************************/
@@ -300,7 +305,7 @@ typedef enum
 
 /****************************************************************************/
 // This is the list of event checking functions
-#define EVENT_CHECK_LIST Check4Keystroke, Check4SPI
+#define EVENT_CHECK_LIST Check4Keystroke, Check4SPI, Check4StartButton, Check4CargoIn, Check4CargoOut
 
 /****************************************************************************/
 // These are the definitions for the post functions to be executed when the

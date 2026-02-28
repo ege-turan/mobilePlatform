@@ -49,6 +49,10 @@
       <itemPath>ProjectHeaders/PIC32_SPI_HAL.h</itemPath>
       <itemPath>ProjectHeaders/SPIFollowService.h</itemPath>
       <itemPath>ProjectHeaders/StepperService.h</itemPath>
+      <itemPath>ProjectHeaders/DropoffLoweringArmFSM.h</itemPath>
+      <itemPath>ProjectHeaders/FieldSideServoService.h</itemPath>
+      <itemPath>ProjectHeaders/IntakeService.h</itemPath>
+      <itemPath>ProjectHeaders/OperatorFSM.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -70,6 +74,10 @@
       <itemPath>ProjectSource/PIC32_SPI_HAL.c</itemPath>
       <itemPath>ProjectSource/SPIFollowService.c</itemPath>
       <itemPath>ProjectSource/StepperService.c</itemPath>
+      <itemPath>ProjectSource/DropoffLoweringArmFSM.c</itemPath>
+      <itemPath>ProjectSource/FieldSideServoService.c</itemPath>
+      <itemPath>ProjectSource/IntakeService.c</itemPath>
+      <itemPath>ProjectSource/OperatorFSM.c</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -88,7 +96,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>snap</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>5.00</languageToolchainVersion>
+        <languageToolchainVersion>4.10</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>

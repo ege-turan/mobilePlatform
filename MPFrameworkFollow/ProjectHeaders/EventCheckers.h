@@ -25,4 +25,9 @@
 bool Check4Keystroke(void);
 bool Check4SPI(void);
 
+// Operator-related events
+bool Check4StartButton(void);
+bool Check4CargoIn(void);
+bool Check4CargoOut(void);
+
 #endif /* EventCheckers_H */
