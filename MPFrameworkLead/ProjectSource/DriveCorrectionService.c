@@ -256,16 +256,16 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
 /***************************************************************************
  ISR (Interrupt Service Routine)
  ***************************************************************************/
-void __ISR(_EXTERNAL_0_VECTOR, IPL5SOFT) EncoderL_ISR(void)
+void __ISR(_EXTERNAL_4_VECTOR, IPL5SOFT) EncoderL_ISR(void)
 {
-    IFS0bits.INT0IF = 0;
+    IFS0bits.INT4IF = 0;
     EncCountL++;
     if(UseMidStop) MidCount++;
 }
 
-void __ISR(_EXTERNAL_1_VECTOR, IPL5SOFT) EncoderR_ISR(void)
+void __ISR(_EXTERNAL_3_VECTOR, IPL5SOFT) EncoderR_ISR(void)
 {
-    IFS0bits.INT1IF = 0;
+    IFS0bits.INT3IF = 0;
     EncCountR++;
     if(UseMidStop) MidCount++;
 }
@@ -369,32 +369,44 @@ static void CheckMidpointStop(void)
 
 static void InitDriveCorrectionInterrupts(void)
 {
-    SetupLineTimer();
+    __builtin_disable_interrupts();
 
-    // Disable analog on RA0-RA3
+    // ---- Disable analog on encoder + line pins ----
     ANSELAbits.ANSA0 = 0;
     ANSELAbits.ANSA1 = 0;
-//    ANSELAbits.ANSA2 = 0; // no ANSEL
-//    ANSELAbits.ANSA3 = 0; // no ANSEL
+    //    ANSELAbits.ANSA2 = 0; // no ANSEL
+    //    ANSELAbits.ANSA3 = 0; // no ANSEL
 
-    // Inputs
-    TRISAbits.TRISA0 = 1;
-    TRISAbits.TRISA1 = 1;
-    TRISAbits.TRISA2 = 1;
-    TRISAbits.TRISA3 = 1;
+    // ---- Set inputs ----
+    TRISAbits.TRISA0 = 1;   // ENC L
+    TRISAbits.TRISA1 = 1;   // ENC R
+    TRISAbits.TRISA2 = 1;   // LINE R
+    TRISAbits.TRISA3 = 1;   // LINE L
 
-    // ---- Encoder INTs ----
+    // Map RA0 -> INT4
+    INT4Rbits.INT4R = 0b0000;
 
-    // INT0 -> RA0 (Left Encoder)
-    INTCONbits.INT0EP = 0;
-    IFS0bits.INT0IF = 0;
-    IEC0bits.INT0IE = 1;
+    // Map RA1 -> INT3
+    INT3Rbits.INT3R = 0b0000;
 
-    // INT1 -> RA1 (Right Encoder)
-    INTCONbits.INT1EP = 0;
-    IFS0bits.INT1IF = 0;
-    IEC0bits.INT1IE = 1;
+    // ---- Encoder Interrupts ----
 
+    // INT4 -> RA0 (Left)
+    INTCONbits.INT4EP = 0;   // rising edge
+    IFS0bits.INT4IF = 0;
+    IEC0bits.INT4IE = 1;
+    IPC4bits.INT4IP = 5;
+
+    // INT3 -> RA1 (Right)
+    INTCONbits.INT3EP = 0;
+    IFS0bits.INT3IF = 0;
+    IEC0bits.INT3IE = 1;
+    IPC3bits.INT3IP = 5;
+
+    // ---- Line Timer ----
+    SetupLineTimer();
+
+    __builtin_enable_interrupts();
 }
 
 /*------------------------------- Footnotes -------------------------------*/
