@@ -169,6 +169,10 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
           spiEvent.EventParam = CMD_SPI_END;
           PostSPIFollowService(spiEvent);
 
+          // todo: event to stop feeder
+
+          // todo: event to reset field side indicator (ES_RESET)
+
           // Reset system state
           carrying = 0;
 
@@ -336,6 +340,8 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
             {
                 if (carrying == 0)
                 {
+                    ES_Timer_StopTimer(DROPOFF_PACE_TIMER);   // double check that we stopped the timer
+
                     // Notify SPI that dropoff is unloaded
                     ES_Event_t unloadEvent;
                     unloadEvent.EventType  = ES_NEW_SPI_CMD_SEND;
@@ -349,6 +355,11 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
                     // Stop pacing timer and move to DroppingOff state
                     ES_Timer_StopTimer(DROPOFF_PACE_TIMER);
                     CurrentState = DroppingOff;
+
+                    // create an event ES_FEEDER_START and post it to StepperService
+                    ES_Event_t feederStartEvent;
+                    feederStartEvent.EventType = ES_FEEDER_START;
+                    PostStepperService(feederStartEvent);
                 }
             }
             break;
@@ -388,6 +399,11 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
                         unloadEvent.EventType  = ES_NEW_SPI_CMD_SEND;
                         unloadEvent.EventParam = CMD_SPI_UNLOADED;
                         PostSPIFollowService(unloadEvent);
+
+                        // create an event ES_FEEDER_STOP and post it to StepperService
+                        ES_Event_t feederStopEvent;
+                        feederStopEvent.EventType = ES_FEEDER_STOP;
+                        PostStepperService(feederStopEvent);
 
                         CurrentState = WaitingForNavigation;
                     }

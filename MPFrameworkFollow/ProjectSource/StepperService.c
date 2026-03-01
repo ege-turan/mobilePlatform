@@ -51,6 +51,10 @@
 #define MOTOR_OUTPUT_TRIS  (TRISAbits.TRISA2)  // input/output mode of RA2
 #define MOTOR_OUTPUT_LAT   (LATAbits.LATA2)    // output latch of RA2
 
+// ENABLE PIN
+#define M_FEEDER_EN_LAT  LATBbits.LATB12
+#define M_FEEDER_EN_TRIS TRISBbits.TRISB12
+
 #define TEST_TIMER_MS 20000 // in ms
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
@@ -92,11 +96,16 @@ bool InitStepperService(uint8_t Priority)
   DB_printf("compiled at %s on %s", __TIME__, __DATE__);
   DB_printf("\n\r");
 
-  // Initialise PWM stuff
+  // Initialize PWM system
   _InitMotorPWM(STEPPER_TIMER, STEPPER_PRESCALER, STEPPER_CHANNEL, STEPPER_PIN);
+
   // Initialize pins as digital outputs
   MOTOR_OUTPUT_TRIS = 0;
   MOTOR_OUTPUT_LAT = 0; // start with low output
+  // Initialize feeder enable pin
+  M_FEEDER_EN_TRIS = 0;   // output
+  M_FEEDER_EN_LAT  = 1;   // DISABLED (A4988 EN is active LOW)
+
   // Initialize PWM at 0% duty cycle (0%)
   PWM_Operate_SetPulseWidthOnChannel(0, STEPPER_CHANNEL);
   // Initialize test timer
@@ -156,6 +165,7 @@ bool PostStepperService(ES_Event_t ThisEvent)
 ****************************************************************************/
 ES_Event_t RunStepperService(ES_Event_t ThisEvent)
 {
+  // TODO: update according to OperatorFSM posting events ES_FEEDER_START and ES_FEEDER_STOP
   ES_Event_t ReturnEvent;
   ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
   /********************************************
@@ -165,30 +175,29 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
   {
     case ES_INIT:
     {
-      DB_printf("\rES_INIT received in SPILeadService, priority: %d\r\n", MyPriority);
-      PWM_Operate_SetPulseWidthOnChannel((PWM_PERIOD_TICKS / 2), STEPPER_CHANNEL); // 50% duty cycle
+      DB_printf("\rES_INIT received in StepperService, priority: %d\r\n", MyPriority);
+
+      // Start OFF
+      PWM_Operate_SetPulseWidthOnChannel(0, STEPPER_CHANNEL);
+      M_FEEDER_EN_LAT = 1;   // disabled
     }
     break;
 
-    case ES_TIMEOUT:
+    case ES_FEEDER_START:
     {
-      if (ThisEvent.EventParam == STEPPER_TEST_TIMER)
-      {
-        DB_printf("StepperService: Test Timer Timeout\r\n");
-        // Toggle between 0% and 50% duty cycle to test stepping
-        static bool isOn = true;
-        if (isOn)
-        {
-          PWM_Operate_SetPulseWidthOnChannel(0, STEPPER_CHANNEL); // off
-        }
-        else
-        {
-          PWM_Operate_SetPulseWidthOnChannel(PWM_PERIOD_TICKS / 2, STEPPER_CHANNEL); // 50% duty cycle
-        }
-        isOn = !isOn;
-        // Restart timer
-        ES_Timer_InitTimer(STEPPER_TEST_TIMER, TEST_TIMER_MS);
-      }
+      DB_printf("StepperService: FEEDER START\r\n");
+
+      M_FEEDER_EN_LAT = 0;   // ENABLE driver
+      PWM_Operate_SetPulseWidthOnChannel(PWM_PERIOD_TICKS / 2, STEPPER_CHANNEL); // 50% duty
+    }
+    break;
+
+    case ES_FEEDER_STOP:
+    {
+      DB_printf("StepperService: FEEDER STOP\r\n");
+
+      M_FEEDER_EN_LAT = 1;   // DISABLE driver
+      PWM_Operate_SetPulseWidthOnChannel(0, STEPPER_CHANNEL); // OFF
     }
     break;
 
