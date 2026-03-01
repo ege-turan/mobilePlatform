@@ -320,8 +320,6 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
             incompleteEvent.EventParam = CMD_SPI_INTAKE_INCOMPLETE;
             PostSPIFollowService(incompleteEvent);
             CurrentState = WaitingForNavigation;
-
-            CurrentState = WaitingForNavigation;
           }
         }
         break;
@@ -354,6 +352,18 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
                 }
             }
             break;
+
+            case ES_NEW_SPI_CMD_RECEIVED:
+            {
+                if (ThisEvent.EventParam == CMD_SPI_RELEASE_DROPOFF)
+                {
+                    // Stop pacing timer and move to RaisingDropoff state
+                    ES_Timer_StopTimer(DROPOFF_PACE_TIMER);
+                    CurrentState = RaisingDropoff;
+                }
+            }
+            break;
+
         }
     }
     break;
@@ -371,6 +381,8 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
 
                     if (carrying == 0)
                     {
+                        ES_Timer_StopTimer(DROPOFF_PACE_TIMER);   // double check that we stopped the timer
+
                         // Notify SPI that all cargo has been unloaded
                         ES_Event_t unloadEvent;
                         unloadEvent.EventType  = ES_NEW_SPI_CMD_SEND;
@@ -386,6 +398,25 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
     }
     break;
 
+    /********************* RAISING DROPOFF *********************/
+    case RaisingDropoff:
+    {
+        switch (ThisEvent.EventType)
+        {
+            case ES_DROPOFF_RAISED:
+            {
+                // Notify SPI that dropoff is released
+                ES_Event_t releaseEvent;
+                releaseEvent.EventType  = ES_NEW_SPI_CMD_SEND;
+                releaseEvent.EventParam = CMD_SPI_RELEASED;
+                PostSPIFollowService(releaseEvent);
+
+                CurrentState = WaitingForNavigation;
+            }
+            break;
+        }
+    }
+    break;
 
     /********************* DEFAULT *********************/
     default:

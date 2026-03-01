@@ -33,6 +33,7 @@
 #define CMD_SPI_INTAKE_INCOMPLETE 0xB2
 #define CMD_SPI_LOADED            0xB3
 #define CMD_SPI_UNLOADED          0xB4
+#define CMD_SPI_RELEASED          0xB8
 #define CMD_SPI_UNLOAD_INCOMPLETE 0xB5
 #define CMD_SPI_END               0xB6
 
