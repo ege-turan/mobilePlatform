@@ -227,18 +227,21 @@ static void InitOperatorInterrupts(void)
  /***************************************************************************
  ISR (Interrupt Service Routine)
  ***************************************************************************/
-// TODO: Fix this to use INT1 at #define DIN_CARGO_OUT at PRB9 at falling edge to post an ES_CARGO_OUT event to OperatorFSM and INT3 at #define DIN_CARGO_IN at PRB8 at rising edge to post ES_CARGO_IN to OperatorFSM 
-void __ISR(_EXTERNAL_0_VECTOR, IPL5SOFT) _EncoderL_ISR(void)
+// use INT1 at #define DIN_CARGO_OUT at PRB9 at falling edge to post an ES_CARGO_OUT event to OperatorFSM 
+// and INT3 at #define DIN_CARGO_IN at PRB8 at rising edge to post ES_CARGO_IN to OperatorFSM 
+void __ISR(_EXTERNAL_1_VECTOR, IPL5SOFT) _CargoOut_ISR(void)
 {
-    IFS0bits.INT0IF = 0;
-    EncCountL++;
-    if(UseMidStop) MidCount++;
+    IFS0bits.INT1IF = 0;   // clear interrupt flag
+    ES_Event_t CargoEvent;
+    CargoEvent.EventType = ES_CARGO_OUT;
+    PostOperatorFSM(CargoEvent);
 }
 
-void __ISR(_EXTERNAL_1_VECTOR, IPL5SOFT) _EncoderR_ISR(void)
+void __ISR(_EXTERNAL_3_VECTOR, IPL5SOFT) _CargoIn_ISR(void)
 {
-    IFS0bits.INT1IF = 0;
-    EncCountR++;
-    if(UseMidStop) MidCount++;
+    IFS0bits.INT3IF = 0;   // clear interrupt flag
+    ES_Event_t CargoEvent;
+    CargoEvent.EventType = ES_CARGO_IN;
+    PostOperatorFSM(CargoEvent);
 }
 
