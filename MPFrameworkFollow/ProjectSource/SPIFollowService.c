@@ -173,11 +173,11 @@ ES_Event_t RunSPIFollowService(ES_Event_t ThisEvent)
 
     case ES_SPI_COMPLETE:
     {
-      static uint8_t LastMessage = 0xAA;
+      static uint8_t LastMessage = CMD_SPI_LEAD_INITIAL;
       uint8_t newMessage = ThisEvent.EventParam;
 
       // check if message different and not bad command
-      if ((newMessage != LastMessage) && (newMessage != 0xAA))
+      if ((newMessage != LastMessage) && (newMessage != CMD_SPI_LEAD_INITIAL))
       {
         ES_Event_t NewEvent;
         NewEvent.EventType  = ES_NEW_SPI_CMD_RECEIVED;

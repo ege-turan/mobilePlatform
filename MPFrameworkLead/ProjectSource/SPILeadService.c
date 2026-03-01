@@ -189,7 +189,7 @@ ES_Event_t RunSPILeadService(ES_Event_t ThisEvent)
           // DB_printf("Follower Sent Over SPI:     0x%x\r\n", (unsigned int)newMessage);
 
           // check if message different and not bad command
-          if ((newMessage != LastMessage) && (newMessage != 0xFF))
+          if ((newMessage != LastMessage) && (newMessage != CMD_SPI_FOLLOW_INITIAL))
           {
             ES_Event_t NewEvent;
             NewEvent.EventType  = ES_NEW_SPI_CMD_RECEIVED;
