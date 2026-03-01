@@ -267,6 +267,12 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
 
               CurrentState = LoweringDropoff;
           }
+          else if (ThisEvent.EventParam == CMD_SPI_RELEASE_DROPOFF)
+          {
+              // Leader requested dropoff to be raised
+              CurrentState = RaisingDropoff;
+          }
+          break;
         }
         break;
       }
@@ -294,8 +300,8 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
 
             // Notify SPI and IntakeService
             ES_Event_t loadedEvent;
-            loadedEvent.EventType  = CMD_SPI_LOADED;
-            loadedEvent.EventParam = 0;  // or payload if needed
+            loadedEvent.EventType  = ES_NEW_SPI_CMD_SEND;
+            loadedEvent.EventParam = CMD_SPI_LOADED;  // or payload if needed
 
             PostSPIFollowService(loadedEvent);  // send to leader
             PostIntakeService(loadedEvent);     // stop intake locally
@@ -334,8 +340,8 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
                 {
                     // Notify SPI that dropoff is unloaded
                     ES_Event_t unloadEvent;
-                    unloadEvent.EventType  = CMD_SPI_UNLOADED;
-                    unloadEvent.EventParam = 0;
+                    unloadEvent.EventType  = ES_NEW_SPI_CMD_SEND;
+                    unloadEvent.EventParam = CMD_SPI_UNLOADED;
                     PostSPIFollowService(unloadEvent);
 
                     CurrentState = WaitingForNavigation;
@@ -348,13 +354,33 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
                 }
             }
             break;
+        }
+    }
+    break;
 
-            case ES_NEW_SPI_CMD_RECEIVED:
-              if (ThisEvent.EventParam == CMD_SPI_RELEASE_DROPOFF)
-              {
-                  // Leader requested dropoff to be raised
-                  CurrentState = RaisingDropoff;
-              }
+    /********************* DROPPING OFF *********************/
+    case DroppingOff:
+    {
+        switch (ThisEvent.EventType)
+        {
+            case ES_CARGO_OUT:
+            {
+                if (carrying > 0)
+                {
+                    carrying--;
+
+                    if (carrying == 0)
+                    {
+                        // Notify SPI that all cargo has been unloaded
+                        ES_Event_t unloadEvent;
+                        unloadEvent.EventType  = ES_NEW_SPI_CMD_SEND;
+                        unloadEvent.EventParam = CMD_SPI_UNLOADED;
+                        PostSPIFollowService(unloadEvent);
+
+                        CurrentState = WaitingForNavigation;
+                    }
+                }
+            }
             break;
         }
     }
