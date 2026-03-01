@@ -38,7 +38,7 @@
 /*----------------------------- Module Defines ----------------------------*/
 // use prescaler of 256 to have bigger pulse width range before overflow
 
-#define HIGH_PULSE_WIDTH_US 5000.0 // in us
+#define HIGH_PULSE_WIDTH_US 2500.0 // in us (updated from 5000.0 to get from 100Hz to 200Hz)
 #define PWM_FREQ_HZ (1.0/((2.0*HIGH_PULSE_WIDTH_US) * 1e-6)) // in Hz
 #define PWM_PERIOD_TICKS (20000000.0/(256.0*PWM_FREQ_HZ)) // in ticks, with PBCLK = 20 MHz and prescaler of 256
 
