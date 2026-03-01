@@ -169,7 +169,10 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
           spiEvent.EventParam = CMD_SPI_END;
           PostSPIFollowService(spiEvent);
 
-          // todo: event to stop feeder
+          // create an event ES_FEEDER_STOP and post it to StepperService
+          ES_Event_t feederStopEvent;
+          feederStopEvent.EventType = ES_FEEDER_STOP;
+          PostStepperService(feederStopEvent);
 
           // todo: event to reset field side indicator (ES_RESET)
 
