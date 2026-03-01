@@ -269,7 +269,7 @@ typedef enum
   ES_CARGO_IN,
   ES_CARGO_OUT,
 
-  ES_SPI_INTAKE_ON,
+  ES_DROPOFF_LOWERED,
 
   ES_START_DOWN
 }ES_EventType_t;

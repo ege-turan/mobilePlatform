@@ -16,7 +16,7 @@
 // State definitions for use with the query function
 typedef enum
 {
-  OperatorInitPState, Standby, WaitingForNavigation, Intaking, LoweringDropoff, DroppingOff
+  OperatorInitPState, Standby, WaitingForNavigation, Intaking, LoweringDropoff, DroppingOff, RaisingDropoff
 }OperatorState_t;
 
 // Public Function Prototypes

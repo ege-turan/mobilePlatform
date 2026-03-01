@@ -25,6 +25,7 @@
 #define CMD_SPI_DROPOFF_REACHED   0xA2
 #define CMD_SPI_BLUE_TEAM         0xA3
 #define CMD_SPI_GREEN_TEAM        0xA4
+#define CMD_SPI_RELEASE_DROPOFF   0xA5
 /* FOLLOW2LEAD SPI CMDS*/
 #define CMD_SPI_FOLLOW_INITIAL    0xFF
 #define CMD_SPI_START             0xB1

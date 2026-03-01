@@ -294,7 +294,7 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
 
             // Notify SPI and IntakeService
             ES_Event_t loadedEvent;
-            loadedEvent.EventType  = ES_SPI_LOADED;
+            loadedEvent.EventType  = CMD_SPI_LOADED;
             loadedEvent.EventParam = 0;  // or payload if needed
 
             PostSPIFollowService(loadedEvent);  // send to leader
@@ -309,11 +309,54 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
         {
           if (ThisEvent.EventParam == INTAKE_PACE_TIMER)
           {
+            ES_Event_t incompleteEvent;
+            incompleteEvent.EventType = ES_NEW_SPI_CMD_SEND;
+            incompleteEvent.EventParam = CMD_SPI_INTAKE_INCOMPLETE;
+            PostSPIFollowService(incompleteEvent);
+            CurrentState = WaitingForNavigation;
+
             CurrentState = WaitingForNavigation;
           }
         }
         break;
       }
+    }
+    break;
+
+    /********************* LOWERING DROPOFF *********************/
+    case LoweringDropoff:
+    {
+        switch (ThisEvent.EventType)
+        {
+            case ES_DROPOFF_LOWERED:
+            {
+                if (carrying == 0)
+                {
+                    // Notify SPI that dropoff is unloaded
+                    ES_Event_t unloadEvent;
+                    unloadEvent.EventType  = CMD_SPI_UNLOADED;
+                    unloadEvent.EventParam = 0;
+                    PostSPIFollowService(unloadEvent);
+
+                    CurrentState = WaitingForNavigation;
+                }
+                else  // carrying > 0
+                {
+                    // Stop pacing timer and move to DroppingOff state
+                    ES_Timer_StopTimer(DROPOFF_PACE_TIMER);
+                    CurrentState = DroppingOff;
+                }
+            }
+            break;
+
+            case ES_NEW_SPI_CMD_RECEIVED:
+              if (ThisEvent.EventParam == CMD_SPI_RELEASE_DROPOFF)
+              {
+                  // Leader requested dropoff to be raised
+                  CurrentState = RaisingDropoff;
+              }
+            break;
+        }
     }
     break;
 
