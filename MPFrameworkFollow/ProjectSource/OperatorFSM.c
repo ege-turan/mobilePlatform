@@ -27,8 +27,20 @@
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 #include "OperatorFSM.h"
+#include "SPIFollowService.h"
 
 /*----------------------------- Module Defines ----------------------------*/
+
+// Pins
+#define DIN_GAMEMODE LATBbits.LATB4
+#define DIN_GAMEMODE_TRIS TRISBbits.TRISB4
+#define DIN_GAMEMODE_ANSEL ANSELBbits.ANSB4
+
+// Timers
+#define INTAKE_PACE_MS  5000
+#define DROPOFF_PACE_MS 7000
+
+
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this machine.They should be functions
@@ -39,6 +51,10 @@
 // everybody needs a state variable, you may need others as well.
 // type of state variable should match htat of enum in header file
 static OperatorState_t CurrentState;
+
+static uint8_t carrying;
+static uint8_t GameMode;
+static uint8_t Strategy;
 
 // with the introduction of Gen2, we need a module level Priority var as well
 static uint8_t MyPriority;
@@ -123,45 +139,143 @@ bool PostOperatorFSM(ES_Event_t ThisEvent)
 ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
 {
   ES_Event_t ReturnEvent;
-  ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
+  ReturnEvent.EventType = ES_NO_EVENT;
 
   switch (CurrentState)
   {
-    case OperatorInitPState:        // If current state is initial Psedudo State
-    {
-      if (ThisEvent.EventType == ES_INIT)    // only respond to ES_Init
-      {
-        // this is where you would put any actions associated with the
-        // transition from the initial pseudo-state into the actual
-        // initial state
 
-        // now put the machine into the actual initial state
-        // CurrentState = UnlockWaiting;
+    /********************* INIT PSEUDOSTATE *********************/
+    case OperatorInitPState:
+    {
+      if (ThisEvent.EventType == ES_INIT)
+      {
+        // Initialize variables
+        carrying = 0;
+        GameMode = 0;
+        Strategy = 0;
+
+        // Set RB4 as digital input for GAMEMODE
+        DIN_GAMEMODE_ANSEL = 0;
+        DIN_GAMEMODE_TRIS = 1;
+
+        // (Add outputs)
+
+        CurrentState = Standby;
       }
     }
     break;
 
-    // case UnlockWaiting:        // If current state is state one
+
+    /********************* STANDBY *********************/
+    case Standby:
     {
       switch (ThisEvent.EventType)
       {
-        //case ES_LOCK:  //If event is event one
+        case ES_START_DOWN:
+        {
+          carrying = 0;
 
-        {   // Execute action function for state one : event one
-          // CurrentState = Locked;  //Decide what the next state will be
+          // Read Game Mode from RB4
+          GameMode = DIN_GAMEMODE;
+
+          // Save Strategy if needed (placeholder)
+          Strategy = 0;
+
+          // Start Game Timer
+          ES_Timer_InitTimer(GAME_TIMER, GAME_TIME_MS);
+
+          // Send SPI Start Command
+          ES_Event_t spiEvent;
+          spiEvent.EventType = ES_NEW_SPI_CMD_SEND;
+
+          if (GameMode == 0)
+            spiEvent.EventParam = CMD_SPI_START;
+          else
+            spiEvent.EventParam = CMD_SPI_START_DEATHMATCH;
+
+          PostSPIFollowService(spiEvent);
+
+          CurrentState = WaitingForNavigation;
+        }
+        break;
+      }
+    }
+    break;
+
+
+    /********************* WAITING FOR NAVIGATION *********************/
+    case WaitingForNavigation:
+    {
+      switch (ThisEvent.EventType)
+      {
+        case ES_NEW_SPI_CMD_RECEIVED:
+        {
+          if (ThisEvent.EventParam == ES_SPI_INTAKE_ON)
+          {
+            ES_Event_t intakeEvent;
+            intakeEvent.EventType = ES_SPI_INTAKE_ON;
+            PostIntakeService(intakeEvent);
+
+            ES_Timer_InitTimer(INTAKE_PACE_TIMER, INTAKE_PACE_MS);
+
+            CurrentState = Intaking;
+          }
+          else if (ThisEvent.EventParam == ES_SPI_DROPOFF_REACHED)
+          {
+            ES_Event_t dropEvent;
+            dropEvent.EventType = ES_SPI_DROPOFF_REACHED;
+            PostDropoffLoweringArmFSM(dropEvent);
+
+            ES_Timer_InitTimer(DROPOFF_PACE_TIMER, DROPOFF_PACE_MS);
+
+            CurrentState = LoweringDropoff;
+          }
+        }
+        break;
+      }
+    }
+    break;
+
+
+    /********************* INTAKING *********************/
+    case Intaking:
+    {
+      switch (ThisEvent.EventType)
+      {
+        case ES_CARGO_IN:
+        {
+          carrying++;
+
+          if (carrying < CAPACITY)
+          {
+            ES_Timer_InitTimer(INTAKE_PACE_TIMER, INTAKE_PACE_MS);
+          }
+          else
+          {
+            ES_Timer_StopTimer(INTAKE_PACE_TIMER);
+            CurrentState = WaitingForNavigation;
+          }
         }
         break;
 
-        // repeat cases as required for relevant events
-        default:
-          ;
-      }  // end switch on CurrentEvent
+        case ES_TIMEOUT:
+        {
+          if (ThisEvent.EventParam == INTAKE_PACE_TIMER)
+          {
+            CurrentState = WaitingForNavigation;
+          }
+        }
+        break;
+      }
     }
     break;
-    // repeat state pattern as required for other states
+
+
+    /********************* DEFAULT *********************/
     default:
-      ;
-  }                                   // end switch on Current State
+      break;
+  }
+
   return ReturnEvent;
 }
 

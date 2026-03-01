@@ -264,12 +264,13 @@ typedef enum
   // ES_UNLOCK,
   ES_NEW_KEY,                /* signals a new key received from terminal */
   ES_SPI_COMPLETE,           /* signals that SPI has risen so message received*/
-  ES_NEW_SPI_CMD_SEND,       /* signals what the next sent command should be */
-  ES_NEW_SPI_CMD_RECEIVED,   /* signals that a new command was received*/  
-  ES_CARGO_IN_RISE,
-  ES_CARGO_IN_FALL,
-  ES_CARGO_OUT_RISE,
-  ES_CARGO_OUT_FALL,
+  ES_NEW_SPI_CMD_SEND,       /* signals what the next sent command should be. Parameter is the command in SPIFollowService */
+  ES_NEW_SPI_CMD_RECEIVED,   /* signals that a new command was received. Parameter is the command in SPIFollowService*/  
+  ES_CARGO_IN,
+  ES_CARGO_OUT,
+
+  ES_SPI_INTAKE_ON,
+
   ES_START_DOWN
 }ES_EventType_t;
 
@@ -326,8 +327,8 @@ typedef enum
 #define TIMER9_RESP_FUNC TIMER_UNUSED
 #define TIMER10_RESP_FUNC TIMER_UNUSED
 #define TIMER11_RESP_FUNC TIMER_UNUSED
-#define TIMER12_RESP_FUNC TIMER_UNUSED
-#define TIMER13_RESP_FUNC TIMER_UNUSED
+#define TIMER12_RESP_FUNC ES_PostAll // PostOperatorFSM
+#define TIMER13_RESP_FUNC ES_PostAll // PostOperatorFSM
 #define TIMER14_RESP_FUNC PostStepperService
 #define TIMER15_RESP_FUNC PostSPIFollowService
 
@@ -340,6 +341,8 @@ typedef enum
 
 #define SPI_TIMER 15
 #define STEPPER_TEST_TIMER 14
+#define INTAKE_PACE_TIMER 13
+#define DROPOFF_PACE_TIMER 12
 
 
 #endif /* ES_CONFIGURE_H */
