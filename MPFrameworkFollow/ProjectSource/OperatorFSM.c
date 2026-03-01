@@ -403,7 +403,7 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
     {
         switch (ThisEvent.EventType)
         {
-            case ES_DROPOFF_RAISED:
+            case ES_DROPOFF_RELEASED:
             {
                 // Notify SPI that dropoff is released
                 ES_Event_t releaseEvent;

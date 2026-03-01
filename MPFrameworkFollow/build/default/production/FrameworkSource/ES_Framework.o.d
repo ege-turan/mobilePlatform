@@ -21,7 +21,7 @@ build/default/production/FrameworkSource/ES_Framework.o: \
  ProjectHeaders/SPIFollowService.h FrameworkHeaders/ES_Types.h \
  ProjectHeaders/StepperService.h ProjectHeaders/OperatorFSM.h \
  FrameworkHeaders/ES_Configure.h ProjectHeaders/DropoffLoweringArmFSM.h \
- ProjectHeaders/IntakeService.h ProjectHeaders/FieldSideServoService.h \
+ ProjectHeaders/FieldSideServoService.h ProjectHeaders/IntakeService.h \
  ProjectHeaders/EventCheckWrapper.h ProjectHeaders/EventCheckers.h \
  FrameworkHeaders/ES_Port.h
 
@@ -75,9 +75,9 @@ FrameworkHeaders/ES_Configure.h:
 
 ProjectHeaders/DropoffLoweringArmFSM.h:
 
-ProjectHeaders/IntakeService.h:
-
 ProjectHeaders/FieldSideServoService.h:
+
+ProjectHeaders/IntakeService.h:
 
 ProjectHeaders/EventCheckWrapper.h:
 

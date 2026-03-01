@@ -97,11 +97,11 @@
 // These are the definitions for Service 4
 #if NUM_SERVICES > 4
 // the header file with the public function prototypes
-#define SERV_4_HEADER "IntakeService.h"
+#define SERV_4_HEADER "FieldSideServoService.h"
 // the name of the Init function
-#define SERV_4_INIT InitIntakeService
+#define SERV_4_INIT InitFieldSideServoService
 // the name of the run function
-#define SERV_4_RUN RunIntakeService
+#define SERV_4_RUN RunFieldSideServoService
 // How big should this services Queue be?
 #define SERV_4_QUEUE_SIZE 10
 #endif
@@ -110,11 +110,11 @@
 // These are the definitions for Service 5
 #if NUM_SERVICES > 5
 // the header file with the public function prototypes
-#define SERV_5_HEADER "FieldSideServoService.h"
+#define SERV_5_HEADER "IntakeService.h"
 // the name of the Init function
-#define SERV_5_INIT InitFieldSideServoService
+#define SERV_5_INIT InitIntakeService
 // the name of the run function
-#define SERV_5_RUN RunFieldSideServoService
+#define SERV_5_RUN RunIntakeService
 // How big should this services Queue be?
 #define SERV_5_QUEUE_SIZE 10
 #endif
@@ -270,6 +270,7 @@ typedef enum
   ES_CARGO_OUT,
 
   ES_DROPOFF_LOWERED,
+  ES_DROPOFF_RELEASED,
 
   ES_START_DOWN
 }ES_EventType_t;

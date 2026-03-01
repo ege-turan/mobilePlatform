@@ -9,10 +9,10 @@ build/default/production/ProjectSource/EventCheckers.o: \
  FrameworkHeaders/ES_PostList.h FrameworkHeaders/ES_ServiceHeaders.h \
  ProjectHeaders/SPIFollowService.h FrameworkHeaders/ES_Types.h \
  ProjectHeaders/StepperService.h ProjectHeaders/OperatorFSM.h \
- ProjectHeaders/DropoffLoweringArmFSM.h ProjectHeaders/IntakeService.h \
- ProjectHeaders/FieldSideServoService.h FrameworkHeaders/ES_Port.h \
- ProjectHeaders/EventCheckers.h ProjectHeaders/PIC32_SPI_HAL.h \
- FrameworkHeaders/dbprintf.h
+ ProjectHeaders/DropoffLoweringArmFSM.h \
+ ProjectHeaders/FieldSideServoService.h ProjectHeaders/IntakeService.h \
+ FrameworkHeaders/ES_Port.h ProjectHeaders/EventCheckers.h \
+ ProjectHeaders/PIC32_SPI_HAL.h FrameworkHeaders/dbprintf.h
 
 FrameworkHeaders/ES_Configure.h:
 
@@ -54,9 +54,9 @@ ProjectHeaders/OperatorFSM.h:
 
 ProjectHeaders/DropoffLoweringArmFSM.h:
 
-ProjectHeaders/IntakeService.h:
-
 ProjectHeaders/FieldSideServoService.h:
+
+ProjectHeaders/IntakeService.h:
 
 FrameworkHeaders/ES_Port.h:
 

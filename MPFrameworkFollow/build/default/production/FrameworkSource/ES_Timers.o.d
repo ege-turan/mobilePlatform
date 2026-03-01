@@ -16,7 +16,7 @@ build/default/production/FrameworkSource/ES_Timers.o: \
  ProjectHeaders/SPIFollowService.h FrameworkHeaders/ES_Types.h \
  ProjectHeaders/StepperService.h ProjectHeaders/OperatorFSM.h \
  FrameworkHeaders/ES_Configure.h ProjectHeaders/DropoffLoweringArmFSM.h \
- ProjectHeaders/IntakeService.h ProjectHeaders/FieldSideServoService.h \
+ ProjectHeaders/FieldSideServoService.h ProjectHeaders/IntakeService.h \
  FrameworkSource/../FrameworkHeaders/ES_General.h \
  FrameworkSource/../FrameworkHeaders/ES_Events.h \
  FrameworkSource/../FrameworkHeaders/ES_PostList.h \
@@ -62,9 +62,9 @@ FrameworkHeaders/ES_Configure.h:
 
 ProjectHeaders/DropoffLoweringArmFSM.h:
 
-ProjectHeaders/IntakeService.h:
-
 ProjectHeaders/FieldSideServoService.h:
+
+ProjectHeaders/IntakeService.h:
 
 FrameworkSource/../FrameworkHeaders/ES_General.h:
 
