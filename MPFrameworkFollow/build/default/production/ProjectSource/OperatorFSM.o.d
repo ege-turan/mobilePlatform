@@ -6,7 +6,8 @@ build/default/production/ProjectSource/OperatorFSM.o: \
  FrameworkHeaders/ES_Events.h FrameworkHeaders/ES_Configure.h \
  FrameworkHeaders/ES_PostList.h FrameworkHeaders/ES_General.h \
  FrameworkHeaders/ES_Timers.h ProjectHeaders/OperatorFSM.h \
- FrameworkHeaders/ES_Types.h
+ FrameworkHeaders/ES_Types.h ProjectHeaders/SPIFollowService.h \
+ ProjectHeaders/IntakeService.h ProjectHeaders/DropoffLoweringArmFSM.h
 
 FrameworkHeaders/ES_Configure.h:
 
@@ -35,3 +36,9 @@ FrameworkHeaders/ES_Timers.h:
 ProjectHeaders/OperatorFSM.h:
 
 FrameworkHeaders/ES_Types.h:
+
+ProjectHeaders/SPIFollowService.h:
+
+ProjectHeaders/IntakeService.h:
+
+ProjectHeaders/DropoffLoweringArmFSM.h:

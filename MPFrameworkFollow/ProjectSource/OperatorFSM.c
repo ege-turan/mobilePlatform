@@ -26,33 +26,42 @@
 */
 #include "ES_Configure.h"
 #include "ES_Framework.h"
+
+#include <sys/attribs.h>
+
 #include "OperatorFSM.h"
 #include "SPIFollowService.h"
+#include "IntakeService.h"
+#include "DropoffLoweringArmFSM.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
 // Pins
-#define DIN_GAMEMODE LATBbits.LATB4
+#define DIN_GAMEMODE PORTBbits.RB4
 #define DIN_GAMEMODE_TRIS TRISBbits.TRISB4
-#define DIN_GAMEMODE_ANSEL ANSELBbits.ANSB4
 
 // Timers
+#define GAME_TIME_MS    21800
 #define INTAKE_PACE_MS  5000
 #define DROPOFF_PACE_MS 7000
 
-
+// Measured
+#define CAPACITY 30
+#define GAME_COUNT 10
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this machine.They should be functions
    relevant to the behavior of this state machine
 */
+static void InitOperatorInterrupts(void);
 
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
-// type of state variable should match htat of enum in header file
+// type of state variable should match that of enum in header file
 static OperatorState_t CurrentState;
 
 static uint8_t carrying;
+static uint8_t gameCounter;
 static uint8_t GameMode;
 static uint8_t Strategy;
 
@@ -141,6 +150,38 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
   ES_Event_t ReturnEvent;
   ReturnEvent.EventType = ES_NO_EVENT;
 
+  /********************* GLOBAL GAME TIMER *********************/
+  if (ThisEvent.EventType == ES_TIMEOUT &&
+      ThisEvent.EventParam == GAME_TIMER)
+  {
+      gameCounter++;
+
+      if (gameCounter >= GAME_COUNT)
+      {
+          // Stop all pacing timers
+          ES_Timer_StopTimer(INTAKE_PACE_TIMER);
+          ES_Timer_StopTimer(DROPOFF_PACE_TIMER);
+          ES_Timer_StopTimer(GAME_TIMER);
+
+          // Send SPI END command
+          ES_Event_t spiEvent;
+          spiEvent.EventType = ES_NEW_SPI_CMD_SEND;
+          spiEvent.EventParam = CMD_SPI_END;
+          PostSPIFollowService(spiEvent);
+
+          // Reset system state
+          carrying = 0;
+
+          CurrentState = Standby;
+          return ReturnEvent;
+      }
+      else
+      {
+          // Restart game timer for next interval
+          ES_Timer_InitTimer(GAME_TIMER, GAME_TIME_MS);
+      }
+  }
+
   switch (CurrentState)
   {
 
@@ -153,12 +194,15 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
         carrying = 0;
         GameMode = 0;
         Strategy = 0;
+        gameCounter = 0;
 
         // Set RB4 as digital input for GAMEMODE
-        DIN_GAMEMODE_ANSEL = 0;
         DIN_GAMEMODE_TRIS = 1;
 
         // (Add outputs)
+
+        // Initialize cargo interrupts
+        InitOperatorInterrupts();
 
         CurrentState = Standby;
       }
@@ -182,6 +226,7 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
           Strategy = 0;
 
           // Start Game Timer
+          gameCounter = 0;
           ES_Timer_InitTimer(GAME_TIMER, GAME_TIME_MS);
 
           // Send SPI Start Command
@@ -210,25 +255,17 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
       {
         case ES_NEW_SPI_CMD_RECEIVED:
         {
-          if (ThisEvent.EventParam == ES_SPI_INTAKE_ON)
+          if (ThisEvent.EventParam == CMD_SPI_INTAKE_ON)
           {
-            ES_Event_t intakeEvent;
-            intakeEvent.EventType = ES_SPI_INTAKE_ON;
-            PostIntakeService(intakeEvent);
+              ES_Timer_InitTimer(INTAKE_PACE_TIMER, INTAKE_PACE_MS);
 
-            ES_Timer_InitTimer(INTAKE_PACE_TIMER, INTAKE_PACE_MS);
-
-            CurrentState = Intaking;
+              CurrentState = Intaking;
           }
-          else if (ThisEvent.EventParam == ES_SPI_DROPOFF_REACHED)
+          else if (ThisEvent.EventParam == CMD_SPI_DROPOFF_REACHED)
           {
-            ES_Event_t dropEvent;
-            dropEvent.EventType = ES_SPI_DROPOFF_REACHED;
-            PostDropoffLoweringArmFSM(dropEvent);
+              ES_Timer_InitTimer(DROPOFF_PACE_TIMER, DROPOFF_PACE_MS);
 
-            ES_Timer_InitTimer(DROPOFF_PACE_TIMER, DROPOFF_PACE_MS);
-
-            CurrentState = LoweringDropoff;
+              CurrentState = LoweringDropoff;
           }
         }
         break;
@@ -248,11 +285,21 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
 
           if (carrying < CAPACITY)
           {
-            ES_Timer_InitTimer(INTAKE_PACE_TIMER, INTAKE_PACE_MS);
+            ES_Timer_InitTimer(INTAKE_PACE_TIMER, INTAKE_PACE_MS);  // sets & starts
           }
           else
           {
-            ES_Timer_StopTimer(INTAKE_PACE_TIMER);
+            // Stop intake pacing timer
+            ES_Timer_StopTimer(INTAKE_PACE_TIMER);                  // stop completely
+
+            // Notify SPI and IntakeService
+            ES_Event_t loadedEvent;
+            loadedEvent.EventType  = ES_SPI_LOADED;
+            loadedEvent.EventParam = 0;  // or payload if needed
+
+            PostSPIFollowService(loadedEvent);  // send to leader
+            PostIntakeService(loadedEvent);     // stop intake locally
+
             CurrentState = WaitingForNavigation;
           }
         }
@@ -309,8 +356,9 @@ static void InitOperatorInterrupts(void)
     __builtin_disable_interrupts();
 
     // ---- Disable analog on cargo input pins ----
-    ANSELBbits.ANSB8 = 0;   // DIN_CARGO_IN
-    ANSELBbits.ANSB9 = 0;   // DIN_CARGO_OUT
+    // No analog selection for these pins
+//    ANSELBbits.ANSB8 = 0;   // DIN_CARGO_IN
+//    ANSELBbits.ANSB9 = 0;   // DIN_CARGO_OUT
 
     // ---- Set inputs ----
     TRISBbits.TRISB8 = 1;   // DIN_CARGO_IN
@@ -318,9 +366,9 @@ static void InitOperatorInterrupts(void)
 
     // ---- Map pins to external interrupts ----
     // PRB8 -> INT3
-    INT3Rbits.INT3R = 0b0010;   // check your datasheet: RB8 -> INT3
+    INT3Rbits.INT3R = 0b0100;   // check datasheet: RB8 -> INT3
     // PRB9 -> INT1
-    INT1Rbits.INT1R = 0b0011;   // check your datasheet: RB9 -> INT1
+    INT1Rbits.INT1R = 0b0100;   // check datasheet: RB9 -> INT1
 
     // ---- Configure interrupts ----
     // INT1 -> Cargo OUT (falling edge)

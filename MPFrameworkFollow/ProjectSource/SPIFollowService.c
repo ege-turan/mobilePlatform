@@ -242,7 +242,7 @@ ES_Event_t RunSPIFollowService(ES_Event_t ThisEvent)
         case 'b':
         {
           DB_printf("Received key: b\r\n");
-          message2send = LAB8_CCW_BEACON;
+          message2send = LAB8_CW_BEACON;
           DB_printf("\r0x%x: Align with Beacon\r\n", message2send);
         }
           break;

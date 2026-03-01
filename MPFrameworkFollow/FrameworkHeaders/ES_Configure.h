@@ -306,7 +306,7 @@ typedef enum
 
 /****************************************************************************/
 // This is the list of event checking functions
-#define EVENT_CHECK_LIST Check4Keystroke, Check4SPI, Check4StartButton, Check4CargoIn, Check4CargoOut
+#define EVENT_CHECK_LIST Check4Keystroke, Check4SPI, Check4StartButton
 
 /****************************************************************************/
 // These are the definitions for the post functions to be executed when the
@@ -326,9 +326,9 @@ typedef enum
 #define TIMER8_RESP_FUNC TIMER_UNUSED
 #define TIMER9_RESP_FUNC TIMER_UNUSED
 #define TIMER10_RESP_FUNC TIMER_UNUSED
-#define TIMER11_RESP_FUNC TIMER_UNUSED
+#define TIMER11_RESP_FUNC ES_PostAll // PostOperatorFSM
 #define TIMER12_RESP_FUNC ES_PostAll // PostOperatorFSM
-#define TIMER13_RESP_FUNC ES_PostAll // PostOperatorFSM
+#define TIMER13_RESP_FUNC PostOperatorFSM
 #define TIMER14_RESP_FUNC PostStepperService
 #define TIMER15_RESP_FUNC PostSPIFollowService
 
@@ -341,8 +341,9 @@ typedef enum
 
 #define SPI_TIMER 15
 #define STEPPER_TEST_TIMER 14
-#define INTAKE_PACE_TIMER 13
-#define DROPOFF_PACE_TIMER 12
+#define GAME_TIMER 13
+#define INTAKE_PACE_TIMER 12
+#define DROPOFF_PACE_TIMER 11
 
 
 #endif /* ES_CONFIGURE_H */
