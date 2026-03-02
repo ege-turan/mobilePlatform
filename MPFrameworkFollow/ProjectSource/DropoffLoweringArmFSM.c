@@ -159,7 +159,7 @@ ES_Event_t RunDropoffLoweringArmFSM(ES_Event_t ThisEvent)
     {
       if (ThisEvent.EventType == ES_INIT)
       {
-        // ----- Configure Timer2 for PWM at 50 Hz (20 ms period) -----
+        // ----- Configure Timer3 for PWM at 50 Hz (20 ms period) -----
         // PBCLK = 20 MHz
         // Prescaler options: 1,8,64,256
         // PWM period ticks = PBCLK / (Prescaler * PWM_FREQ)

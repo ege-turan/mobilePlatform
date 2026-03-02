@@ -95,11 +95,11 @@ bool InitStepperService(uint8_t Priority)
   M_FEEDER_EN_TRIS = 0;   // output
   M_FEEDER_EN_LAT  = 1;   // DISABLED (A4988 EN is active LOW)
 
-  // Initialize test timer
-  ES_Timer_InitTimer(STEPPER_TEST_TIMER, TEST_TIMER_MS);
+  // Initialize test timer (decomissioned)
+  // ES_Timer_InitTimer(STEPPER_TEST_TIMER, TEST_TIMER_MS);
   
-  // Initialize step timer
-//  ES_Timer_InitTimer(STEPPER_STEP_TIMER, STEP_INTERVAL_MS);
+  // Initialize step timer (done in states)
+  // ES_Timer_InitTimer(STEPPER_STEP_TIMER, STEP_INTERVAL_MS);
   
   // Initialize variables
 

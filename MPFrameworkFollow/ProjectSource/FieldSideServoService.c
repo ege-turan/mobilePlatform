@@ -24,8 +24,17 @@
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 #include "FieldSideServoService.h"
+#include "PIC32_PWM_Lib.h"
+#include "SPIFollowService.h"
 
 /*----------------------------- Module Defines ----------------------------*/
+#define M_BG_PWM_CH      3
+#define M_BG_PWM_PIN     PWM_RPB10
+#define M_BG_PWM_TIMER   _Timer3_
+
+#define PWM_SERVO_CENTER 3750  // 1.5 ms pulse width at 20 ms period
+#define PWM_SERVO_SIDE   2500  // 1 ms
+#define PWM_SERVO_OTHER  5000  // 2 ms
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
@@ -60,10 +69,20 @@ bool InitFieldSideServoService(uint8_t Priority)
   ES_Event_t ThisEvent;
 
   MyPriority = Priority;
-  /********************************************
-   in here you write your initialization code
-   *******************************************/
-  // post the initial transition event
+
+  // ----- Configure Timer3 for PWM at 50 Hz (20 ms period) -----
+  // PBCLK = 20 MHz, Prescaler = 64 -> Period ticks = 20e6 / (64 * 50) = 6250
+  PWM_Setup_ConfigureTimer(M_BG_PWM_TIMER, 6250, PWM_PS_64);
+
+  // Map PWM channel for servo
+  PWM_Setup_SetChannel(M_BG_PWM_CH);
+  PWM_Setup_AssignChannelToTimer(M_BG_PWM_CH, M_BG_PWM_TIMER);
+  PWM_Setup_MapChannelToOutputPin(M_BG_PWM_CH, M_BG_PWM_PIN);
+
+  // Initialize servo to center
+  PWM_Operate_SetPulseWidthOnChannel(PWM_SERVO_CENTER, M_BG_PWM_CH);
+
+  // Post initial transition event
   ThisEvent.EventType = ES_INIT;
   if (ES_PostToService(MyPriority, ThisEvent) == true)
   {
@@ -118,9 +137,32 @@ ES_Event_t RunFieldSideServoService(ES_Event_t ThisEvent)
 {
   ES_Event_t ReturnEvent;
   ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
-  /********************************************
-   in here you write your service code
-   *******************************************/
+
+  switch (ThisEvent.EventType)
+  {
+      case ES_NEW_SPI_CMD_RECEIVED:
+      {
+          switch (ThisEvent.EventParam)
+          {
+              case CMD_SPI_BLUE_TEAM:
+                  PWM_Operate_SetPulseWidthOnChannel(PWM_SERVO_SIDE, M_BG_PWM_CH);
+                  break;
+
+              case CMD_SPI_GREEN_TEAM:
+                  PWM_Operate_SetPulseWidthOnChannel(PWM_SERVO_OTHER, M_BG_PWM_CH);
+                  break;
+          }
+      }
+      break;
+
+      case ES_RESET:
+          PWM_Operate_SetPulseWidthOnChannel(PWM_SERVO_CENTER, M_BG_PWM_CH);
+          break;
+
+        default:
+            break;
+    }
+
   return ReturnEvent;
 }
 
