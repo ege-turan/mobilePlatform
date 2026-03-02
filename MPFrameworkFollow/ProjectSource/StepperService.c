@@ -24,7 +24,6 @@
 */
 #include "ES_Configure.h"
 #include "ES_Framework.h"
-#include "PIC32_PWM_Lib.h"
 #include "dbprintf.h"
 #include <sys/attribs.h>
 #include "StepperService.h"
@@ -53,7 +52,7 @@
 /* prototypes for private functions for this service.They should be functions
    relevant to the behavior of this service
 */
-void _InitMotorPWM(WhichTimer_t thisTimer, PWM_Prescaler_t thisPrescaler, uint8_t thisChannel, PWM_PinMap_t thisPin);
+
 /*---------------------------- Module Variables ---------------------------*/
 // with the introduction of Gen2, we need a module level Priority variable
 static uint8_t MyPriority;
@@ -89,9 +88,6 @@ bool InitStepperService(uint8_t Priority)
   DB_printf("compiled at %s on %s", __TIME__, __DATE__);
   DB_printf("\n\r");
 
-  // Initialize PWM system
-  _InitMotorPWM(STEPPER_TIMER, STEPPER_PRESCALER, STEPPER_CHANNEL, STEPPER_PIN);
-
   // Initialize pins as digital outputs
   MOTOR_OUTPUT_TRIS = 0;
   MOTOR_OUTPUT_LAT = 0; // start with low output
@@ -99,10 +95,12 @@ bool InitStepperService(uint8_t Priority)
   M_FEEDER_EN_TRIS = 0;   // output
   M_FEEDER_EN_LAT  = 1;   // DISABLED (A4988 EN is active LOW)
 
-  // Initialize PWM at 0% duty cycle (0%)
-  PWM_Operate_SetPulseWidthOnChannel(0, STEPPER_CHANNEL);
   // Initialize test timer
   ES_Timer_InitTimer(STEPPER_TEST_TIMER, TEST_TIMER_MS);
+  
+  // Initialize step timer
+//  ES_Timer_InitTimer(STEPPER_STEP_TIMER, STEP_INTERVAL_MS);
+  
   // Initialize variables
 
   // post the initial transition event
@@ -212,18 +210,7 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
 /***************************************************************************
  private functions
  ***************************************************************************/
-void _InitMotorPWM(WhichTimer_t thisTimer, PWM_Prescaler_t thisPrescaler, uint8_t thisChannel, PWM_PinMap_t thisPin)
-{
-    // Initialize Timer 2 for PWM
-    PWM_Setup_ConfigureTimer(thisTimer, PWM_PERIOD_TICKS, thisPrescaler);
 
-    // Initialize OC1 for PWM1 output
-    PWM_Setup_SetChannel(thisChannel);
-    PWM_Setup_AssignChannelToTimer(thisChannel, thisTimer);
-
-    // Assign output compares for both pwm channels to respective pins
-    PWM_Setup_MapChannelToOutputPin(thisChannel, thisPin);
-}
 /*------------------------------- Footnotes -------------------------------*/
 /*------------------------------ End of file ------------------------------*/
 
