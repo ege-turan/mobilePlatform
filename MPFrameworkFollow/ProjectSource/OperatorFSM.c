@@ -33,6 +33,7 @@
 #include "SPIFollowService.h"
 #include "IntakeService.h"
 #include "DropoffLoweringArmFSM.h"
+#include "StepperService.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
@@ -272,11 +273,19 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
           {
               ES_Timer_InitTimer(DROPOFF_PACE_TIMER, DROPOFF_PACE_MS);
 
+              ES_Event_t armEvent;
+              armEvent.EventType = ES_START_LOWERING_ARM;
+              PostDropoffLoweringArmFSM(armEvent);
+
               CurrentState = LoweringDropoff;
           }
           else if (ThisEvent.EventParam == CMD_SPI_RELEASE_DROPOFF)
           {
               // Leader requested dropoff to be raised
+              ES_Event_t armEvent;
+              armEvent.EventType = ES_START_RAISING_ARM;
+              PostDropoffLoweringArmFSM(armEvent);
+
               CurrentState = RaisingDropoff;
           }
           break;
@@ -339,7 +348,7 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
     {
         switch (ThisEvent.EventType)
         {
-            case ES_DROPOFF_LOWERED:
+            case ES_ARM_LOWERED:
             {
                 if (carrying == 0)
                 {
@@ -372,6 +381,10 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
                 if (ThisEvent.EventParam == CMD_SPI_RELEASE_DROPOFF)
                 {
                     // Stop pacing timer and move to RaisingDropoff state
+                    ES_Event_t armEvent;
+                    armEvent.EventType = ES_START_RAISING_ARM;
+                    PostDropoffLoweringArmFSM(armEvent);
+
                     ES_Timer_StopTimer(DROPOFF_PACE_TIMER);
                     CurrentState = RaisingDropoff;
                 }
@@ -422,7 +435,7 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
     {
         switch (ThisEvent.EventType)
         {
-            case ES_DROPOFF_RELEASED:
+            case ES_ARM_RELEASED:
             {
                 // Notify SPI that dropoff is released
                 ES_Event_t releaseEvent;

@@ -27,8 +27,27 @@
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 #include "DropoffLoweringArmFSM.h"
+#include "OperatorFSM.h"
+#include "PIC32_PWM_Lib.h"
 
 /*----------------------------- Module Defines ----------------------------*/
+// PWM Channels
+#define ARM_ELBOW_CH   1
+#define ARM_HAND_CH    2
+
+// PWM Pins
+#define M_ARM_ELBOW_PWM PWM_RPA0
+#define M_ARM_HAND_PWM  PWM_RPA1
+#define M_ARM_PWM_TIMER _Timer2_
+
+// Timer already configured globally (Timer2 @ 20ms)
+
+// Motion timer
+#define ARM_MOVE_TIMER  9
+#define ARM_STEP_TIME   40   // ms between trajectory points
+
+// TRAJECTORIES
+#define ARM_SEQ_LEN 5
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this machine.They should be functions
@@ -42,6 +61,15 @@ static DropoffLoweringArmState_t CurrentState;
 
 // with the introduction of Gen2, we need a module level Priority var as well
 static uint8_t MyPriority;
+
+// TRAJECTORIES
+static uint8_t seqIndex;
+
+static const uint16_t Lower_Elbow[ARM_SEQ_LEN] = {3750, 3500, 3200, 2800, 2500};
+static const uint16_t Lower_Hand[ARM_SEQ_LEN]  = {3750, 3600, 3400, 3000, 2700};
+
+static const uint16_t Raise_Elbow[ARM_SEQ_LEN] = {2500, 2800, 3200, 3500, 3750};
+static const uint16_t Raise_Hand[ARM_SEQ_LEN]  = {2700, 3000, 3400, 3600, 3750};
 
 /*------------------------------ Module Code ------------------------------*/
 /****************************************************************************
@@ -129,38 +157,100 @@ ES_Event_t RunDropoffLoweringArmFSM(ES_Event_t ThisEvent)
   {
     case ArmInitPState:        // If current state is initial Psedudo State
     {
-      if (ThisEvent.EventType == ES_INIT)    // only respond to ES_Init
+      if (ThisEvent.EventType == ES_INIT)
       {
-        // this is where you would put any actions associated with the
-        // transition from the initial pseudo-state into the actual
-        // initial state
+        // Map PWM channels
+        PWM_Setup_SetChannel(ARM_ELBOW_CH);
+        PWM_Setup_AssignChannelToTimer(ARM_ELBOW_CH, M_ARM_PWM_TIMER);
+        PWM_Setup_MapChannelToOutputPin(ARM_ELBOW_CH, M_ARM_ELBOW_PWM);
 
-        // now put the machine into the actual initial state
-        //CurrentState = UnlockWaiting;
+        PWM_Setup_SetChannel(ARM_HAND_CH);
+        PWM_Setup_AssignChannelToTimer(ARM_HAND_CH, M_ARM_PWM_TIMER);
+        PWM_Setup_MapChannelToOutputPin(ARM_HAND_CH, M_ARM_HAND_PWM);
+
+        // Home position
+        PWM_Operate_SetPulseWidthOnChannel(3750, ARM_ELBOW_CH);
+        PWM_Operate_SetPulseWidthOnChannel(3750, ARM_HAND_CH);
+
+        CurrentState = ArmWaiting;
       }
     }
     break;
 
-    //case UnlockWaiting:        // If current state is state one
+    case ArmWaiting:
     {
       switch (ThisEvent.EventType)
       {
-        //case ES_LOCK:  //If event is event one
-
-        {   // Execute action function for state one : event one
-          //CurrentState = Locked;  //Decide what the next state will be
+        case ES_START_LOWERING_ARM:
+        {
+          seqIndex = 0;
+          ES_Timer_InitTimer(ARM_MOVE_TIMER, ARM_STEP_TIME);
+          CurrentState = Lowering;
         }
         break;
 
-        // repeat cases as required for relevant events
-        default:
-          ;
-      }  // end switch on CurrentEvent
+        case ES_START_RAISING_ARM:
+        {
+          seqIndex = 0;
+          ES_Timer_InitTimer(ARM_MOVE_TIMER, ARM_STEP_TIME);
+          CurrentState = Raising;
+        }
+        break;
+      }
     }
     break;
-    // repeat state pattern as required for other states
-    default:
-      ;
+
+    case Lowering:
+    {
+      if (ThisEvent.EventType == ES_TIMEOUT &&
+          ThisEvent.EventParam == ARM_MOVE_TIMER)
+      {
+        PWM_Operate_SetPulseWidthOnChannel(Lower_Elbow[seqIndex], ARM_ELBOW_CH);
+        PWM_Operate_SetPulseWidthOnChannel(Lower_Hand[seqIndex], ARM_HAND_CH);
+
+        seqIndex++;
+
+        if (seqIndex >= ARM_SEQ_LEN)
+        {
+          ES_Event_t done;
+          done.EventType = ES_ARM_LOWERED;
+          PostOperatorFSM(done);
+
+          CurrentState = ArmWaiting;
+        }
+        else
+        {
+          ES_Timer_InitTimer(ARM_MOVE_TIMER, ARM_STEP_TIME);
+        }
+      }
+    }
+    break;
+
+    case Raising:
+    {
+      if (ThisEvent.EventType == ES_TIMEOUT &&
+          ThisEvent.EventParam == ARM_MOVE_TIMER)
+      {
+        PWM_Operate_SetPulseWidthOnChannel(Raise_Elbow[seqIndex], ARM_ELBOW_CH);
+        PWM_Operate_SetPulseWidthOnChannel(Raise_Hand[seqIndex], ARM_HAND_CH);
+
+        seqIndex++;
+
+        if (seqIndex >= ARM_SEQ_LEN)
+        {
+          ES_Event_t done;
+          done.EventType = ES_ARM_RELEASED;
+          PostOperatorFSM(done);
+
+          CurrentState = ArmWaiting;
+        }
+        else
+        {
+          ES_Timer_InitTimer(ARM_MOVE_TIMER, ARM_STEP_TIME);
+        }
+      }
+    }
+    break;
   }                                   // end switch on Current State
   return ReturnEvent;
 }

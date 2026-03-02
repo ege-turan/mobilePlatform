@@ -6,7 +6,8 @@ build/default/production/ProjectSource/DropoffLoweringArmFSM.o: \
  FrameworkHeaders/ES_Events.h FrameworkHeaders/ES_Configure.h \
  FrameworkHeaders/ES_PostList.h FrameworkHeaders/ES_General.h \
  FrameworkHeaders/ES_Timers.h ProjectHeaders/DropoffLoweringArmFSM.h \
- FrameworkHeaders/ES_Types.h
+ FrameworkHeaders/ES_Types.h ProjectHeaders/OperatorFSM.h \
+ ProjectHeaders/PIC32_PWM_Lib.h
 
 FrameworkHeaders/ES_Configure.h:
 
@@ -35,3 +36,7 @@ FrameworkHeaders/ES_Timers.h:
 ProjectHeaders/DropoffLoweringArmFSM.h:
 
 FrameworkHeaders/ES_Types.h:
+
+ProjectHeaders/OperatorFSM.h:
+
+ProjectHeaders/PIC32_PWM_Lib.h:

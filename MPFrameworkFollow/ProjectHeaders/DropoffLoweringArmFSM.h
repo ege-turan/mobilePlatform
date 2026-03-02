@@ -16,7 +16,7 @@
 // State definitions for use with the query function
 typedef enum
 {
-  ArmInitPState, ArmReady, Raising, Lowering
+  ArmInitPState, ArmWaiting, Raising, Lowering
 }DropoffLoweringArmState_t;
 
 // Public Function Prototypes

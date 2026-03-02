@@ -1,6 +1,6 @@
 /****************************************************************************
  Module
-   TemplateService.c
+   StepperService.c
 
  Revision
    1.0.1
@@ -14,6 +14,7 @@
  History
  When           Who     What/Why
  -------------- ---     --------
+ 2026-03-01     ege      converted to timer-driven (no PWM)
  25             ege      updated and cleaned
  01/16/12 09:58 jec      began conversion from TemplateFSM.c
 ****************************************************************************/
