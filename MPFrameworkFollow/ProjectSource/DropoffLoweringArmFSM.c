@@ -38,7 +38,7 @@
 // PWM Pins
 #define M_ARM_ELBOW_PWM PWM_RPA0
 #define M_ARM_HAND_PWM  PWM_RPA1
-#define M_ARM_PWM_TIMER _Timer2_
+#define M_ARM_PWM_TIMER _Timer3_
 
 // Timer already configured globally (Timer2 @ 20ms)
 
@@ -159,6 +159,14 @@ ES_Event_t RunDropoffLoweringArmFSM(ES_Event_t ThisEvent)
     {
       if (ThisEvent.EventType == ES_INIT)
       {
+        // ----- Configure Timer2 for PWM at 50 Hz (20 ms period) -----
+        // PBCLK = 20 MHz
+        // Prescaler options: 1,8,64,256
+        // PWM period ticks = PBCLK / (Prescaler * PWM_FREQ)
+        // For 50 Hz: Period = 1 / 50 = 0.02 s
+        // Using prescaler 64: ticks = 20e6 / (64 * 50) = 6250 ticks
+        PWM_Setup_ConfigureTimer(M_ARM_PWM_TIMER, 6250, PWM_PS_64);
+
         // Map PWM channels
         PWM_Setup_SetChannel(ARM_ELBOW_CH);
         PWM_Setup_AssignChannelToTimer(ARM_ELBOW_CH, M_ARM_PWM_TIMER);
@@ -169,7 +177,9 @@ ES_Event_t RunDropoffLoweringArmFSM(ES_Event_t ThisEvent)
         PWM_Setup_MapChannelToOutputPin(ARM_HAND_CH, M_ARM_HAND_PWM);
 
         // Home position
-        PWM_Operate_SetPulseWidthOnChannel(3750, ARM_ELBOW_CH);
+        // Pulse widths: 1.5 ms center, 1–2 ms range
+        // DS3235: 20 ms period, 1 ms -> 5% duty, 2 ms -> 10% duty
+        PWM_Operate_SetPulseWidthOnChannel(3750, ARM_ELBOW_CH); // 1.5 ms center
         PWM_Operate_SetPulseWidthOnChannel(3750, ARM_HAND_CH);
 
         CurrentState = ArmWaiting;
