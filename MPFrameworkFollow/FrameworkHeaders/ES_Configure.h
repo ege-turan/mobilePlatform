@@ -335,7 +335,7 @@ typedef enum
 #define TIMER7_RESP_FUNC TIMER_UNUSED
 #define TIMER8_RESP_FUNC TIMER_UNUSED
 #define TIMER9_RESP_FUNC TIMER_UNUSED
-#define TIMER10_RESP_FUNC TIMER_UNUSED
+#define TIMER10_RESP_FUNC PostStepperService
 #define TIMER11_RESP_FUNC ES_PostAll // PostOperatorFSM
 #define TIMER12_RESP_FUNC ES_PostAll // PostOperatorFSM
 #define TIMER13_RESP_FUNC PostOperatorFSM
@@ -354,6 +354,7 @@ typedef enum
 #define GAME_TIMER 13
 #define INTAKE_PACE_TIMER 12
 #define DROPOFF_PACE_TIMER 11
+#define STEPPER_STEP_TIMER 10
 
 
 #endif /* ES_CONFIGURE_H */

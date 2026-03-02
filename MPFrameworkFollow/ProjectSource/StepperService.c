@@ -38,23 +38,15 @@
 
 /*----------------------------- Module Defines ----------------------------*/
 // use prescaler of 256 to have bigger pulse width range before overflow
-
-#define HIGH_PULSE_WIDTH_US 2500.0 // in us (updated from 5000.0 to get from 100Hz to 200Hz)
-#define PWM_FREQ_HZ (1.0/((2.0*HIGH_PULSE_WIDTH_US) * 1e-6)) // in Hz
-#define PWM_PERIOD_TICKS (20000000.0/(256.0*PWM_FREQ_HZ)) // in ticks, with PBCLK = 20 MHz and prescaler of 256
-
-#define STEPPER_TIMER _Timer2_
-#define STEPPER_PRESCALER PWM_PS_256
-#define STEPPER_CHANNEL 5
-#define STEPPER_PIN PWM_RPA2
+#define STEP_INTERVAL_MS   10   // bigger --> slower
 
 // #define MOTOR_OUTPUT_ANSEL (ANSELAbits.ANSA2)  // analog/digital mode of RA2, RA2 doesnt have ANSEL
 #define MOTOR_OUTPUT_TRIS  (TRISAbits.TRISA2)  // input/output mode of RA2
 #define MOTOR_OUTPUT_LAT   (LATAbits.LATA2)    // output latch of RA2
 
 // ENABLE PIN
-#define M_FEEDER_EN_LAT  LATBbits.LATB12
-#define M_FEEDER_EN_TRIS TRISBbits.TRISB12
+#define M_FEEDER_EN_LAT  (LATBbits.LATB12)
+#define M_FEEDER_EN_TRIS (TRISBbits.TRISB12)
 
 #define TEST_TIMER_MS 20000 // in ms
 /*---------------------------- Module Functions ---------------------------*/
@@ -166,46 +158,55 @@ bool PostStepperService(ES_Event_t ThisEvent)
 ****************************************************************************/
 ES_Event_t RunStepperService(ES_Event_t ThisEvent)
 {
-  // TODO: update according to OperatorFSM posting events ES_FEEDER_START and ES_FEEDER_STOP
-  ES_Event_t ReturnEvent;
-  ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
-  /********************************************
-   in here you write your service code
-   *******************************************/
-  switch (ThisEvent.EventType)
-  {
-    case ES_INIT:
+    ES_Event_t ReturnEvent;
+    ReturnEvent.EventType = ES_NO_EVENT;
+
+    switch (ThisEvent.EventType)
     {
-      DB_printf("\rES_INIT received in StepperService, priority: %d\r\n", MyPriority);
+        case ES_INIT:
+        {
+            DB_printf("\rStepperService initialized\r\n");
+            M_FEEDER_EN_LAT = 1;     // disable driver
+            MOTOR_OUTPUT_LAT = 0;    // start step pin low
+        }
+        break;
 
-      // Start OFF
-      PWM_Operate_SetPulseWidthOnChannel(0, STEPPER_CHANNEL);
-      M_FEEDER_EN_LAT = 1;   // disabled
+        case ES_FEEDER_START:
+        {
+            DB_printf("StepperService: FEEDER START\r\n");
+            M_FEEDER_EN_LAT = 0;   // enable driver
+            MOTOR_OUTPUT_LAT = 0;  // ensure starting low
+            ES_Timer_InitTimer(STEPPER_STEP_TIMER, STEP_INTERVAL_MS); // start toggling
+        }
+        break;
+
+        case ES_FEEDER_STOP:
+        {
+            DB_printf("StepperService: FEEDER STOP\r\n");
+            M_FEEDER_EN_LAT = 1;     // disable driver
+            MOTOR_OUTPUT_LAT = 0;    // keep step pin low
+            ES_Timer_StopTimer(STEPPER_STEP_TIMER); // stop toggling
+        }
+        break;
+
+        case ES_TIMEOUT:
+        {
+            if (ThisEvent.EventParam == STEPPER_STEP_TIMER)
+            {
+                // toggle step pin
+                MOTOR_OUTPUT_LAT ^= 1;
+
+                // restart timer for next toggle
+                ES_Timer_InitTimer(STEPPER_STEP_TIMER, STEP_INTERVAL_MS);
+            }
+        }
+        break;
+
+        default:
+            break;
     }
-    break;
 
-    case ES_FEEDER_START:
-    {
-      DB_printf("StepperService: FEEDER START\r\n");
-
-      M_FEEDER_EN_LAT = 0;   // ENABLE driver
-      PWM_Operate_SetPulseWidthOnChannel(PWM_PERIOD_TICKS / 2, STEPPER_CHANNEL); // 50% duty
-    }
-    break;
-
-    case ES_FEEDER_STOP:
-    {
-      DB_printf("StepperService: FEEDER STOP\r\n");
-
-      M_FEEDER_EN_LAT = 1;   // DISABLE driver
-      PWM_Operate_SetPulseWidthOnChannel(0, STEPPER_CHANNEL); // OFF
-    }
-    break;
-
-    default:
-      break;
-  }
-  return ReturnEvent;
+    return ReturnEvent;
 }
 
 /***************************************************************************
