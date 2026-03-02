@@ -34,27 +34,54 @@
 #include "IntakeService.h"
 #include "DropoffLoweringArmFSM.h"
 #include "StepperService.h"
+#include "FieldSideServoService.h"
+
+#include "PIC32_PWM_Lib.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 
-// Pins
-#define DIN_GAMEMODE PORTBbits.RB4
-#define DIN_GAMEMODE_TRIS TRISBbits.TRISB4
+// Measured
+#define CAPACITY 30
+#define GAME_COUNT 10
 
 // Timers
 #define GAME_TIME_MS    21800
 #define INTAKE_PACE_MS  5000
 #define DROPOFF_PACE_MS 7000
 
-// Measured
-#define CAPACITY 30
-#define GAME_COUNT 10
+// Pins
+#define DIN_GAMEMODE PORTBbits.RB4
+#define DIN_GAMEMODE_TRIS TRISBbits.TRISB4
+
+// Agitator
+#define M_AGITATOR_LAT  LATBbits.LATB5
+#define M_AGITATOR_TRIS TRISBbits.TRISB5
+
+// Intake PWM
+#define INTAKE_PWM_FREQ        10000
+
+#define M_INTAKE_CH            4
+#define M_INTAKE_PWM_TIMER     _Timer2_
+#define M_INTAKE_PWM_PIN       PWM_RPB4
+
+#define INTAKE_PWM_PSC         PWM_PS_1
+#define INTAKE_PWM_PERIOD      2000
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this machine.They should be functions
    relevant to the behavior of this state machine
 */
 static void InitOperatorInterrupts(void);
+
+// Intake Helpers
+static void Intake_Init(void);
+static void Intake_On(void);
+static void Intake_Off(void);
+
+// Agitator Helpers
+static void Agitator_Init(void);
+static void Agitator_On(void);
+static void Agitator_Off(void);
 
 /*---------------------------- Module Variables ---------------------------*/
 // everybody needs a state variable, you may need others as well.
@@ -175,7 +202,10 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
           feederStopEvent.EventType = ES_FEEDER_STOP;
           PostStepperService(feederStopEvent);
 
-          // todo: event to reset field side indicator (ES_RESET)
+          // create an event to reset field side indicator (ES_RESET)
+          ES_Event_t resetFieldSideEvent;
+          resetFieldSideEvent.EventType = ES_RESET;
+          PostFieldSideServoService(resetFieldSideEvent);
 
           // Reset system state
           carrying = 0;
@@ -207,7 +237,9 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
         // Set RB4 as digital input for GAMEMODE
         DIN_GAMEMODE_TRIS = 1;
 
-        // (Add outputs)
+        // Initialize agitator and intake
+        Agitator_Init();
+        Intake_Init();
 
         // Initialize cargo interrupts
         InitOperatorInterrupts();
@@ -268,6 +300,9 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
               ES_Timer_InitTimer(INTAKE_PACE_TIMER, INTAKE_PACE_MS);
 
               CurrentState = Intaking;
+
+              // turn on intake PWM
+              Intake_On();
           }
           else if (ThisEvent.EventParam == CMD_SPI_DROPOFF_REACHED)
           {
@@ -311,6 +346,8 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
           }
           else
           {
+            // Stop intake
+            Intake_Off();  // <- turn off intake
             // Stop intake pacing timer
             ES_Timer_StopTimer(INTAKE_PACE_TIMER);                  // stop completely
 
@@ -320,7 +357,6 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
             loadedEvent.EventParam = CMD_SPI_LOADED;  // or payload if needed
 
             PostSPIFollowService(loadedEvent);  // send to leader
-            PostIntakeService(loadedEvent);     // stop intake locally
 
             CurrentState = WaitingForNavigation;
           }
@@ -335,6 +371,7 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
             incompleteEvent.EventType = ES_NEW_SPI_CMD_SEND;
             incompleteEvent.EventParam = CMD_SPI_INTAKE_INCOMPLETE;
             PostSPIFollowService(incompleteEvent);
+            Intake_Off();  // <- also turn off intake on timeout
             CurrentState = WaitingForNavigation;
           }
         }
@@ -372,6 +409,9 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
                     ES_Event_t feederStartEvent;
                     feederStartEvent.EventType = ES_FEEDER_START;
                     PostStepperService(feederStartEvent);
+
+                    // turn on agitator
+                    Agitator_On();
                 }
             }
             break;
@@ -420,6 +460,9 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
                         ES_Event_t feederStopEvent;
                         feederStopEvent.EventType = ES_FEEDER_STOP;
                         PostStepperService(feederStopEvent);
+
+                        // turn off agitator
+                        Agitator_Off();
 
                         CurrentState = WaitingForNavigation;
                     }
@@ -483,6 +526,45 @@ OperatorState_t QueryOperatorFSM(void)
 /***************************************************************************
  private functions
  ***************************************************************************/
+
+ //---------------- Agitator ----------------
+static void Agitator_Init(void)
+{
+    M_AGITATOR_TRIS = 0;   // output
+    M_AGITATOR_LAT  = 0;   // start off
+}
+
+static void Agitator_On(void)  { M_AGITATOR_LAT = 1; }
+static void Agitator_Off(void) { M_AGITATOR_LAT = 0; }
+
+//---------------- Intake ------------------
+static void Intake_Init(void)
+{
+    // Configure Timer2 for 10 kHz PWM
+    PWM_Setup_ConfigureTimer(M_INTAKE_PWM_TIMER,
+                             INTAKE_PWM_PERIOD,
+                             INTAKE_PWM_PSC);
+
+    // Map PWM channel
+    PWM_Setup_SetChannel(M_INTAKE_CH);
+    PWM_Setup_AssignChannelToTimer(M_INTAKE_CH, M_INTAKE_PWM_TIMER);
+    PWM_Setup_MapChannelToOutputPin(M_INTAKE_CH, M_INTAKE_PWM_PIN);
+
+    // Start OFF
+    PWM_Operate_SetPulseWidthOnChannel(0, M_INTAKE_CH);
+}
+
+static void Intake_On(void)
+{
+    PWM_Operate_SetPulseWidthOnChannel(INTAKE_PWM_PERIOD/2, M_INTAKE_CH); // 50%
+}
+
+static void Intake_Off(void)
+{
+    PWM_Operate_SetPulseWidthOnChannel(0, M_INTAKE_CH);
+}
+
+
 static void InitOperatorInterrupts(void)
 {
     __builtin_disable_interrupts();

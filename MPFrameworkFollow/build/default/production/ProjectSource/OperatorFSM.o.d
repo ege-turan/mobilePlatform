@@ -8,7 +8,8 @@ build/default/production/ProjectSource/OperatorFSM.o: \
  FrameworkHeaders/ES_Timers.h ProjectHeaders/OperatorFSM.h \
  FrameworkHeaders/ES_Types.h ProjectHeaders/SPIFollowService.h \
  ProjectHeaders/IntakeService.h ProjectHeaders/DropoffLoweringArmFSM.h \
- ProjectHeaders/StepperService.h
+ ProjectHeaders/StepperService.h ProjectHeaders/FieldSideServoService.h \
+ ProjectHeaders/PIC32_PWM_Lib.h
 
 FrameworkHeaders/ES_Configure.h:
 
@@ -45,3 +46,7 @@ ProjectHeaders/IntakeService.h:
 ProjectHeaders/DropoffLoweringArmFSM.h:
 
 ProjectHeaders/StepperService.h:
+
+ProjectHeaders/FieldSideServoService.h:
+
+ProjectHeaders/PIC32_PWM_Lib.h:
