@@ -147,6 +147,9 @@ bool Check4SPI(void)
 ****************************************************************************/
 
 #define BUTTON_IN     PORTAbits.RA3   // Button input line on RA3
+#define BUTTON_TRIS TRISAbits.TRISA3
+#define BUTTON_LAT LATAbits.LATA3
+//#define BUTTON_ANSEL ANSELAbits.ANSA3
 
 #define DEBUG_BUTTON       // enable for debug prints
 
@@ -175,6 +178,16 @@ bool Check4SPI(void)
 bool Check4StartButton(void)
 {
     bool ReturnVal = false;
+
+    static bool Initialized = false; 
+    if (!Initialized)
+    {
+        // Disable analog, set input, optional pull-up
+//        BUTTON_ANSEL  = 0; // digital mode // no analog for A3
+        BUTTON_TRIS   = 1; // input
+        BUTTON_LAT    = 0; // set low initially
+        Initialized = true;
+    }
 
     static uint8_t LastButtonState = 1;                   // assume button is not initially pressed
     uint8_t CurrentButtonState = BUTTON_IN;
