@@ -47,7 +47,7 @@
 #define M_FEEDER_EN_LAT  (LATBbits.LATB12)
 #define M_FEEDER_EN_TRIS (TRISBbits.TRISB12)
 
-#define TEST_TIMER_MS 20000 // in ms
+#define TEST_TIMER_MS 1000 // in ms (turns on and off every 1 seconds)
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
    relevant to the behavior of this service
@@ -92,8 +92,8 @@ bool InitStepperService(uint8_t Priority)
   MOTOR_OUTPUT_TRIS = 0;
   MOTOR_OUTPUT_LAT = 0; // start with low output
   // Initialize feeder enable pin
-  M_FEEDER_EN_TRIS = 0;   // output
-  M_FEEDER_EN_LAT  = 1;   // DISABLED (A4988 EN is active LOW)
+  M_FEEDER_EN_TRIS = 0;   // output (EXTRA CONTROL)
+  M_FEEDER_EN_LAT  = 0;   // DISABLED
 
   // Initialize test timer (decomissioned)
   // ES_Timer_InitTimer(STEPPER_TEST_TIMER, TEST_TIMER_MS);
@@ -164,7 +164,7 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
         case ES_INIT:
         {
             DB_printf("\rStepperService initialized\r\n");
-            M_FEEDER_EN_LAT = 1;     // disable driver
+            M_FEEDER_EN_LAT = 0;     // disable driver
             MOTOR_OUTPUT_LAT = 0;    // start step pin low
         }
         break;
@@ -172,7 +172,7 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
         case ES_FEEDER_START:
         {
             DB_printf("StepperService: FEEDER START\r\n");
-            M_FEEDER_EN_LAT = 0;   // enable driver
+            M_FEEDER_EN_LAT = 1;   // enable driver
             MOTOR_OUTPUT_LAT = 0;  // ensure starting low
             ES_Timer_InitTimer(STEPPER_STEP_TIMER, STEP_INTERVAL_MS); // start toggling
         }
@@ -181,7 +181,7 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
         case ES_FEEDER_STOP:
         {
             DB_printf("StepperService: FEEDER STOP\r\n");
-            M_FEEDER_EN_LAT = 1;     // disable driver
+            M_FEEDER_EN_LAT = 0;     // disable driver
             MOTOR_OUTPUT_LAT = 0;    // keep step pin low
             ES_Timer_StopTimer(STEPPER_STEP_TIMER); // stop toggling
         }

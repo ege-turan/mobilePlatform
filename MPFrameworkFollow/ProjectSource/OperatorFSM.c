@@ -556,7 +556,7 @@ static void Intake_Init(void)
 
 static void Intake_On(void)
 {
-    PWM_Operate_SetPulseWidthOnChannel(INTAKE_PWM_PERIOD/2, M_INTAKE_CH); // 50%
+    PWM_Operate_SetPulseWidthOnChannel(INTAKE_PWM_PERIOD/10, M_INTAKE_CH); // 10%
 }
 
 static void Intake_Off(void)
