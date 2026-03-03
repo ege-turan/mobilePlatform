@@ -305,3 +305,57 @@ bool Check4Tape(void)
 
     return ReturnVal;
 }
+
+#define LIMIT_TRIS TRISAbits.TRISA4
+#define LIMIT_LAT LATAbits.LATA4
+#define LIMIT_IN PORTAbits.RA4
+
+/****************************************************************************
+ Function
+     Check4Limit
+
+ Parameters
+     None
+
+ Returns
+     bool: true if an event was posted, false otherwise
+
+ Description
+     Checks the limmit switch for changes. Posts ES_LIMIT
+     events to all when a change is detected.
+
+ Author
+     Ege Turan
+****************************************************************************/
+bool Check4Limit(void)
+{
+    bool ReturnVal = false;
+
+    static bool Initialized = false; 
+    if (!Initialized)
+    {
+        // Disable analog, set input, optional pull-up
+//        LIMIT_ANSEL  = 0; // digital mode // no analog for A4
+        LIMIT_TRIS   = 1; // input
+        LIMIT_LAT    = 0; // set low initially
+        Initialized = true;
+    }
+
+    static uint8_t LastLimitState = 1;                   // assume button is not initially pressed
+    uint8_t CurrentLimitState = LIMIT_IN;
+
+    if (CurrentLimitState != LastLimitState) {
+#ifdef DEBUG_LIMIT
+        DB_printf("Limit (%d) -> TOGGLE posted\n", CurrentLimitState);
+#endif
+
+        ES_Event_t ThisEvent;
+        ReturnVal = true;
+        ThisEvent.EventType  = ES_LIMIT_SWITCH;
+        ThisEvent.EventParam = CurrentLimitState;        // no additional parameter needed, include CurrentLimitState for debugging
+        ES_PostAll(ThisEvent);                           // post event to all
+    }
+
+    LastLimitState = CurrentLimitState; // update last state
+    return ReturnVal;
+}
