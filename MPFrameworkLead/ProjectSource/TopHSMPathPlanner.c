@@ -63,6 +63,7 @@ static MasterState_t CurrentState;
 static uint8_t MyPriority;
 
 static uint8_t PlanIndex = 0;
+static bool DEATHMATCH_MODE = false;
 
 /*------------------------------ Module Code ------------------------------*/
 /****************************************************************************
@@ -173,7 +174,11 @@ ES_Event_t RunMasterSM( ES_Event_t CurrentEvent )
                             PlanIndex = 0;
                             NextState = RUNNING_PLAN;
                             MakeTransition = true;
-                            EntryEventKind.EventType = ES_ENTRY;
+                            EntryEventKind.EventType = ES_ENTRY;   
+                            break;
+                        case CMD_SPI_START_DEATHMATCH:
+                            DEATHMATCH_MODE = true;
+                            PlanIndex = 0;
                             break;
                         case CMD_SPI_LOADED:
                         case CMD_SPI_UNLOADED:
@@ -351,7 +356,14 @@ static ES_Event_t DuringRunningPlan( ES_Event_t Event)
         // implement any entry actions required for this state machine
         
         // after that start any lower level machines that run in this state
-        ES_Event_t StartPlanEvent = { ES_START_PLAN, PlanIndex };
+        ES_Event_t StartPlanEvent;
+        if (false == DEATHMATCH_MODE){
+            StartPlanEvent.EventType = ES_START_PLAN;
+            StartPlanEvent.EventParam = PlanIndex;
+        } else if (true == DEATHMATCH_MODE){
+            StartPlanEvent.EventType = ES_START_DM_PLAN;
+            StartPlanEvent.EventParam = PlanIndex;
+        }
         RunDriverFromToSM(StartPlanEvent);
         // repeat the StartxxxSM() functions for concurrent state machines
         // on the lower level

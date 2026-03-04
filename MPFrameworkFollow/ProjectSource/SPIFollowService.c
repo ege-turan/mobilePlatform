@@ -31,7 +31,7 @@
 // #define SPI_TIMER_MS 20 // NOT USED BY FOLLOWER
 
 /*----------------------------- Module Defines ----------------------------*/
-#define DEBUG_PRINT
+// #define DEBUG_PRINT
 #include "dbprintf.h"
 #define SPI1_SS_PIN SPI_RPB15
 #define SPI1_SDO_PIN SPI_RPB13

@@ -304,6 +304,7 @@ typedef enum
   ES_SPI_END,
   /* HSM Events */
   ES_START_PLAN,
+  ES_START_DM_PLAN,
   ES_PLAN_DONE,
   ES_STEP_DONE,
   ES_BEACON_DISPENSER,
@@ -346,7 +347,7 @@ typedef enum
 
 /****************************************************************************/
 // This is the list of event checking functions
-#define EVENT_CHECK_LIST Check4Keystroke, Check4Tape, Check4Limit
+#define EVENT_CHECK_LIST Check4Keystroke, Check4Limit, Check4Tape
 
 /****************************************************************************/
 // These are the definitions for the post functions to be executed when the
@@ -367,7 +368,7 @@ typedef enum
 #define TIMER9_RESP_FUNC TIMER_UNUSED
 #define TIMER10_RESP_FUNC TIMER_UNUSED
 #define TIMER11_RESP_FUNC TIMER_UNUSED
-#define TIMER12_RESP_FUNC TIMER_UNUSED
+#define TIMER12_RESP_FUNC PostTopHSMPathPlanner
 #define TIMER13_RESP_FUNC PostBeaconService
 #define TIMER14_RESP_FUNC PostDCMotorService
 #define TIMER15_RESP_FUNC PostSPILeadService
@@ -382,6 +383,7 @@ typedef enum
 #define SPI_TIMER 15
 #define RotateRobotTimer 14
 #define BeaconDetectTimer 13
+#define GameStartTimer 12
 
 
 #endif /* ES_CONFIGURE_H */

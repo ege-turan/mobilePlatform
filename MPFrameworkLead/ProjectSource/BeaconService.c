@@ -195,6 +195,8 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
     }
     break;
 
+    case 
+
     case ES_TIMEOUT:
     {
       if (ThisEvent.EventParam == BeaconDetectTimer)
@@ -235,10 +237,13 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
         else 
         {
             CurrentBeaconState = 0;
+            #ifdef VERBOSE_BEACON
+            DB_printf("No Beacon. Freq: %u Hz\r\n", (unsigned int)CurrentBeaconFreq);
+            #endif
         }
 
         // event detected, so post detected event
-        if ((CurrentBeaconState != 0)) // && (CurrentBeaconState != LastBeaconState))
+        if ((CurrentBeaconState != 0) && (CurrentBeaconState != LastBeaconState))
         {
           #ifdef VERBOSE_BEACON
           DB_printf("Beacon Detected! Freq: %u Hz. State: %u\r\n", (unsigned int)CurrentBeaconFreq, CurrentBeaconState);
@@ -249,12 +254,7 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
             NewEvent.EventType = ES_BEACON_DISPENSER;
             ES_PostAll(NewEvent);
           }
-        } else
-        {
-          #ifdef VERBOSE_BEACON
-          DB_printf("No Beacon. Freq: %u Hz\r\n", (unsigned int)CurrentBeaconFreq);
-          #endif
-        }
+        } 
 
         if ((CurrentBeaconState != 0))// && (CurrentBeaconState != LastBeaconState))
         {

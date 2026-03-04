@@ -25,6 +25,8 @@ typedef enum
 {
     Forward = 0,
     Reverse = 1,
+    RotateCClockWise = 2,
+    RotateClockWise = 3
 } MotorDir_t;
 
 // Helper

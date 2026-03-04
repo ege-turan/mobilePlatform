@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<project>                                  
+  <executable name="dist/default/debug/MPFrameworkFollow.debug.elf">                 
+    <memory name="program">                 
+      <units>bytes</units>                 
+      <length>263312</length>                 
+      <used>51173</used>                     
+      <free>212139</free>                     
+    </memory>                              
+    <memory name="data">              
+      <units>bytes</units>                 
+      <length>66048</length>                 
+      <used>3076</used>                     
+      <free>62972</free>                     
+    </memory>                              
+  </executable>                            
+</project>                                 

@@ -4,6 +4,10 @@
 #include "ES_Configure.h"
 #include "ES_Framework.h"
 
+
+#define INITIAL_ROTATE_CCW_MS 5000
+#define INITIAL_ROTATE_90 1000
+
 typedef enum {
     RotateCW,
     RotateCW_count,
@@ -29,8 +33,8 @@ typedef enum {
 
 typedef struct {
     PrimitiveCmd_t PrimitiveCmd;
-    ES_EventType_t StoppingCondition;   // use EventType, not full ES_Event_t
-    ES_EventType_t PostEvent;
+    ES_Event_t StoppingCondition;   // use full ES_Event_t
+    ES_Event_t PostEvent;
 } PlanStep_t;
 
 typedef enum {
@@ -40,11 +44,22 @@ typedef enum {
     NUM_PLANS
 } PlanIndex_t;
 
+typedef enum {
+    PLAN_DM_START_SEE_BEACON = 0,
+    PLAN_DM_START2CLOSESTBUCKET,
+    /* DM_NUM_PLANS tells how many plans there are. Line below goes last always */
+    DM_NUM_PLANS
+} DMPlanIndex_t;
+
 typedef struct {
     const PlanStep_t *Steps;
     uint16_t NumSteps;
 } Plan_t;
 
 extern const Plan_t Plans[NUM_PLANS];
+
+
+
+extern const Plan_t DM_Plans[DM_NUM_PLANS];
 
 #endif /* PLANS_AND_STEPS_H */

@@ -192,7 +192,7 @@ bool Check4StartButton(void)
     static uint8_t LastButtonState = 1;                   // assume button is not initially pressed
     uint8_t CurrentButtonState = BUTTON_IN;
 
-    if (CurrentButtonState != LastButtonState) {
+    if ((CurrentButtonState != LastButtonState) && (CurrentButtonState == 0)) {
 #ifdef DEBUG_BUTTON
         DB_printf("Button (RA3=%d) -> TOGGLE posted\n", CurrentButtonState);
 #endif

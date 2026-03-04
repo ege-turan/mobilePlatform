@@ -92,6 +92,7 @@ static TemplateState_t CurrentState;
 static uint16_t StepCounter; 
 static const Plan_t *ActivePlan = NULL;
 static PlanIndex_t CurrentPlanIndex;
+static DMPlanIndex_t CurrentDMPlanIndex;
 
 /*------------------------------ Module Code ------------------------------*/
 /****************************************************************************
@@ -147,6 +148,23 @@ ES_Event_t RunDriverFromToSM( ES_Event_t CurrentEvent )
                   // optionally, consume or re-map this event for the upper
                   // level state machine
                   ReturnEvent.EventType = ES_NO_EVENT;
+                  break;
+              case ES_START_DM_PLAN :
+                #ifdef VERBOSE_DRIVER
+                DB_printf("[Driver ] Received:     ES_START_DM_PLAN");
+                #endif
+                  // Execute action function for state one : event one
+                  CurrentDMPlanIndex = (DMPlanIndex_t)CurrentEvent.EventParam;
+                  ActivePlan = &DM_Plans[CurrentDMPlanIndex];
+
+                  NextState = RUNNING_STEP;//Decide what the next state will be
+                  StepCounter = 0; // initialize step counter
+                  MakeTransition = true; //mark that we are taking a transition
+                  EntryEventKind.EventType = ES_ENTRY;
+                  ReturnEvent.EventType = ES_NO_EVENT;
+                  break;
+                
+                 default:
                   break;
                 // repeat cases as required for relevant events
             }
@@ -329,7 +347,13 @@ static ES_Event_t DuringRunningStep( ES_Event_t Event)
     {
         // run any lower level state machine
         // ReturnEvent = RunLowerLevelSM(Event);
-        if (Event.EventType == ActivePlan->Steps[StepCounter].StoppingCondition)
+        if (ActivePlan == NULL)
+        {
+            return ReturnEvent;
+        }
+        PlanStep_t *CurrentStep = &ActivePlan->Steps[StepCounter];
+        if ((Event.EventType == CurrentStep->StoppingCondition.EventType) &&
+            (Event.EventParam == CurrentStep->StoppingCondition.EventParam))
         {
           StepCounter++;
           if (StepCounter >= ActivePlan->NumSteps)
@@ -358,23 +382,31 @@ static void DoStepActions (void)
     /* Send Primitive CMD to DCMotorService*/
     // ANNOUNCE WHAT PLAN, STEP, MotorPrimitive, StopCondition and Event2Post HERE
     #ifdef VERBOSE_DRIVER
-    DB_printf("\r[Driver] Plan: %u, Step: %u, Primitive: %u, StopCondition: %u, Event2Post: %u\n",
+        DB_printf("\r[Driver] Plan: %u, Step: %u, Primitive: %u, StopCondition Type: %u, StopCondition Param: %u, Event2Post Type: %u, Event2Post Param: %u\n",
         (unsigned int)CurrentPlanIndex,
         (unsigned int)StepCounter,
         (unsigned int)ActivePlan->Steps[StepCounter].PrimitiveCmd,
-        (unsigned int)ActivePlan->Steps[StepCounter].StoppingCondition,
-        (unsigned int)ActivePlan->Steps[StepCounter].PostEvent
+        (unsigned int)ActivePlan->Steps[StepCounter].StoppingCondition.EventType,
+        (unsigned int)ActivePlan->Steps[StepCounter].StoppingCondition.EventParam,
+        (unsigned int)ActivePlan->Steps[StepCounter].PostEvent.EventType,
+        (unsigned int)ActivePlan->Steps[StepCounter].PostEvent.EventParam
     );
     #endif
     ES_Event_t MotorCmdEvent;
     MotorCmdEvent.EventType = ES_MOTOR_PRIMITIVE;
     MotorCmdEvent.EventParam = ActivePlan->Steps[StepCounter].PrimitiveCmd; // Add parameters if needed
     PostDCMotorService(MotorCmdEvent);
+    PostBeaconService(MotorCmdEvent);
     /* Post Event Sent on Entry */
-    if (ES_NO_EVENT != ActivePlan->Steps[StepCounter].PostEvent)
+    if (ES_NO_EVENT != ActivePlan->Steps[StepCounter].PostEvent.EventType)
     {
         ES_Event_t Event2Post;
-        Event2Post.EventType = ActivePlan->Steps[StepCounter].PostEvent;
+        Event2Post = ActivePlan->Steps[StepCounter].PostEvent;
         ES_PostAll(Event2Post);
+        if ((ActivePlan->Steps[StepCounter].PostEvent.EventType == ES_TIMEOUT) &&
+             ActivePlan->Steps[StepCounter].PostEvent.EventParam == GameStartTimer){
+          ES_Timer_InitTimer(GameStartTimer, INITIAL_ROTATE_CCW_MS);
+        }
     }
+    
 }

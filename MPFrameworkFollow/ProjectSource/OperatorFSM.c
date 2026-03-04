@@ -38,6 +38,8 @@
 
 #include "PIC32_PWM_Lib.h"
 
+#include "dbprintf.h"
+
 /*----------------------------- Module Defines ----------------------------*/
 
 // Measured
@@ -62,7 +64,7 @@
 
 #define M_INTAKE_CH            4
 #define M_INTAKE_PWM_TIMER     _Timer2_
-#define M_INTAKE_PWM_PIN       PWM_RPB4
+#define M_INTAKE_PWM_PIN       PWM_RPB2
 
 #define INTAKE_PWM_PSC         PWM_PS_1
 #define INTAKE_PWM_PERIOD      2000
@@ -118,8 +120,13 @@ static uint8_t MyPriority;
 bool InitOperatorFSM(uint8_t Priority)
 {
   ES_Event_t ThisEvent;
-
   MyPriority = Priority;
+
+  // Announce initialisation of DCMotorService
+    DB_printf("\rStarting OperatorFSM: ");
+    DB_printf("compiled at %s on %s", __TIME__, __DATE__);
+    DB_printf("\n\r");
+
   // put us into the Initial PseudoState
   CurrentState = OperatorInitPState;
   // post the initial transition event
@@ -228,6 +235,8 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
     {
       if (ThisEvent.EventType == ES_INIT)
       {
+        DB_printf("\rES_INIT received in OperatorFSM, priority: %d\r\n", MyPriority);
+
         // Initialize variables
         carrying = 0;
         GameMode = 0;
@@ -240,6 +249,7 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
         // Initialize agitator and intake
         Agitator_Init();
         Intake_Init();
+        DB_printf("/rIntakeInit Complete /r/n");
 
         // Initialize cargo interrupts
         InitOperatorInterrupts();
@@ -258,6 +268,7 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
         case ES_START_DOWN:
         {
           carrying = 0;
+            DB_printf("\rStandby, ES_StART_DOWN ");
 
           // Read Game Mode from RB4
           GameMode = DIN_GAMEMODE;
@@ -298,11 +309,14 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
           if (ThisEvent.EventParam == CMD_SPI_INTAKE_ON)
           {
               ES_Timer_InitTimer(INTAKE_PACE_TIMER, INTAKE_PACE_MS);
+              DB_printf("\rWaitingForNavigation CMD_SPI_INTAKE_ON ");
+
 
               CurrentState = Intaking;
 
               // turn on intake PWM
               Intake_On();
+              Agitator_On();
           }
           else if (ThisEvent.EventParam == CMD_SPI_DROPOFF_REACHED)
           {
@@ -347,7 +361,7 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
           else
           {
             // Stop intake
-            Intake_Off();  // <- turn off intake
+            // Intake_Off();  // <- turn off intake
             // Stop intake pacing timer
             ES_Timer_StopTimer(INTAKE_PACE_TIMER);                  // stop completely
 
@@ -550,13 +564,16 @@ static void Intake_Init(void)
     PWM_Setup_AssignChannelToTimer(M_INTAKE_CH, M_INTAKE_PWM_TIMER);
     PWM_Setup_MapChannelToOutputPin(M_INTAKE_CH, M_INTAKE_PWM_PIN);
 
+    ANSELBbits.ANSB2 = 0;
+    TRISBbits.TRISB2 = 0;
     // Start OFF
     PWM_Operate_SetPulseWidthOnChannel(0, M_INTAKE_CH);
 }
 
 static void Intake_On(void)
 {
-    PWM_Operate_SetPulseWidthOnChannel(INTAKE_PWM_PERIOD/10, M_INTAKE_CH); // 10%
+    PWM_Operate_SetPulseWidthOnChannel(INTAKE_PWM_PERIOD, M_INTAKE_CH); // 50%
+    DB_printf("\rPWM SET! ");
 }
 
 static void Intake_Off(void)
