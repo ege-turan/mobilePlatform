@@ -344,7 +344,7 @@ bool Check4Limit(void)
     static uint8_t LastLimitState = 1;                   // assume button is not initially pressed
     uint8_t CurrentLimitState = LIMIT_IN;
 
-    if (CurrentLimitState != LastLimitState) {
+    if ((CurrentLimitState != LastLimitState) && (CurrentLimitState == 0)) {    // when pressed down, sunk low!
 #ifdef DEBUG_LIMIT
         DB_printf("Limit (%d) -> TOGGLE posted\n", CurrentLimitState);
 #endif
