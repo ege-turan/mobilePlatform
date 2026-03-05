@@ -58,6 +58,10 @@
 // Agitator
 #define M_AGITATOR_LAT  LATBbits.LATB5
 #define M_AGITATOR_TRIS TRISBbits.TRISB5
+// #define AGITATOR_FAKE_PWM_HIGH_MS 100 //in ms for fake pwm using ES_TIMEOUT
+// #define AGITATOR_FAKE_PWM_LOW_MS  100  //in ms for fake pwm using ES_TIMEOUT
+// static bool AgitatorRunning = 0;
+// static bool agitatorPWMHigh = 1;
 
 // Intake PWM
 #define INTAKE_PWM_FREQ        10000
@@ -68,6 +72,7 @@
 
 #define INTAKE_PWM_PSC         PWM_PS_1
 #define INTAKE_PWM_PERIOD      2000
+#define INTAKE_PWM_DUTY        32 // as percentage
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this machine.They should be functions
@@ -127,6 +132,7 @@ bool InitOperatorFSM(uint8_t Priority)
     DB_printf("compiled at %s on %s", __TIME__, __DATE__);
     DB_printf("\n\r");
 
+//  ES_Timer_InitTimer(AGITATOR_FAKE_PWM_TIMER, AGITATOR_FAKE_PWM_HIGH_MS);
   // put us into the Initial PseudoState
   CurrentState = OperatorInitPState;
   // post the initial transition event
@@ -186,6 +192,27 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
   ReturnEvent.EventType = ES_NO_EVENT;
 
   /********************* GLOBAL GAME TIMER *********************/
+  // if (ThisEvent.EventType == ES_TIMEOUT &&
+  //     ThisEvent.EventParam == AGITATOR_FAKE_PWM_TIMER &&
+  //     agitatorPWMHigh == true)
+  // {
+  //   ES_Timer_InitTimer(AGITATOR_FAKE_PWM_TIMER, AGITATOR_FAKE_PWM_LOW_MS);
+  //   agitatorPWMHigh = false;
+  //   if (AgitatorRunning)
+  //   {
+  //     Agitator_On();
+  //   }
+  // }
+  // if (ThisEvent.EventType == ES_TIMEOUT &&
+  //     ThisEvent.EventParam == AGITATOR_FAKE_PWM_TIMER &&
+  //     agitatorPWMHigh == false)
+  // {
+  //   ES_Timer_InitTimer(AGITATOR_FAKE_PWM_TIMER, AGITATOR_FAKE_PWM_HIGH_MS);
+  //   agitatorPWMHigh = true;
+  //   Agitator_Off();
+  // }
+
+
   if (ThisEvent.EventType == ES_TIMEOUT &&
       ThisEvent.EventParam == GAME_TIMER)
   {
@@ -249,7 +276,14 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
         // Initialize agitator and intake
         Agitator_Init();
         Intake_Init();
-        DB_printf("/rIntakeInit Complete /r/n");
+        DB_printf("\r IntakeInit Complete \r\n");
+
+        // Intake_On();
+        // DB_printf("\r IntakeOn \r\n");
+
+        // Agitator_On();
+        // DB_printf("\r AgitatorOn \r\n");
+
 
         // Initialize cargo interrupts
         InitOperatorInterrupts();
@@ -361,7 +395,7 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
           else
           {
             // Stop intake
-            // Intake_Off();  // <- turn off intake
+            Intake_Off();  // <- turn off intake
             // Stop intake pacing timer
             ES_Timer_StopTimer(INTAKE_PACE_TIMER);                  // stop completely
 
@@ -568,17 +602,20 @@ static void Intake_Init(void)
     TRISBbits.TRISB2 = 0;
     // Start OFF
     PWM_Operate_SetPulseWidthOnChannel(0, M_INTAKE_CH);
+    DB_printf("\r Intake Initialized \r\n ");
 }
 
 static void Intake_On(void)
 {
-    PWM_Operate_SetPulseWidthOnChannel(INTAKE_PWM_PERIOD, M_INTAKE_CH); // 50%
-    DB_printf("\rPWM SET! ");
+    PWM_Operate_SetPulseWidthOnChannel(INTAKE_PWM_PERIOD*INTAKE_PWM_DUTY/100, M_INTAKE_CH); // 50%
+    DB_printf("\r INTAKE ON \r\n ");
+//    while(1){};
 }
 
 static void Intake_Off(void)
 {
     PWM_Operate_SetPulseWidthOnChannel(0, M_INTAKE_CH);
+    DB_printf("\r INTAKE OFF \r\n ");
 }
 
 

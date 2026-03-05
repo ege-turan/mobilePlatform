@@ -403,9 +403,21 @@ static void DoStepActions (void)
         ES_Event_t Event2Post;
         Event2Post = ActivePlan->Steps[StepCounter].PostEvent;
         ES_PostAll(Event2Post);
-        if ((ActivePlan->Steps[StepCounter].PostEvent.EventType == ES_TIMEOUT) &&
-             ActivePlan->Steps[StepCounter].PostEvent.EventParam == GameStartTimer){
-          ES_Timer_InitTimer(GameStartTimer, INITIAL_ROTATE_CCW_MS);
+        if (ActivePlan->Steps[StepCounter].PostEvent.EventType == ES_TIMEOUT){
+          switch (ActivePlan->Steps[StepCounter].PostEvent.EventParam)
+          {
+            case GameStartTimer:{
+              ES_Timer_InitTimer(GameStartTimer, INITIAL_ROTATE_CCW_MS);
+            }
+              break;
+            case StartRotateTimer:{
+              ES_Timer_InitTimer(StartRotateTimer, INITIAL_ROTATE_CW_MS);
+            }
+              break;
+            default: 
+              break;
+          }
+
         }
     }
     

@@ -111,7 +111,7 @@ typedef enum
 
 #define SPEED_FORWARDS_PERCENT 50
 #define SPEED_BACKWARDS_PERCENT 50
-#define SPEED_ROTATE_PERCENT 20
+#define SPEED_ROTATE_PERCENT 10
 
 
 // #define TESTING_MODE // Set to 1 to enter testing mode on init

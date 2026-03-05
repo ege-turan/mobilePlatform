@@ -32,9 +32,9 @@
 #define M_BG_PWM_PIN     PWM_RPB10
 #define M_BG_PWM_TIMER   _Timer3_
 
-#define PWM_SERVO_CENTER 3750  // 1.5 ms pulse width at 20 ms period
-#define PWM_SERVO_SIDE   2500  // 1 ms
-#define PWM_SERVO_OTHER  5000  // 2 ms
+#define PWM_SERVO_CENTER 375  // 1.5 ms pulse width at 20 ms period
+#define PWM_SERVO_SIDE   250  // 1 ms
+#define PWM_SERVO_OTHER  500  // 2 ms
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
