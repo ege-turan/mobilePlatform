@@ -367,8 +367,8 @@ typedef enum
 #define TIMER8_RESP_FUNC TIMER_UNUSED
 #define TIMER9_RESP_FUNC TIMER_UNUSED
 #define TIMER10_RESP_FUNC TIMER_UNUSED
-#define TIMER11_RESP_FUNC PostTopHSMPathPlanner
-#define TIMER12_RESP_FUNC PostTopHSMPathPlanner
+#define TIMER11_RESP_FUNC PostMasterSM
+#define TIMER12_RESP_FUNC PostMasterSM
 #define TIMER13_RESP_FUNC PostBeaconService
 #define TIMER14_RESP_FUNC PostDCMotorService
 #define TIMER15_RESP_FUNC PostSPILeadService

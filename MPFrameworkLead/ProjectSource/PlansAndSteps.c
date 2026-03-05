@@ -13,13 +13,13 @@ const PlanStep_t StartPos2LoadingDockSeq[] = {
     { Forwards,  {ES_LINE_PIVOT_L, 0},         {ES_NO_EVENT, 0} },
     { RotateCCW, {ES_CENTERED, 0},             {ES_NO_EVENT, 0} },
     { Forwards,  {ES_LINE_PIVOT_L, 0},         {ES_NO_EVENT, 0} },
-    { Forwards,  {ES_LINE_PIVOT_L, 0},         {ES_NEW_SPI_CMD_SEND, CMD_SPI_INTAKE_ON} },
+    { RotateCCW,  {ES_LINE_PIVOT_R, 0},         {ES_NO_EVENT, 0} },
+    { Backwards, {ES_TIMEOUT, StartRotateTimer}, {ES_NEW_SPI_CMD_SEND, CMD_SPI_INTAKE_ON} },
     { Stop,      {ES_ERROR, 0},                {ES_PLAN_DONE, 0} }
 };
 
 const PlanStep_t LoadingDock2Bucket1Seq[] = {
-    { Forwards,       {ES_LINE_PIVOT_L, 0}, {ES_NO_EVENT, 0} },
-    { Forwards_count, {ES_COUNT_DONE, 0},   {ES_NEW_SPI_CMD_SEND, CMD_SPI_DROPOFF_REACHED} },
+    { Forwards,       {ES_LINE_PIVOT_L, 0}, {ES_NEW_SPI_CMD_SEND, CMD_SPI_DROPOFF_REACHED}},
     { Stop,           {ES_ERROR, 0},        {ES_PLAN_DONE, 0} }
 };
 
@@ -40,18 +40,19 @@ const Plan_t Plans[NUM_PLANS] =
 
 // DEATHMATCH GAME PLANS
 const PlanStep_t DM_StartrSeeBeacon[] = {
-    { RotateCCW, {ES_SIDE_FOUND, 0},        {ES_NO_EVENT, 0} },
-    { RotateCCW, {ES_BEACON_DISPENSER, 0},  {ES_NO_EVENT, 0} },
-    { RotateCW,  {ES_CENTERED, 0},          {ES_NO_EVENT, 0} },
-    { Forwards,  {ES_LINE_PIVOT_L, 0},      {ES_NO_EVENT, 0} },
-    { RotateCW,  {ES_LINE_PIVOT_R, 0},      {ES_NO_EVENT, 0} },
-    { Backwards, {ES_LIMIT_SWITCH, 0},      {ES_SPI_INTAKE_ON, 0} },
-    { Stop,      {ES_ERROR, 0},             {ES_PLAN_DONE, 0} }
+    { RotateCCW, {ES_TIMEOUT, GameStartTimer}, {ES_TIMEOUT, GameStartTimer} },
+    { RotateCW,  {ES_SIDE_FOUND, 0},           {ES_NO_EVENT, 0} },
+    { RotateCW,  {ES_TIMEOUT, StartRotateTimer}, {ES_NO_EVENT, 0} },
+    { Forwards,  {ES_LINE_PIVOT_L, 0},         {ES_NO_EVENT, 0} },
+    { RotateCCW, {ES_CENTERED, 0},             {ES_NO_EVENT, 0} },
+    { Forwards,  {ES_LINE_PIVOT_R, 0},         {ES_NO_EVENT, 0} },
+    { RotateCW,  {ES_LINE_PIVOT_R, 0},         {ES_NO_EVENT, 0} },
+    { Forwards, {ES_LINE_PIVOT_L, 0},          {ES_NEW_SPI_CMD_SEND, CMD_SPI_DROPOFF_REACHED} },
+    { Stop,      {ES_ERROR, 0},                {ES_PLAN_DONE, 0} }
 };
 
 const PlanStep_t DM_Start2ClosestBucket[] = {
     { Forwards,       {ES_LINE_PIVOT_L, 0}, {ES_NO_EVENT, 0} },
-    { Forwards_count, {ES_COUNT_DONE, 0},   {ES_SPI_DROPOFF_REACHED, 0} },
     { Stop,           {ES_ERROR, 0},        {ES_PLAN_DONE, 0} }
 };
 

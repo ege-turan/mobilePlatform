@@ -7,6 +7,7 @@
 
 #define INITIAL_ROTATE_CCW_MS 5000
 #define INITIAL_ROTATE_CW_MS  500
+#define INITIAL_BWDS_MS       400
 #define ROTATE_90_MS          1000
 
 typedef enum {

@@ -195,8 +195,6 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
     }
     break;
 
-    case 
-
     case ES_TIMEOUT:
     {
       if (ThisEvent.EventParam == BeaconDetectTimer)

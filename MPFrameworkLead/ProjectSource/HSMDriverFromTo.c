@@ -351,9 +351,8 @@ static ES_Event_t DuringRunningStep( ES_Event_t Event)
         {
             return ReturnEvent;
         }
-        PlanStep_t *CurrentStep = &ActivePlan->Steps[StepCounter];
-        if ((Event.EventType == CurrentStep->StoppingCondition.EventType) &&
-            (Event.EventParam == CurrentStep->StoppingCondition.EventParam))
+        if ((Event.EventType == ActivePlan->Steps[StepCounter].StoppingCondition.EventType) &&
+            (Event.EventParam == ActivePlan->Steps[StepCounter].StoppingCondition.EventParam))
         {
           StepCounter++;
           if (StepCounter >= ActivePlan->NumSteps)
@@ -416,7 +415,7 @@ static void DoStepActions (void)
               break;
             default: 
               break;
-          }
+          } 
 
         }
     }

@@ -57,9 +57,9 @@ typedef enum
 #define MOTOR_2_DIR_PIN_TRIS (TRISBbits.TRISB12)
 
 // // Define the analog select for the pins which allow this
-// #define MOTOR_1_PWM_PIN_ANSEL (ANSELBbits.ANSB8)
-// #define MOTOR_1_DIR_PIN_ANSEL (ANSELBbits.ANSB9)
-// #define MOTOR_2_PWM_PIN_ANSEL (ANSELBbits.ANSB10)
+#define MOTOR_1_PWM_PIN_ANSEL (ANSELBbits.ANSB8)
+#define MOTOR_1_DIR_PIN_ANSEL (ANSELBbits.ANSB9)
+#define MOTOR_2_PWM_PIN_ANSEL (ANSELBbits.ANSB10)
 #define MOTOR_2_DIR_PIN_ANSEL (ANSELBbits.ANSB12)
 
 // Define the lat bits (write)
@@ -111,7 +111,7 @@ typedef enum
 
 #define SPEED_FORWARDS_PERCENT 50
 #define SPEED_BACKWARDS_PERCENT 50
-#define SPEED_ROTATE_PERCENT 10
+#define SPEED_ROTATE_PERCENT 30
 
 
 // #define TESTING_MODE // Set to 1 to enter testing mode on init
