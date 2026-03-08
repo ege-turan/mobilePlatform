@@ -13798,6 +13798,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:+5V")
+		(at 404.368 298.704 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "33c71acb-53ed-4ba3-aead-6c1a4bc08c09")
+		(property "Reference" "#PWR024"
+			(at 404.368 302.514 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+14V"
+			(at 404.368 293.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 404.368 298.704 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 404.368 298.704 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+5V\""
+			(at 404.368 298.704 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "362a3c89-ea42-42e8-855e-1e8b39e46663")
+		)
+		(instances
+			(project "mobilePlatformElectronics"
+				(path "/bd24c4db-4e36-4117-bd4f-5228ef241da9"
+					(reference "#PWR024")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "power:GND")
 		(at 258.064 185.166 0)
 		(mirror y)
@@ -25019,72 +25085,6 @@
 			(project ""
 				(path "/bd24c4db-4e36-4117-bd4f-5228ef241da9"
 					(reference "U2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+5V")
-		(at 404.368 298.704 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "eb8413bd-e5ac-4da9-8ec0-5e8130f4e41e")
-		(property "Reference" "#PWR024"
-			(at 404.368 302.514 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+3V3"
-			(at 404.368 293.37 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 404.368 298.704 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 404.368 298.704 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+5V\""
-			(at 404.368 298.704 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "2522ede7-81ac-479f-ab2c-2cdaa00db182")
-		)
-		(instances
-			(project "mobilePlatformElectronics"
-				(path "/bd24c4db-4e36-4117-bd4f-5228ef241da9"
-					(reference "#PWR024")
 					(unit 1)
 				)
 			)
