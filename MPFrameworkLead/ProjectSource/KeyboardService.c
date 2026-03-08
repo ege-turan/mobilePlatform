@@ -183,7 +183,11 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
         case '9': KB_Event1.EventType  = ES_LINE_PIVOT_R;     break;
         case '0': KB_Event1.EventType  = ES_LIMIT_SWITCH;     break;
         case 'h': KB_Event1.EventType  = ES_COUNT_DONE;       break;
-        case 'j': KB_Event1.EventType  = ES_LIMIT_SWITCH;     break;
+        case 'i': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = Forwards;  break;
+        case 'j': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = RotateCCW; break;
+        case 'k': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = Backwards; break;
+        case 'l': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = RotateCW;  break;
+        case ',': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = Stop;      break;
         
         
         default:

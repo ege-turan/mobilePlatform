@@ -89,6 +89,11 @@ bool Check4Lock(void)
 
 #endif
 
+
+// #define DEBUG_PRINT
+
+
+
 /****************************************************************************
  Function
    Check4Keystroke
@@ -123,6 +128,165 @@ bool Check4Keystroke(void)
 }
 
 
+/****************************************************************************
+****************************************************************************/
+
+#define LINE_PIVOT_L_ANSEL ANSELBbits.ANSB2
+#define LINE_PIVOT_L_TRIS  TRISBbits.TRISB2
+#define LINE_PIVOT_L_LAT   LATBbits.LATB2
+#define LINE_PIVOT_L_PIN   PORTBbits.RB2
+#define LINE_PIVOT_L_PIN_HI 1
+#define LINE_PIVOT_L_PIN_LO 0
+#define LINE_PIVOT_L_EVENT LINE_PIVOT_L_PIN_HI
+
+#define LINE_PIVOT_R_ANSEL ANSELBbits.ANSB3
+#define LINE_PIVOT_R_TRIS  TRISBbits.TRISB3
+#define LINE_PIVOT_R_LAT   LATBbits.LATB3
+#define LINE_PIVOT_R_PIN   PORTBbits.RB3
+#define LINE_PIVOT_R_PIN_HI 1
+#define LINE_PIVOT_R_PIN_LO 0
+#define LINE_PIVOT_R_EVENT LINE_PIVOT_L_PIN_HI
+
+bool Check4Tape(void)
+{
+    static bool Initialized = false;
+    if (!Initialized)
+    {
+        // Disable analog, set input, optional pull-up
+        LINE_PIVOT_L_ANSEL  = 0; // digital mode
+        LINE_PIVOT_L_TRIS   = 1; // input
+        LINE_PIVOT_L_LAT    = 0; // set low initially
+        LINE_PIVOT_R_ANSEL  = 0; // digital mode
+        LINE_PIVOT_R_TRIS   = 1; // input
+        LINE_PIVOT_R_LAT    = 0; // set low initially
+        Initialized = true;
+    }
+
+    static bool centered    = 0;
+    static bool leftOnLine  = 0;
+    static bool rightOnLine = 0;
+
+    static uint8_t LastPinLState = 0;
+    uint8_t CurrentPinLState;
+    static uint8_t LastPinRState = 0;
+    uint8_t CurrentPinRState;
+    bool ReturnVal = false;
+
+    CurrentPinLState = LINE_PIVOT_L_PIN;
+    CurrentPinRState = LINE_PIVOT_R_PIN;
+    // check for pin high AND different from last time
+    // do the check for difference first so that you don't bother with a test
+    // of a port/variable that is not going to matter, since it hasn't changed
+    if (CurrentPinLState != LastPinLState) {
+      if (CurrentPinLState == LINE_PIVOT_L_EVENT) // event detected, so post detected event
+      {
+          leftOnLine = true;
+          ES_Event_t ThisEvent;
+          ThisEvent.EventType = ES_LINE_PIVOT_L;
+          ES_PostAll(ThisEvent);
+  #ifdef DEBUG_PRINT
+          DB_printf("Tape Pivot L Detected!\r\n");
+  #endif
+          ReturnVal = true;
+      }
+      else {
+          leftOnLine = false;
+          centered = false;
+      }
+    }
+        
+    if (CurrentPinRState != LastPinRState) {
+      if (CurrentPinRState == LINE_PIVOT_R_EVENT) // event detected, so post detected event
+      {
+          rightOnLine = true;
+          ES_Event_t ThisEvent;
+          ThisEvent.EventType = ES_LINE_PIVOT_R;
+          ES_PostAll(ThisEvent);
+  #ifdef DEBUG_PRINT
+          DB_printf("Tape Pivot R Detected!\r\n");
+  #endif
+          ReturnVal = true;
+      }
+      else {
+          rightOnLine = false;
+          centered = false;
+      }
+    }
+
+    if ((leftOnLine) && (rightOnLine)){
+        ES_Event_t ThisEvent;
+        ThisEvent.EventType = ES_CENTERED;
+        ES_PostAll(ThisEvent);
+    }
+
+    LastPinLState = CurrentPinLState; // update the state for next time
+    LastPinRState = CurrentPinRState; // update the state for next time
+
+    return ReturnVal;
+}
+
+
+/****************************************************************************
+****************************************************************************/
+
+
+#define LIMIT_TRIS TRISAbits.TRISA4
+#define LIMIT_LAT LATAbits.LATA4
+#define LIMIT_IN PORTAbits.RA4
+
+/****************************************************************************
+ Function
+     Check4Limit
+
+ Parameters
+     None
+
+ Returns
+     bool: true if an event was posted, false otherwise
+
+ Description
+     Checks the limmit switch for changes. Posts ES_LIMIT
+     events to all when a change is detected.
+
+ Author
+     Ege Turan
+****************************************************************************/
+bool Check4Limit(void)
+{
+    bool ReturnVal = false;
+
+    static bool Initialized = false; 
+    if (!Initialized)
+    {
+        // Disable analog, set input, optional pull-up
+//        LIMIT_ANSEL  = 0; // digital mode // no analog for A4
+        LIMIT_TRIS   = 1; // input
+        LIMIT_LAT    = 0; // set low initially
+        Initialized = true;
+    }
+
+    static uint8_t LastLimitState = 1;                   // assume button is not initially pressed
+    uint8_t CurrentLimitState = LIMIT_IN;
+
+    if ((CurrentLimitState != LastLimitState) && (CurrentLimitState == 0)) {    // when pressed down, sunk low!
+#ifdef DEBUG_LIMIT
+        DB_printf("Limit (%d) -> TOGGLE posted\n", CurrentLimitState);
+#endif
+
+        ES_Event_t ThisEvent;
+        ReturnVal = true;
+        ThisEvent.EventType  = ES_LIMIT_SWITCH;
+        ThisEvent.EventParam = CurrentLimitState;        // no additional parameter needed, include CurrentLimitState for debugging
+        ES_PostAll(ThisEvent);                           // post event to all
+    }
+
+    LastLimitState = CurrentLimitState; // update last state
+    return ReturnVal;
+}
+
+
+
+/**/
 /* EVERYTHING BELOW HERE WAS FROM LAB 8*/
 
 /* Beacon Part Moved to separate service*/
@@ -149,7 +313,6 @@ typedef union
 
 #define BEACON_FREQ 1427 // in Hz
 #define BEACON_TOL 25     // in Hz
-// #define DEBUG_PRINT
 
 bool Check4Beacon(void)
 {
@@ -258,104 +421,3 @@ void __ISR(_TIMER_3_VECTOR, IPL6SOFT) Timer3ISR(void)
     return;
 }
 */
-
-
-#define TAPE_ANSEL ANSELAbits.ANSA0
-#define TAPE_TRIS TRISAbits.TRISA0
-#define TAPE_LAT LATAbits.LATA0
-#define TAPE_PIN PORTAbits.RA0
-#define TAPE_PIN_HI 1
-#define TAPE_PIN_LO 0
-#define TAPE_EVENT TAPE_PIN_HI
-
-bool Check4Tape(void)
-{
-    static bool Initialized = false;
-    if (!Initialized)
-    {
-        // Disable analog, set input, optional pull-up
-        TAPE_ANSEL  = 0; // digital mode
-        TAPE_TRIS   = 1; // input
-        TAPE_LAT    = 0; // set low initially
-        Initialized = true;
-    }
-
-    static uint8_t LastPinState = 0;
-    uint8_t CurrentPinState;
-    bool ReturnVal = false;
-
-    CurrentPinState = TAPE_PIN;
-    // check for pin high AND different from last time
-    // do the check for difference first so that you don't bother with a test
-    // of a port/variable that is not going to matter, since it hasn't changed
-    if ((CurrentPinState != LastPinState) &&
-        (CurrentPinState == TAPE_EVENT)) // event detected, so post detected event
-    {
-        ES_Event_t ThisEvent;
-        ThisEvent.EventType = ES_TAPE_DETECTED;
-        // this could be any of the service post functions, ES_PostListx or
-        // ES_PostAll functions
-        ES_PostAll(ThisEvent);
-#ifdef DEBUG_PRINT
-        DB_printf("Tape Detected!\r\n");
-#endif
-        ReturnVal = true;
-    }
-    LastPinState = CurrentPinState; // update the state for next time
-
-    return ReturnVal;
-}
-
-#define LIMIT_TRIS TRISAbits.TRISA4
-#define LIMIT_LAT LATAbits.LATA4
-#define LIMIT_IN PORTAbits.RA4
-
-/****************************************************************************
- Function
-     Check4Limit
-
- Parameters
-     None
-
- Returns
-     bool: true if an event was posted, false otherwise
-
- Description
-     Checks the limmit switch for changes. Posts ES_LIMIT
-     events to all when a change is detected.
-
- Author
-     Ege Turan
-****************************************************************************/
-bool Check4Limit(void)
-{
-    bool ReturnVal = false;
-
-    static bool Initialized = false; 
-    if (!Initialized)
-    {
-        // Disable analog, set input, optional pull-up
-//        LIMIT_ANSEL  = 0; // digital mode // no analog for A4
-        LIMIT_TRIS   = 1; // input
-        LIMIT_LAT    = 0; // set low initially
-        Initialized = true;
-    }
-
-    static uint8_t LastLimitState = 1;                   // assume button is not initially pressed
-    uint8_t CurrentLimitState = LIMIT_IN;
-
-    if ((CurrentLimitState != LastLimitState) && (CurrentLimitState == 0)) {    // when pressed down, sunk low!
-#ifdef DEBUG_LIMIT
-        DB_printf("Limit (%d) -> TOGGLE posted\n", CurrentLimitState);
-#endif
-
-        ES_Event_t ThisEvent;
-        ReturnVal = true;
-        ThisEvent.EventType  = ES_LIMIT_SWITCH;
-        ThisEvent.EventParam = CurrentLimitState;        // no additional parameter needed, include CurrentLimitState for debugging
-        ES_PostAll(ThisEvent);                           // post event to all
-    }
-
-    LastLimitState = CurrentLimitState; // update last state
-    return ReturnVal;
-}

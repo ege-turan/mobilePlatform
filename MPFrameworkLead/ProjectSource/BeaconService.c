@@ -235,10 +235,13 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
         else 
         {
             CurrentBeaconState = 0;
+            #ifdef VERBOSE_BEACON
+            DB_printf("No Beacon. Freq: %u Hz\r\n", (unsigned int)CurrentBeaconFreq);
+            #endif
         }
 
         // event detected, so post detected event
-        if ((CurrentBeaconState != 0)) // && (CurrentBeaconState != LastBeaconState))
+        if ((CurrentBeaconState != 0) && (CurrentBeaconState != LastBeaconState))
         {
           #ifdef VERBOSE_BEACON
           DB_printf("Beacon Detected! Freq: %u Hz. State: %u\r\n", (unsigned int)CurrentBeaconFreq, CurrentBeaconState);
@@ -249,46 +252,41 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
             NewEvent.EventType = ES_BEACON_DISPENSER;
             ES_PostAll(NewEvent);
           }
-        } else
-        {
-          #ifdef VERBOSE_BEACON
-          DB_printf("No Beacon. Freq: %u Hz\r\n", (unsigned int)CurrentBeaconFreq);
-          #endif
-        }
+        } 
 
         if ((CurrentBeaconState != 0))// && (CurrentBeaconState != LastBeaconState))
         {
-          uint8_t sideDetected;
-          if (CheckSideSequence(CurrentBeaconState, &sideDetected))
-          {
-            // Side detected, post ES_SIDE_FOUND
-            ES_Event_t SideEvent;
-            SideEvent.EventType = ES_SIDE_FOUND;
-            SideEvent.EventParam = (sideDetected == BEACON_G) ? ES_TEAM_GREEN : ES_TEAM_BLUE;
-            ES_PostAll(SideEvent);
-            // SPI event
-            ES_Event_t SPIEvent;
-            SPIEvent.EventType = ES_NEW_SPI_CMD_SEND;
-            SPIEvent.EventParam = (sideDetected == BEACON_G) ? CMD_SPI_GREEN_TEAM : CMD_SPI_BLUE_TEAM;
-            PostSPILeadService(SPIEvent);
+        //   uint8_t sideDetected;
+        //   if (CheckSideSequence(CurrentBeaconState, &sideDetected))
+        //   {
+        //     // Side detected, post ES_SIDE_FOUND
+        //     ES_Event_t SideEvent;
+        //     SideEvent.EventType = ES_SIDE_FOUND;
+        //     SideEvent.EventParam = (sideDetected == BEACON_G) ? ES_TEAM_GREEN : ES_TEAM_BLUE;
+        //     ES_PostAll(SideEvent);
+        //     // SPI event
+        //     ES_Event_t SPIEvent;
+        //     SPIEvent.EventType = ES_NEW_SPI_CMD_SEND;
+        //     SPIEvent.EventParam = (sideDetected == BEACON_G) ? CMD_SPI_GREEN_TEAM : CMD_SPI_BLUE_TEAM;
+        //     PostSPILeadService(SPIEvent);
 
-            #ifdef VERBOSE_BEACON
-            DB_printf("Side Found! %s\r\n", (sideDetected == BEACON_G) ? "GREEN" : "BLUE");
-            #endif
-          }
+        //     #ifdef VERBOSE_BEACON
+        //     DB_printf("Side Found! %s\r\n", (sideDetected == BEACON_G) ? "GREEN" : "BLUE");
+        //     #endif
+        //   }
           if (CurrentBeaconState == BEACON_G)
           {
             DB_printf("Green Sequence Detected: ");
-            ES_Event_t NewEvent;
-            NewEvent.EventType = ES_BEACON_DISPENSER;
-            ES_PostAll(NewEvent);
+            ES_Event_t SideEvent;
+            SideEvent.EventType = ES_SIDE_FOUND;
+            SideEvent.EventParam = ES_TEAM_GREEN;
           }
           else if (CurrentBeaconState == BEACON_B)
           {
             DB_printf("Blue Sequence Detected: ");
-            ES_Event_t NewEvent;
-            NewEvent.EventType = ES_BEACON_DISPENSER;
-            ES_PostAll(NewEvent);
+            ES_Event_t SideEvent;
+            SideEvent.EventType = ES_SIDE_FOUND;
+            SideEvent.EventParam = ES_TEAM_BLUE;
           }
         }
         LastBeaconState = CurrentBeaconState; // update the state for next time

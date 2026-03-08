@@ -17,45 +17,24 @@ build/default/production/FrameworkSource/ES_PostList.o: \
  ProjectHeaders/DCMotorService.h FrameworkHeaders/ES_Events.h \
  ProjectHeaders/BeaconService.h ProjectHeaders/TopHSMPathPlanner.h \
  ProjectHeaders/KeyboardService.h ProjectHeaders/DriveCorrectionService.h
-
 FrameworkSource/../FrameworkHeaders/ES_Port.h:
-
 FrameworkSource/../FrameworkHeaders/bitdefs.h:
-
 FrameworkSource/../FrameworkHeaders/Bin_Const.h:
-
 FrameworkSource/../FrameworkHeaders/ES_Types.h:
-
 FrameworkSource/../FrameworkHeaders/terminal.h:
-
 FrameworkSource/../FrameworkHeaders/ES_Port.h:
-
 FrameworkSource/../FrameworkHeaders/ES_Types.h:
-
 FrameworkSource/../FrameworkHeaders/ES_Configure.h:
-
 FrameworkSource/../FrameworkHeaders/ES_General.h:
-
 FrameworkSource/../FrameworkHeaders/ES_PostList.h:
-
 FrameworkSource/../FrameworkHeaders/ES_Events.h:
-
 FrameworkSource/../FrameworkHeaders/ES_Configure.h:
-
 FrameworkSource/../FrameworkHeaders/ES_ServiceHeaders.h:
-
 ProjectHeaders/SPILeadService.h:
-
 FrameworkHeaders/ES_Types.h:
-
 ProjectHeaders/DCMotorService.h:
-
 FrameworkHeaders/ES_Events.h:
-
 ProjectHeaders/BeaconService.h:
-
 ProjectHeaders/TopHSMPathPlanner.h:
-
 ProjectHeaders/KeyboardService.h:
-
 ProjectHeaders/DriveCorrectionService.h:

@@ -65,11 +65,11 @@ static uint8_t MyPriority;
 // TRAJECTORIES
 static uint8_t seqIndex;
 
-static const uint16_t Lower_Elbow[ARM_SEQ_LEN] = {3750, 3500, 3200, 2800, 2500};
-static const uint16_t Lower_Hand[ARM_SEQ_LEN]  = {3750, 3600, 3400, 3000, 2700};
+static const uint16_t Lower_Elbow[ARM_SEQ_LEN] = {375, 350, 320, 280, 250};
+static const uint16_t Lower_Hand[ARM_SEQ_LEN]  = {375, 360, 340, 300, 270};
 
-static const uint16_t Raise_Elbow[ARM_SEQ_LEN] = {2500, 2800, 3200, 3500, 3750};
-static const uint16_t Raise_Hand[ARM_SEQ_LEN]  = {2700, 3000, 3400, 3600, 3750};
+static const uint16_t Raise_Elbow[ARM_SEQ_LEN] = {250, 280, 320, 350, 375};
+static const uint16_t Raise_Hand[ARM_SEQ_LEN]  = {270, 300, 340, 360, 375};
 
 /*------------------------------ Module Code ------------------------------*/
 /****************************************************************************
@@ -165,7 +165,7 @@ ES_Event_t RunDropoffLoweringArmFSM(ES_Event_t ThisEvent)
         // PWM period ticks = PBCLK / (Prescaler * PWM_FREQ)
         // For 50 Hz: Period = 1 / 50 = 0.02 s
         // Using prescaler 64: ticks = 20e6 / (64 * 50) = 6250 ticks
-        PWM_Setup_ConfigureTimer(M_ARM_PWM_TIMER, 6250, PWM_PS_64);
+        PWM_Setup_ConfigureTimer(M_ARM_PWM_TIMER, 625, PWM_PS_64);
 
         // Map PWM channels
         PWM_Setup_SetChannel(ARM_ELBOW_CH);
@@ -179,8 +179,8 @@ ES_Event_t RunDropoffLoweringArmFSM(ES_Event_t ThisEvent)
         // Home position
         // Pulse widths: 1.5 ms center, 1–2 ms range
         // DS3235: 20 ms period, 1 ms -> 5% duty, 2 ms -> 10% duty
-        PWM_Operate_SetPulseWidthOnChannel(3750, ARM_ELBOW_CH); // 1.5 ms center
-        PWM_Operate_SetPulseWidthOnChannel(3750, ARM_HAND_CH);
+        PWM_Operate_SetPulseWidthOnChannel(375, ARM_ELBOW_CH); // 1.5 ms center
+        PWM_Operate_SetPulseWidthOnChannel(375, ARM_HAND_CH);
 
         CurrentState = ArmWaiting;
       }
