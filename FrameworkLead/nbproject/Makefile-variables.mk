@@ -6,5 +6,5 @@
 CND_BASEDIR=`pwd`
 # default configuration
 CND_ARTIFACT_DIR_default=dist/default/production
-CND_ARTIFACT_NAME_default=MPFrameworkLead.production.hex
-CND_ARTIFACT_PATH_default=dist/default/production/MPFrameworkLead.production.hex
+CND_ARTIFACT_NAME_default=FrameworkLead.production.hex
+CND_ARTIFACT_PATH_default=dist/default/production/FrameworkLead.production.hex

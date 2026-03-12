@@ -115,6 +115,7 @@ bool InitDriveCorrectionService(uint8_t Priority)
   CurrentState = DC_Idle;
 
   InitDriveCorrectionInterrupts();
+  ES_Timer_InitTimer(DriveCorrectionTimer, 10);
 
   ThisEvent.EventType = ES_INIT;
   return ES_PostToService(MyPriority, ThisEvent);
@@ -168,6 +169,12 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
 
   switch(ThisEvent.EventType)
     {
+        case ES_TIMEOUT:
+          if (ThisEvent.EventParam == SPI_TIMER)
+          {
+            ES_Timer_InitTimer(DriveCorrectionTimer, 10); // re-start timer
+          }
+          break;
         case ES_START_ENC_FWD:
             ResetDriveControl();
             UseMidStop = false;

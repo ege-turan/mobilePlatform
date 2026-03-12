@@ -347,7 +347,7 @@ typedef enum
 
 /****************************************************************************/
 // This is the list of event checking functions
-#define EVENT_CHECK_LIST Check4Keystroke, Check4Limit, Check4Tape
+#define EVENT_CHECK_LIST Check4Keystroke, Check4Limit, Check4TapePivot, Check4TapeFront
 
 /****************************************************************************/
 // These are the definitions for the post functions to be executed when the
@@ -366,7 +366,7 @@ typedef enum
 #define TIMER7_RESP_FUNC TIMER_UNUSED
 #define TIMER8_RESP_FUNC TIMER_UNUSED
 #define TIMER9_RESP_FUNC TIMER_UNUSED
-#define TIMER10_RESP_FUNC TIMER_UNUSED
+#define TIMER10_RESP_FUNC PostDriveCorrectionService
 #define TIMER11_RESP_FUNC PostMasterSM
 #define TIMER12_RESP_FUNC PostMasterSM
 #define TIMER13_RESP_FUNC PostBeaconService
@@ -385,6 +385,7 @@ typedef enum
 #define BeaconDetectTimer 13
 #define GameStartTimer 12
 #define StartRotateTimer 11
+#define DriveCorrectionTimer 10
 
 
 #endif /* ES_CONFIGURE_H */

@@ -25,7 +25,8 @@
 bool Check4Keystroke(void);
 
 // bool Check4Beacon(void); // Moved to its own service
-bool Check4Tape(void);
+bool Check4TapePivot(void);
+bool Check4TapeFront(void);
 bool Check4Limit(void);
 
 #endif /* EventCheckers_H */
