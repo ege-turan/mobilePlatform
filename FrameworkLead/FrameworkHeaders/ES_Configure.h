@@ -272,6 +272,7 @@ typedef enum
   ES_TAPE_DETECTED,
   ES_LINE_PIVOT_L,         /* When the left pivot tape detector is on the tape*/
   ES_LINE_PIVOT_R,         /* When the right pivot tape detector is on the tape*/
+  ES_CENTERED_PIVOT,
   ES_CENTERED,             /* When the two front tape detectors are on the tape*/
   ES_MOTORS_OFF,
   ES_COUNT_DONE,

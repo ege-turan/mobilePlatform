@@ -215,7 +215,7 @@ bool Check4TapePivot(void)
 
     if (ReturnVal && (leftOnLine && rightOnLine)){
         ES_Event_t ThisEvent;
-        ThisEvent.EventType = ES_CENTERED;
+        ThisEvent.EventType = ES_CENTERED_PIVOT;
         ES_PostAll(ThisEvent);
     }
 
