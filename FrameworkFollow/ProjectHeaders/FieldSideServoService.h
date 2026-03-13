@@ -8,6 +8,9 @@
 #ifndef ServFieldSideServo_H
 #define ServFieldSideServo_H
 
+#pragma once
+
+#include "ES_Events.h"
 #include "ES_Types.h"
 
 // Public Function Prototypes
@@ -17,4 +20,3 @@ bool PostFieldSideServoService(ES_Event_t ThisEvent);
 ES_Event_t RunFieldSideServoService(ES_Event_t ThisEvent);
 
 #endif /* ServFieldSideServo_H */
-

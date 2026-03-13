@@ -71,8 +71,8 @@ static uint8_t seqIndex;
 // static const uint16_t RaiseJ2[ARM_SEQ_LEN]  = {270, 300, 340, 360, 375};
 
 // Sequence for raising the robot arm, J1 refers to joint 1
-static const uint16_t LowerJ1[] = {600, 375};
-static const uint16_t LowerJ2[] = {570, 375};
+static const uint16_t LowerJ1[] = {530}; //, 375};
+static const uint16_t LowerJ2[] = {550}; //, 375};
 
 // 600 is about horizontal for J1
 static const uint16_t RaiseJ1[] = {730};

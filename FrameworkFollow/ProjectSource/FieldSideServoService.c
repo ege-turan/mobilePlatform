@@ -21,20 +21,21 @@
 /* include header files for this state machine as well as any machines at the
    next lower level in the hierarchy that are sub-machines to this machine
 */
+#include "FieldSideServoService.h"
 #include "ES_Configure.h"
 #include "ES_Framework.h"
-#include "FieldSideServoService.h"
 #include "PIC32_PWM_Lib.h"
 #include "SPIFollowService.h"
+#include "dbprintf.h"
 
 /*----------------------------- Module Defines ----------------------------*/
-#define M_BG_PWM_CH      3
-#define M_BG_PWM_PIN     PWM_RPB10
-#define M_BG_PWM_TIMER   _Timer3_
+#define M_BG_PWM_CH 3
+#define M_BG_PWM_PIN PWM_RPB10
+#define M_BG_PWM_TIMER _Timer3_
 
-#define PWM_SERVO_CENTER 375  // 1.5 ms pulse width at 20 ms period
-#define PWM_SERVO_SIDE   250  // 1 ms
-#define PWM_SERVO_OTHER  500  // 2 ms
+#define PWM_SERVO_CENTER 375 // 1.5 ms pulse width at 20 ms period
+#define PWM_SERVO_SIDE 250   // 1 ms
+#define PWM_SERVO_OTHER 500  // 2 ms
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
@@ -66,32 +67,34 @@ static uint8_t MyPriority;
 ****************************************************************************/
 bool InitFieldSideServoService(uint8_t Priority)
 {
-  ES_Event_t ThisEvent;
+    ES_Event_t ThisEvent;
 
-  MyPriority = Priority;
+    MyPriority = Priority;
 
-  // ----- Configure Timer3 for PWM at 50 Hz (20 ms period) -----
-  // PBCLK = 20 MHz, Prescaler = 64 -> Period ticks = 20e6 / (64 * 50) = 6250
-  PWM_Setup_ConfigureTimer(M_BG_PWM_TIMER, 6250, PWM_PS_64);
+    // ----- Configure Timer3 for PWM at 50 Hz (20 ms period) -----
+    // PBCLK = 20 MHz, Prescaler = 64 -> Period ticks = 20e6 / (64 * 50) = 6250
+    PWM_Setup_ConfigureTimer(M_BG_PWM_TIMER, 6250, PWM_PS_64);
 
-  // Map PWM channel for servo
-  PWM_Setup_SetChannel(M_BG_PWM_CH);
-  PWM_Setup_AssignChannelToTimer(M_BG_PWM_CH, M_BG_PWM_TIMER);
-  PWM_Setup_MapChannelToOutputPin(M_BG_PWM_CH, M_BG_PWM_PIN);
+    // Map PWM channel for servo
+    PWM_Setup_SetChannel(M_BG_PWM_CH);
+    PWM_Setup_AssignChannelToTimer(M_BG_PWM_CH, M_BG_PWM_TIMER);
+    PWM_Setup_MapChannelToOutputPin(M_BG_PWM_CH, M_BG_PWM_PIN);
 
-  // Initialize servo to center
-  PWM_Operate_SetPulseWidthOnChannel(PWM_SERVO_CENTER, M_BG_PWM_CH);
+    // Initialize servo to center
+    PWM_Operate_SetPulseWidthOnChannel(PWM_SERVO_CENTER, M_BG_PWM_CH);
 
-  // Post initial transition event
-  ThisEvent.EventType = ES_INIT;
-  if (ES_PostToService(MyPriority, ThisEvent) == true)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+    DB_printf("\rStarting BG servo in centre\r\n");
+
+    // Post initial transition event
+    ThisEvent.EventType = ES_INIT;
+    if (ES_PostToService(MyPriority, ThisEvent) == true)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 /****************************************************************************
@@ -113,7 +116,7 @@ bool InitFieldSideServoService(uint8_t Priority)
 ****************************************************************************/
 bool PostFieldSideServoService(ES_Event_t ThisEvent)
 {
-  return ES_PostToService(MyPriority, ThisEvent);
+    return ES_PostToService(MyPriority, ThisEvent);
 }
 
 /****************************************************************************
@@ -135,35 +138,41 @@ bool PostFieldSideServoService(ES_Event_t ThisEvent)
 ****************************************************************************/
 ES_Event_t RunFieldSideServoService(ES_Event_t ThisEvent)
 {
-  ES_Event_t ReturnEvent;
-  ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
+    ES_Event_t ReturnEvent;
+    ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
 
-  switch (ThisEvent.EventType)
-  {
-      case ES_NEW_SPI_CMD_RECEIVED:
-      {
-          switch (ThisEvent.EventParam)
-          {
-              case CMD_SPI_BLUE_TEAM:
-                  PWM_Operate_SetPulseWidthOnChannel(PWM_SERVO_SIDE, M_BG_PWM_CH);
-                  break;
+    switch (ThisEvent.EventType)
+    {
+        case ES_NEW_SPI_CMD_RECEIVED:
+        {
+            switch (ThisEvent.EventParam)
+            {
+                case CMD_SPI_BLUE_TEAM:
+                {
+                    DB_printf("\rCMD_SPI_BLUE_TEAM received\r\n");
+                    PWM_Operate_SetPulseWidthOnChannel(PWM_SERVO_SIDE, M_BG_PWM_CH);
+                }
+                break;
 
-              case CMD_SPI_GREEN_TEAM:
-                  PWM_Operate_SetPulseWidthOnChannel(PWM_SERVO_OTHER, M_BG_PWM_CH);
-                  break;
-          }
-      }
-      break;
+                case CMD_SPI_GREEN_TEAM:
+                {
+                    DB_printf("\rCMD_SPI_GREEN_TEAM received\r\n");
+                    PWM_Operate_SetPulseWidthOnChannel(PWM_SERVO_OTHER, M_BG_PWM_CH);
+                }
+                break;
+            }
+        }
+        break;
 
-      case ES_RESET:
-          PWM_Operate_SetPulseWidthOnChannel(PWM_SERVO_CENTER, M_BG_PWM_CH);
-          break;
+        case ES_RESET:
+            PWM_Operate_SetPulseWidthOnChannel(PWM_SERVO_CENTER, M_BG_PWM_CH);
+            break;
 
         default:
             break;
     }
 
-  return ReturnEvent;
+    return ReturnEvent;
 }
 
 /***************************************************************************
@@ -172,4 +181,3 @@ ES_Event_t RunFieldSideServoService(ES_Event_t ThisEvent)
 
 /*------------------------------- Footnotes -------------------------------*/
 /*------------------------------ End of file ------------------------------*/
-
