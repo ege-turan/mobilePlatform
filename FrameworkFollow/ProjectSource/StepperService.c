@@ -37,7 +37,7 @@
 
 /*----------------------------- Module Defines ----------------------------*/
 // use prescaler of 256 to have bigger pulse width range before overflow
-#define STEP_INTERVAL_MS   1   // bigger --> slower
+#define STEP_INTERVAL_MS   10   // bigger --> slower
 // #define STEP_INTERVAL_MS_LOW   4
 
 // #define MOTOR_OUTPUT_ANSEL (ANSELAbits.ANSA2)  // analog/digital mode of RA2, RA2 doesnt have ANSEL

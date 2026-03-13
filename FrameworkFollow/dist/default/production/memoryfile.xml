@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <project>                                  
-  <executable name="dist/default/production/MPFrameworkFollow.production.elf">                 
+  <executable name="dist/default/production/FrameworkFollow.production.elf">                 
     <memory name="program">                 
       <units>bytes</units>                 
       <length>263312</length>                 
-      <used>51347</used>                     
-      <free>211965</free>                     
+      <used>51399</used>                     
+      <free>211913</free>                     
     </memory>                              
     <memory name="data">              
       <units>bytes</units>                 

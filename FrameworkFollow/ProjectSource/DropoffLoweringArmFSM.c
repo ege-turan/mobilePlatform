@@ -179,8 +179,8 @@ ES_Event_t RunDropoffLoweringArmFSM(ES_Event_t ThisEvent)
         // Home position
         // Pulse widths: 1.5 ms center, 1–2 ms range
         // DS3235: 20 ms period, 1 ms -> 5% duty, 2 ms -> 10% duty
-        PWM_Operate_SetPulseWidthOnChannel(375, ARM_ELBOW_CH); // 1.5 ms center
-        PWM_Operate_SetPulseWidthOnChannel(375, ARM_HAND_CH);
+         PWM_Operate_SetPulseWidthOnChannel(0, ARM_ELBOW_CH); // 1.5 ms center
+         PWM_Operate_SetPulseWidthOnChannel(0, ARM_HAND_CH);
 
         CurrentState = ArmWaiting;
       }
@@ -191,6 +191,12 @@ ES_Event_t RunDropoffLoweringArmFSM(ES_Event_t ThisEvent)
     {
       switch (ThisEvent.EventType)
       {
+        case ES_START_DOWN:
+        {
+          PWM_Operate_SetPulseWidthOnChannel(375, ARM_ELBOW_CH); // 1.5 ms center
+          PWM_Operate_SetPulseWidthOnChannel(375, ARM_HAND_CH);
+        }
+        break;
         case ES_START_LOWERING_ARM:
         {
           seqIndex = 0;

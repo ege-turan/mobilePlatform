@@ -202,6 +202,7 @@ bool Check4StartButton(void)
         ThisEvent.EventType  = ES_START_DOWN;
         ThisEvent.EventParam = CurrentButtonState;        // no additional parameter needed, include CurrentButtonState for debugging
         PostOperatorFSM(ThisEvent);                       // post event to Laser FSM
+        PostDropoffLoweringArmFSM(ThisEvent);
     }
 
     LastButtonState = CurrentButtonState; // update last state
