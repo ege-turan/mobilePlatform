@@ -8,16 +8,22 @@
 #ifndef FSMDropoffLoweringArm_H
 #define FSMDropoffLoweringArm_H
 
+#pragma once
+
 // Event Definitions
 #include "ES_Configure.h" /* gets us event definitions */
-#include "ES_Types.h"     /* gets bool type for returns */
+#include "ES_Events.h"
+#include "ES_Types.h"
 
 // typedefs for the states
 // State definitions for use with the query function
 typedef enum
 {
-  ArmInitPState, ArmWaiting, Raising, Lowering
-}DropoffLoweringArmState_t;
+    ArmInitPState,
+    ArmWaiting,
+    Raising,
+    Lowering
+} DropoffLoweringArmState_t;
 
 // Public Function Prototypes
 
@@ -27,4 +33,3 @@ ES_Event_t RunDropoffLoweringArmFSM(ES_Event_t ThisEvent);
 DropoffLoweringArmState_t QueryDropoffLoweringArmSM(void);
 
 #endif /* FSMDropoffLoweringArm_H */
-

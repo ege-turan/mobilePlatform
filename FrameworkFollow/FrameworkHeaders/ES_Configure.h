@@ -57,196 +57,196 @@
 /****************************************************************************/
 // These are the definitions for Service 1
 #if NUM_SERVICES > 1
-// the header file with the public function prototypes
-#define SERV_1_HEADER "StepperService.h"
-// the name of the Init function
-#define SERV_1_INIT InitStepperService
-// the name of the run function
-#define SERV_1_RUN RunStepperService
-// How big should this services Queue be?
-#define SERV_1_QUEUE_SIZE 10
+    // the header file with the public function prototypes
+    #define SERV_1_HEADER "StepperService.h"
+    // the name of the Init function
+    #define SERV_1_INIT InitStepperService
+    // the name of the run function
+    #define SERV_1_RUN RunStepperService
+    // How big should this services Queue be?
+    #define SERV_1_QUEUE_SIZE 10
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 2
 #if NUM_SERVICES > 2
-// the header file with the public function prototypes
-#define SERV_2_HEADER "OperatorFSM.h"
-// the name of the Init function
-#define SERV_2_INIT InitOperatorFSM
-// the name of the run function
-#define SERV_2_RUN RunOperatorFSM
-// How big should this services Queue be?
-#define SERV_2_QUEUE_SIZE 10
+    // the header file with the public function prototypes
+    #define SERV_2_HEADER "OperatorFSM.h"
+    // the name of the Init function
+    #define SERV_2_INIT InitOperatorFSM
+    // the name of the run function
+    #define SERV_2_RUN RunOperatorFSM
+    // How big should this services Queue be?
+    #define SERV_2_QUEUE_SIZE 10
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 3
 #if NUM_SERVICES > 3
-// the header file with the public function prototypes
-#define SERV_3_HEADER "DropoffLoweringArmFSM.h"
-// the name of the Init function
-#define SERV_3_INIT InitDropoffLoweringArmFSM
-// the name of the run function
-#define SERV_3_RUN RunDropoffLoweringArmFSM
-// How big should this services Queue be?
-#define SERV_3_QUEUE_SIZE 10
+    // the header file with the public function prototypes
+    #define SERV_3_HEADER "DropoffLoweringArmFSM.h"
+    // the name of the Init function
+    #define SERV_3_INIT InitDropoffLoweringArmFSM
+    // the name of the run function
+    #define SERV_3_RUN RunDropoffLoweringArmFSM
+    // How big should this services Queue be?
+    #define SERV_3_QUEUE_SIZE 10
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 4
 #if NUM_SERVICES > 4
-// the header file with the public function prototypes
-#define SERV_4_HEADER "FieldSideServoService.h"
-// the name of the Init function
-#define SERV_4_INIT InitFieldSideServoService
-// the name of the run function
-#define SERV_4_RUN RunFieldSideServoService
-// How big should this services Queue be?
-#define SERV_4_QUEUE_SIZE 10
+    // the header file with the public function prototypes
+    #define SERV_4_HEADER "FieldSideServoService.h"
+    // the name of the Init function
+    #define SERV_4_INIT InitFieldSideServoService
+    // the name of the run function
+    #define SERV_4_RUN RunFieldSideServoService
+    // How big should this services Queue be?
+    #define SERV_4_QUEUE_SIZE 10
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 5
 #if NUM_SERVICES > 5
-// the header file with the public function prototypes
-#define SERV_5_HEADER "IntakeService.h"
-// the name of the Init function
-#define SERV_5_INIT InitIntakeService
-// the name of the run function
-#define SERV_5_RUN RunIntakeService
-// How big should this services Queue be?
-#define SERV_5_QUEUE_SIZE 10
+    // the header file with the public function prototypes
+    #define SERV_5_HEADER "IntakeService.h"
+    // the name of the Init function
+    #define SERV_5_INIT InitIntakeService
+    // the name of the run function
+    #define SERV_5_RUN RunIntakeService
+    // How big should this services Queue be?
+    #define SERV_5_QUEUE_SIZE 10
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 6
 #if NUM_SERVICES > 6
-// the header file with the public function prototypes
-#define SERV_6_HEADER "KeyboardService.h"
-// the name of the Init function
-#define SERV_6_INIT InitKeyboardService
-// the name of the run function
-#define SERV_6_RUN RunKeyboardService
-// How big should this services Queue be?
-#define SERV_6_QUEUE_SIZE 3
+    // the header file with the public function prototypes
+    #define SERV_6_HEADER "KeyboardService.h"
+    // the name of the Init function
+    #define SERV_6_INIT InitKeyboardService
+    // the name of the run function
+    #define SERV_6_RUN RunKeyboardService
+    // How big should this services Queue be?
+    #define SERV_6_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 7
 #if NUM_SERVICES > 7
-// the header file with the public function prototypes
-#define SERV_7_HEADER "TestHarnessService7.h"
-// the name of the Init function
-#define SERV_7_INIT InitTestHarnessService7
-// the name of the run function
-#define SERV_7_RUN RunTestHarnessService7
-// How big should this services Queue be?
-#define SERV_7_QUEUE_SIZE 3
+    // the header file with the public function prototypes
+    #define SERV_7_HEADER "TestHarnessService7.h"
+    // the name of the Init function
+    #define SERV_7_INIT InitTestHarnessService7
+    // the name of the run function
+    #define SERV_7_RUN RunTestHarnessService7
+    // How big should this services Queue be?
+    #define SERV_7_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 8
 #if NUM_SERVICES > 8
-// the header file with the public function prototypes
-#define SERV_8_HEADER "TestHarnessService8.h"
-// the name of the Init function
-#define SERV_8_INIT InitTestHarnessService8
-// the name of the run function
-#define SERV_8_RUN RunTestHarnessService8
-// How big should this services Queue be?
-#define SERV_8_QUEUE_SIZE 3
+    // the header file with the public function prototypes
+    #define SERV_8_HEADER "TestHarnessService8.h"
+    // the name of the Init function
+    #define SERV_8_INIT InitTestHarnessService8
+    // the name of the run function
+    #define SERV_8_RUN RunTestHarnessService8
+    // How big should this services Queue be?
+    #define SERV_8_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 9
 #if NUM_SERVICES > 9
-// the header file with the public function prototypes
-#define SERV_9_HEADER "TestHarnessService9.h"
-// the name of the Init function
-#define SERV_9_INIT InitTestHarnessService9
-// the name of the run function
-#define SERV_9_RUN RunTestHarnessService9
-// How big should this services Queue be?
-#define SERV_9_QUEUE_SIZE 3
+    // the header file with the public function prototypes
+    #define SERV_9_HEADER "TestHarnessService9.h"
+    // the name of the Init function
+    #define SERV_9_INIT InitTestHarnessService9
+    // the name of the run function
+    #define SERV_9_RUN RunTestHarnessService9
+    // How big should this services Queue be?
+    #define SERV_9_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 10
 #if NUM_SERVICES > 10
-// the header file with the public function prototypes
-#define SERV_10_HEADER "TestHarnessService10.h"
-// the name of the Init function
-#define SERV_10_INIT InitTestHarnessService10
-// the name of the run function
-#define SERV_10_RUN RunTestHarnessService10
-// How big should this services Queue be?
-#define SERV_10_QUEUE_SIZE 3
+    // the header file with the public function prototypes
+    #define SERV_10_HEADER "TestHarnessService10.h"
+    // the name of the Init function
+    #define SERV_10_INIT InitTestHarnessService10
+    // the name of the run function
+    #define SERV_10_RUN RunTestHarnessService10
+    // How big should this services Queue be?
+    #define SERV_10_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 11
 #if NUM_SERVICES > 11
-// the header file with the public function prototypes
-#define SERV_11_HEADER "TestHarnessService11.h"
-// the name of the Init function
-#define SERV_11_INIT InitTestHarnessService11
-// the name of the run function
-#define SERV_11_RUN RunTestHarnessService11
-// How big should this services Queue be?
-#define SERV_11_QUEUE_SIZE 3
+    // the header file with the public function prototypes
+    #define SERV_11_HEADER "TestHarnessService11.h"
+    // the name of the Init function
+    #define SERV_11_INIT InitTestHarnessService11
+    // the name of the run function
+    #define SERV_11_RUN RunTestHarnessService11
+    // How big should this services Queue be?
+    #define SERV_11_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 12
 #if NUM_SERVICES > 12
-// the header file with the public function prototypes
-#define SERV_12_HEADER "TestHarnessService12.h"
-// the name of the Init function
-#define SERV_12_INIT InitTestHarnessService12
-// the name of the run function
-#define SERV_12_RUN RunTestHarnessService12
-// How big should this services Queue be?
-#define SERV_12_QUEUE_SIZE 3
+    // the header file with the public function prototypes
+    #define SERV_12_HEADER "TestHarnessService12.h"
+    // the name of the Init function
+    #define SERV_12_INIT InitTestHarnessService12
+    // the name of the run function
+    #define SERV_12_RUN RunTestHarnessService12
+    // How big should this services Queue be?
+    #define SERV_12_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 13
 #if NUM_SERVICES > 13
-// the header file with the public function prototypes
-#define SERV_13_HEADER "TestHarnessService13.h"
-// the name of the Init function
-#define SERV_13_INIT InitTestHarnessService13
-// the name of the run function
-#define SERV_13_RUN RunTestHarnessService13
-// How big should this services Queue be?
-#define SERV_13_QUEUE_SIZE 3
+    // the header file with the public function prototypes
+    #define SERV_13_HEADER "TestHarnessService13.h"
+    // the name of the Init function
+    #define SERV_13_INIT InitTestHarnessService13
+    // the name of the run function
+    #define SERV_13_RUN RunTestHarnessService13
+    // How big should this services Queue be?
+    #define SERV_13_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 14
 #if NUM_SERVICES > 14
-// the header file with the public function prototypes
-#define SERV_14_HEADER "TestHarnessService14.h"
-// the name of the Init function
-#define SERV_14_INIT InitTestHarnessService14
-// the name of the run function
-#define SERV_14_RUN RunTestHarnessService14
-// How big should this services Queue be?
-#define SERV_14_QUEUE_SIZE 3
+    // the header file with the public function prototypes
+    #define SERV_14_HEADER "TestHarnessService14.h"
+    // the name of the Init function
+    #define SERV_14_INIT InitTestHarnessService14
+    // the name of the run function
+    #define SERV_14_RUN RunTestHarnessService14
+    // How big should this services Queue be?
+    #define SERV_14_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
 // These are the definitions for Service 15
 #if NUM_SERVICES > 15
-// the header file with the public function prototypes
-#define SERV_15_HEADER "TestHarnessService15.h"
-// the name of the Init function
-#define SERV_15_INIT InitTestHarnessService15
-// the name of the run function
-#define SERV_15_RUN RunTestHarnessService15
-// How big should this services Queue be?
-#define SERV_15_QUEUE_SIZE 3
+    // the header file with the public function prototypes
+    #define SERV_15_HEADER "TestHarnessService15.h"
+    // the name of the Init function
+    #define SERV_15_INIT InitTestHarnessService15
+    // the name of the run function
+    #define SERV_15_RUN RunTestHarnessService15
+    // How big should this services Queue be?
+    #define SERV_15_QUEUE_SIZE 3
 #endif
 
 /****************************************************************************/
@@ -254,35 +254,35 @@
 // Universal events occupy the lowest entries, followed by user-defined events
 typedef enum
 {
-  ES_NO_EVENT = 0,
-  ES_ERROR,                 /* used to indicate an error from the service */
-  ES_INIT,                  /* used to transition from initial pseudo-state */
-  ES_TIMEOUT,               /* signals that the timer has expired */
-  ES_SHORT_TIMEOUT,         /* signals that a short timer has expired */
-  /* User-defined events start here */
-  // ES_LOCK,
-  // ES_UNLOCK,
-  ES_NEW_KEY,                /* signals a new key received from terminal */
-  ES_SPI_COMPLETE,           /* signals that SPI has risen so message received*/
-  ES_NEW_SPI_CMD_SEND,       /* signals what the next sent command should be. Parameter is the command in SPIFollowService */
-  ES_NEW_SPI_CMD_RECEIVED,   /* signals that a new command was received. Parameter is the command in SPIFollowService*/  
-  ES_CARGO_IN,
-  ES_CARGO_OUT,
+    ES_NO_EVENT = 0,
+    ES_ERROR,         /* used to indicate an error from the service */
+    ES_INIT,          /* used to transition from initial pseudo-state */
+    ES_TIMEOUT,       /* signals that the timer has expired */
+    ES_SHORT_TIMEOUT, /* signals that a short timer has expired */
+    /* User-defined events start here */
+    // ES_LOCK,
+    // ES_UNLOCK,
+    ES_NEW_KEY,      /* signals a new key received from terminal */
+    ES_SPI_COMPLETE, /* signals that SPI has risen so message received*/
+    ES_NEW_SPI_CMD_SEND, /* signals what the next sent command should be. Parameter is the command in SPIFollowService */
+    ES_NEW_SPI_CMD_RECEIVED, /* signals that a new command was received. Parameter is the command in SPIFollowService*/
+    ES_CARGO_IN,
+    ES_CARGO_OUT,
 
-  ES_ARM_LOWERED,
-  ES_ARM_RELEASED,
+    ES_ARM_LOWERED,
+    ES_ARM_RELEASED,
 
-  ES_FEEDER_START,
-  ES_FEEDER_STOP,
+    ES_FEEDER_START,
+    ES_FEEDER_STOP,
 
-  ES_START_LOWERING_ARM,
-  ES_START_RAISING_ARM,
-  ES_STOP_ARM,
+    ES_START_LOWERING_ARM,
+    ES_START_RAISING_ARM,
+    ES_STOP_ARM,
 
-  ES_RESET,
+    ES_RESET,
 
-  ES_START_DOWN
-}ES_EventType_t;
+    ES_START_DOWN
+} ES_EventType_t;
 
 /****************************************************************************/
 // These are the definitions for the Distribution lists. Each definition
@@ -290,28 +290,28 @@ typedef enum
 // services are on that distribution list.
 #define NUM_DIST_LISTS 0
 #if NUM_DIST_LISTS > 0
-#define DIST_LIST0 PostTestHarnessService0, PostTestHarnessService0
+    #define DIST_LIST0 PostTestHarnessService0, PostTestHarnessService0
 #endif
 #if NUM_DIST_LISTS > 1
-#define DIST_LIST1 PostTestHarnessService1, PostTestHarnessService1
+    #define DIST_LIST1 PostTestHarnessService1, PostTestHarnessService1
 #endif
 #if NUM_DIST_LISTS > 2
-#define DIST_LIST2 PostTemplateFSM
+    #define DIST_LIST2 PostTemplateFSM
 #endif
 #if NUM_DIST_LISTS > 3
-#define DIST_LIST3 PostTemplateFSM
+    #define DIST_LIST3 PostTemplateFSM
 #endif
 #if NUM_DIST_LISTS > 4
-#define DIST_LIST4 PostTemplateFSM
+    #define DIST_LIST4 PostTemplateFSM
 #endif
 #if NUM_DIST_LISTS > 5
-#define DIST_LIST5 PostTemplateFSM
+    #define DIST_LIST5 PostTemplateFSM
 #endif
 #if NUM_DIST_LISTS > 6
-#define DIST_LIST6 PostTemplateFSM
+    #define DIST_LIST6 PostTemplateFSM
 #endif
 #if NUM_DIST_LISTS > 7
-#define DIST_LIST7 PostTemplateFSM
+    #define DIST_LIST7 PostTemplateFSM
 #endif
 
 /****************************************************************************/
@@ -333,7 +333,7 @@ typedef enum
 #define TIMER5_RESP_FUNC TIMER_UNUSED
 #define TIMER6_RESP_FUNC TIMER_UNUSED
 #define TIMER7_RESP_FUNC TIMER_UNUSED
-#define TIMER8_RESP_FUNC TIMER_UNUSED
+#define TIMER8_RESP_FUNC PostDropoffLoweringArmFSM
 #define TIMER9_RESP_FUNC PostOperatorFSM
 #define TIMER10_RESP_FUNC PostStepperService
 #define TIMER11_RESP_FUNC ES_PostAll // PostOperatorFSM
@@ -356,6 +356,6 @@ typedef enum
 #define DROPOFF_PACE_TIMER 11
 #define STEPPER_STEP_TIMER 10
 #define AGITATOR_FAKE_PWM_TIMER 9
-
+#define ARM_MOVE_TIMER 8
 
 #endif /* ES_CONFIGURE_H */

@@ -8,6 +8,9 @@
 #ifndef ServKeyboard_H
 #define ServKeyboard_H
 
+#pragma once
+
+#include "ES_Events.h"
 #include "ES_Types.h"
 
 // Public Function Prototypes
@@ -17,4 +20,3 @@ bool PostKeyboardService(ES_Event_t ThisEvent);
 ES_Event_t RunKeyboardService(ES_Event_t ThisEvent);
 
 #endif /* ServKeyboard_H */
-

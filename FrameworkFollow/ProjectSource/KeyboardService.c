@@ -21,20 +21,16 @@
 /* include header files for this state machine as well as any machines at the
    next lower level in the hierarchy that are sub-machines to this machine
 */
+#include "KeyboardService.h"
+#include "DropoffLoweringArmFSM.h"
 #include "ES_Configure.h"
 #include "ES_Framework.h"
-#include "KeyboardService.h"
-#include "dbprintf.h"
-
-#include "SPIFollowService.h"
-#include "StepperService.h"
-#include "OperatorFSM.h"
-#include "DropoffLoweringArmFSM.h"
 #include "FieldSideServoService.h"
 #include "IntakeService.h"
-
-
-
+#include "OperatorFSM.h"
+#include "SPIFollowService.h"
+#include "StepperService.h"
+#include "dbprintf.h"
 
 /*----------------------------- Module Defines ----------------------------*/
 #define VERBOSE_KEYBOARD
@@ -74,25 +70,25 @@ static ES_Event_t KB_Event5;
 ****************************************************************************/
 bool InitKeyboardService(uint8_t Priority)
 {
-  ES_Event_t ThisEvent;
+    ES_Event_t ThisEvent;
 
-  MyPriority = Priority;
-  /********************************************
+    MyPriority = Priority;
+    /********************************************
    in here you write your initialization code
    *******************************************/
-  DB_printf("\rStarting KeyboardService: ");
-  DB_printf("compiled at %s on %s", __TIME__, __DATE__);
-  DB_printf("\n\r");
-  // post the initial transition event
-  ThisEvent.EventType = ES_INIT;
-  if (ES_PostToService(MyPriority, ThisEvent) == true)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+    DB_printf("\rStarting KeyboardService: ");
+    DB_printf("compiled at %s on %s", __TIME__, __DATE__);
+    DB_printf("\n\r");
+    // post the initial transition event
+    ThisEvent.EventType = ES_INIT;
+    if (ES_PostToService(MyPriority, ThisEvent) == true)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 /****************************************************************************
@@ -114,7 +110,7 @@ bool InitKeyboardService(uint8_t Priority)
 ****************************************************************************/
 bool PostKeyboardService(ES_Event_t ThisEvent)
 {
-  return ES_PostToService(MyPriority, ThisEvent);
+    return ES_PostToService(MyPriority, ThisEvent);
 }
 
 /****************************************************************************
@@ -136,72 +132,89 @@ bool PostKeyboardService(ES_Event_t ThisEvent)
 ****************************************************************************/
 ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
 {
-  ES_Event_t ReturnEvent;
-  ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
-  /********************************************
-   in here you write your service code
-   *******************************************/
-  switch (ThisEvent.EventType)
-  {
-    // This event is run once at the end of service initialisation
-    case ES_INIT:
+    ES_Event_t ReturnEvent;
+    ReturnEvent.EventType = ES_NO_EVENT; // assume no errors
+    /********************************************
+    in here you write your service code
+    *******************************************/
+    switch (ThisEvent.EventType)
     {
-      DB_printf("\rES_INIT received in KeyboardService, priority: %d\r\n", MyPriority);
-    }
-      break;
+        // This event is run once at the end of service initialisation
+        case ES_INIT:
+        {
+            DB_printf("\rES_INIT received in KeyboardService, priority: %d\r\n", MyPriority);
+        }
+        break;
 
+        case ES_NEW_KEY:
+        {
+            switch (ThisEvent.EventParam)
+            {
+                case '1':
+                {
+                    KB_Event1.EventType  = ES_NEW_SPI_CMD_RECEIVED;
+                    KB_Event1.EventParam = CMD_SPI_INTAKE_ON;
+                }
+                break;
+                case '2':
+                {
+                    KB_Event1.EventType  = ES_NEW_SPI_CMD_RECEIVED;
+                    KB_Event1.EventParam = CMD_SPI_DROPOFF_REACHED;
+                }
+                break;
+                case '3':
+                {
+                    KB_Event1.EventType  = ES_NEW_SPI_CMD_RECEIVED;
+                    KB_Event1.EventParam = CMD_SPI_BLUE_TEAM;
+                }
+                break;
+                case '4':
+                {
+                    KB_Event1.EventType  = ES_NEW_SPI_CMD_RECEIVED;
+                    KB_Event1.EventParam = CMD_SPI_GREEN_TEAM;
+                }
+                break;
+                case '5':
+                {
+                    KB_Event1.EventType = ES_FEEDER_START;
+                    break;
+                }
+                case '6':
+                {
+                    KB_Event1.EventType = ES_FEEDER_STOP;
+                    break;
+                }
+                case '7':
+                {
+                    KB_Event1.EventType = ES_START_RAISING_ARM;
+                    break;
+                }
+                case '8':
+                {
+                    KB_Event1.EventType = ES_START_LOWERING_ARM;
+                    break;
+                }
+                    // case '9': KB_Event1.EventType  = ES_LINE_PIVOT_R;     break;
+                    // case '0': KB_Event1.EventType  = ES_LIMIT_SWITCH;     break;
+                    // case 'h': KB_Event1.EventType  = ES_COUNT_DONE;       break;
+                    // case 'j': KB_Event1.EventType  = ES_LIMIT_SWITCH;     break;
 
-    case ES_NEW_KEY:
-    {
-      switch (ThisEvent.EventParam) {
-        case '1':
-        {
-          KB_Event1.EventType  = ES_NEW_SPI_CMD_RECEIVED;
-          KB_Event1.EventParam = CMD_SPI_INTAKE_ON;
+                default:
+                    // KB_Event1.EventType  = ES_MOTORS_OFF;
+                    DB_printf("KeyboardService msg: %c\r\n", ThisEvent.EventParam);
+                    break;
+            }
+            ES_PostAll(KB_Event1);
+            DB_printf("PostedEvent: %u, with param 0x%x\r\n",
+                      (unsigned int)KB_Event1.EventType,
+                      (unsigned int)KB_Event1.EventParam);
         }
-          break;
-        case '2':
-        {
-          KB_Event1.EventType  = ES_NEW_SPI_CMD_RECEIVED;
-          KB_Event1.EventParam = CMD_SPI_DROPOFF_REACHED;
-        }
-          break;
-        case '3':
-        {
-          KB_Event1.EventType  = ES_NEW_SPI_CMD_RECEIVED;
-          KB_Event1.EventParam = CMD_SPI_BLUE_TEAM;
-        }
-          break;
-        case '4':
-        {
-          KB_Event1.EventType  = ES_NEW_SPI_CMD_RECEIVED;
-          KB_Event1.EventParam = CMD_SPI_GREEN_TEAM;
-        }
-          break;
-        case '5': KB_Event1.EventType  = ES_FEEDER_START;     break;
-        case '6': KB_Event1.EventType  = ES_FEEDER_STOP;      break;
-        case '7': KB_Event1.EventType  = ES_START_RAISING_ARM; break;
-        case '8': KB_Event1.EventType  = ES_START_LOWERING_ARM;break;
-        // case '9': KB_Event1.EventType  = ES_LINE_PIVOT_R;     break;
-        // case '0': KB_Event1.EventType  = ES_LIMIT_SWITCH;     break;
-        // case 'h': KB_Event1.EventType  = ES_COUNT_DONE;       break;
-        // case 'j': KB_Event1.EventType  = ES_LIMIT_SWITCH;     break;
-        
-        
+        break;
+
         default:
-          // KB_Event1.EventType  = ES_MOTORS_OFF;
-          DB_printf("KeyboardService msg: %c\r\n", ThisEvent.EventParam);
-          break;
-      }
-      ES_PostAll(KB_Event1);
-        DB_printf("PostedEvent: %u, with param 0x%x\r\n", (unsigned int) KB_Event1.EventType, (unsigned int) KB_Event1.EventParam);
+            break;
     }
-      break;
-
-    default:
-      break;
-  }
-  return ReturnEvent;
+    return ReturnEvent;
 }
 
 /***************************************************************************
@@ -210,4 +223,3 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
 
 /*------------------------------- Footnotes -------------------------------*/
 /*------------------------------ End of file ------------------------------*/
-

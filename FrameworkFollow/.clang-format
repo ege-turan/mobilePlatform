@@ -1,0 +1,36 @@
+﻿---
+BasedOnStyle: Microsoft
+ColumnLimit: 100
+BreakBeforeBraces: Allman
+IndentPPDirectives: BeforeHash
+ReflowComments: false
+
+AlignConsecutiveAssignments:
+  Enabled: true
+  AcrossEmptyLines: false
+  AcrossComments: false
+
+# Control empty lines
+MaxEmptyLinesToKeep: 1
+KeepEmptyLines:
+  AtStartOfFile: false
+  AtEndOfFile: false
+  AtStartOfBlock: true
+
+# Indent the case labels (case X:) one level from the switch statement.
+IndentCaseLabels: true
+
+# Function/class spacing
+SeparateDefinitionBlocks: Always
+
+# Parameter/argument breaking
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowAllArgumentsOnNextLine: true
+BinPackParameters: false
+BinPackArguments: false
+
+# When to break lines
+AlwaysBreakBeforeMultilineStrings: false
+BreakStringLiterals: true
+BreakBeforeBinaryOperators: None
+BreakBeforeTernaryOperators: true
