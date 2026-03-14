@@ -48,7 +48,7 @@
 
 // Timers
 #define GAME_TIME_MS 21800
-#define INTAKE_PACE_MS 5000
+#define INTAKE_PACE_MS 10000
 #define DROPOFF_PACE_MS 7000
 
 // Pins
@@ -72,7 +72,7 @@
 
 #define INTAKE_PWM_PSC PWM_PS_1
 #define INTAKE_PWM_PERIOD 2000
-#define INTAKE_PWM_DUTY 32 // as percentage
+#define INTAKE_PWM_DUTY 25 // as percentage
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this machine.They should be functions
@@ -293,8 +293,10 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
         /********************* STANDBY *********************/
         case Standby:
         {
+            if ((ThisEvent.EventType == ES_NEW_SPI_CMD_RECEIVED) && (ThisEvent.EventParam == CMD_SPI_INTAKE_ON)) Intake_On();
+            if (ThisEvent.EventType == ES_FEEDER_STOP) Intake_Off();
             switch (ThisEvent.EventType)
-            {
+            {               
                 case ES_START_DOWN:
                 {
                     carrying = 0;
@@ -344,7 +346,7 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
 
                         // turn on intake PWM
                         Intake_On();
-                        Agitator_On();
+                        // Agitator_On();
                     }
                     else if (ThisEvent.EventParam == CMD_SPI_DROPOFF_REACHED)
                     {

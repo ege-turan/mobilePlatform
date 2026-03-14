@@ -192,6 +192,7 @@ ES_Event_t RunSPIFollowService(ES_Event_t ThisEvent)
 
       // write the next message to be sent into the buffer
       SPIOperate_SPI1_Send8(message2send);
+      DB_printf("[follower ]      sending over SPI:     0x%x\r\n", (unsigned int)message2send);
     }
       break;
     case ES_NEW_SPI_CMD_SEND:

@@ -135,7 +135,7 @@ bool Check4SPI(void)
     ThisEvent.EventParam = newMessage;
     ES_PostAll(ThisEvent);
 
-    // DB_printf("SPI msg from Leader:     0x%x\r\n", (unsigned int)ThisEvent.EventParam);
+    DB_printf("[follower ]     received over SPI:     0x%x\r\n", (unsigned int)ThisEvent.EventParam);
 
     return true;
   }
