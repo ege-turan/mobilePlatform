@@ -1,4 +1,4 @@
-#ifndef PLANS_AND_STEPS_H
+ #ifndef PLANS_AND_STEPS_H
 #define PLANS_AND_STEPS_H
 
 #include "ES_Configure.h"

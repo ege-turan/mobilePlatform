@@ -191,7 +191,7 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
   {
     case ES_INIT:
     {
-      DB_printf("BeaconService received ES_INIT\r\n");
+      DB_printf("\rES_INIT received in BeaconService, priority: %d\r\n", MyPriority);
     }
     break;
 

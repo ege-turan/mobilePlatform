@@ -27,6 +27,7 @@
 #include "DriveCorrectionService.h"
 
 #include "DCMotorService.h"
+#include "dbprintf.h"
 
 #include <sys/attribs.h> // for interrupts
 
@@ -169,6 +170,11 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
 
   switch(ThisEvent.EventType)
     {
+        case ES_INIT:
+        {
+        DB_printf("\rES_INIT received in DriveCorrectionService, priority: %d\r\n", MyPriority);
+        }
+        break;
         case ES_TIMEOUT:
           if (ThisEvent.EventParam == SPI_TIMER)
           {

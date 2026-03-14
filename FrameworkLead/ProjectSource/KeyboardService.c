@@ -157,25 +157,25 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
         {
           KB_Event1.EventType  = ES_NEW_SPI_CMD_RECEIVED;
           KB_Event1.EventParam = CMD_SPI_START;
-        }
           break;
-        case '2':
-        {
-          KB_Event1.EventType  = ES_NEW_SPI_CMD_RECEIVED;
-          KB_Event1.EventParam = CMD_SPI_LOADED;
         }
-          break;
+          
+        case '2': DB_printf("KEYBOARD2 \r\n"); KB_Event1.EventType  = ES_NEW_SPI_CMD_RECEIVED; KB_Event1.EventParam = 0xb1; break;
         case '3':
         {
           KB_Event1.EventType  = ES_NEW_SPI_CMD_RECEIVED;
           KB_Event1.EventParam = CMD_SPI_UNLOADED;
-        }
           break;
+        }
         case '4':
         {
           KB_Event1.EventType  = ES_PLAN_DONE;
-        }
+          DB_printf("KEYBOARD4 \r\n");
+          KB_Event1.EventType  = ES_NEW_SPI_CMD_RECEIVED;
+          // KB_Event1.EventParam = CMD_SPI_LOADED;
+          DB_printf("PostedEvent: %u, with param 0x%x\r\n", (unsigned int) KB_Event1.EventType, (unsigned int) KB_Event1.EventParam);
           break;
+        }
         case '5': KB_Event1.EventType  = ES_SIDE_FOUND;       break;
         case '6': KB_Event1.EventType  = ES_BEACON_DISPENSER; break;
         case '7': KB_Event1.EventType  = ES_CENTERED;         break;
@@ -183,6 +183,7 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
         case '9': KB_Event1.EventType  = ES_LINE_PIVOT_R;     break;
         case '0': KB_Event1.EventType  = ES_LIMIT_SWITCH;     break;
         case 'h': KB_Event1.EventType  = ES_COUNT_DONE;       break;
+        case 'u': KB_Event1.EventType  = ES_START_LINE_FWD;   break;
         case 'i': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = Forwards;  break;
         case 'j': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = RotateCCW; break;
         case 'k': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = Backwards; break;
@@ -196,7 +197,7 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
           break;
       }
       ES_PostAll(KB_Event1);
-        DB_printf("PostedEvent: %u, with param 0x%x\r\n", (unsigned int) KB_Event1.EventType, (unsigned int) KB_Event1.EventParam);
+      DB_printf("PostedEvent: %u, with param 0x%x\r\n", (unsigned int) KB_Event1.EventType, (unsigned int) KB_Event1.EventParam);
     }
       break;
 

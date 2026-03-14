@@ -358,15 +358,17 @@ static ES_Event_t DuringRunningPlan( ES_Event_t Event)
         // after that start any lower level machines that run in this state
         ES_Event_t StartPlanEvent;
         if (false == DEATHMATCH_MODE){
+            DB_printf("[Planner] Sending: ES_START_PLAN\r\n");
             StartPlanEvent.EventType = ES_START_PLAN;
             StartPlanEvent.EventParam = PlanIndex;
         } else if (true == DEATHMATCH_MODE){
+            DB_printf("[Planner] Sending: ES_START_DM_PLAN\r\n");
             StartPlanEvent.EventType = ES_START_DM_PLAN;
             StartPlanEvent.EventParam = PlanIndex;
         }
         RunDriverFromToSM(StartPlanEvent);
-        // repeat the StartxxxSM() functions for concurrent state machines
-        // on the lower level
+        // // repeat the StartxxxSM() functions for concurrent state machines
+        // // on the lower level
     }
     else if ( Event.EventType == ES_EXIT )
     {

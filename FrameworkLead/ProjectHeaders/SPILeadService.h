@@ -29,13 +29,13 @@
 /* FOLLOW2LEAD SPI CMDS*/
 #define CMD_SPI_FOLLOW_INITIAL    0xFF
 #define CMD_SPI_START             0xB1
-#define CMD_SPI_START_DEATHMATCH  0xB7
 #define CMD_SPI_INTAKE_INCOMPLETE 0xB2
 #define CMD_SPI_LOADED            0xB3
 #define CMD_SPI_UNLOADED          0xB4
-#define CMD_SPI_RELEASED          0xB8
 #define CMD_SPI_UNLOAD_INCOMPLETE 0xB5
 #define CMD_SPI_END               0xB6
+#define CMD_SPI_START_DEATHMATCH  0xB7
+#define CMD_SPI_RELEASED          0xB8
 
 
 // Public Function Prototypes

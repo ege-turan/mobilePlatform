@@ -38,7 +38,7 @@
 #define SPI1_SDI_PIN SPI_RPB11
 #define SPIClkPeriodInNs 10000 // 100 kHz = 10000 ns
 
-#define SPI_TIMER_MS 20
+#define SPI_TIMER_MS 200
 
 
 /*---------------------------- Module Functions ---------------------------*/
@@ -174,6 +174,7 @@ ES_Event_t RunSPILeadService(ES_Event_t ThisEvent)
     case ES_NEW_SPI_CMD_SEND:
     {
       message2send = (uint8_t)ThisEvent.EventParam;
+      DB_printf("New SPI send Leader:     0x%x\r\n", (unsigned int)message2send);
     }
       break;
     case ES_TIMEOUT:
@@ -182,11 +183,11 @@ ES_Event_t RunSPILeadService(ES_Event_t ThisEvent)
       {
         static uint8_t LastMessage = 0xFF;
 
-        // If previous SPI transfer finished, read its result
-        if (SPIOperate_HasSS1_Risen())
+        // // If previous SPI transfer finished, read its result
+        // if (SPIOperate_HasSS1_Risen())
         {
           uint8_t newMessage = (uint8_t)SPIOperate_ReadData(SPI_SPI1);
-          // DB_printf("Follower Sent Over SPI:     0x%x\r\n", (unsigned int)newMessage);
+          DB_printf("[leader ]     received over SPI:     0x%x\r\n", (unsigned int)newMessage);
 
           // check if message different and not bad command
           if ((newMessage != LastMessage) && (newMessage != CMD_SPI_FOLLOW_INITIAL))
@@ -197,7 +198,7 @@ ES_Event_t RunSPILeadService(ES_Event_t ThisEvent)
             ES_PostAll(NewEvent);
 
             #ifdef DEBUG_PRINT
-            DB_printf("New SPI from Follower:     0x%x\r\n", (unsigned int)NewEvent.EventParam);
+            DB_printf("[leader ] received New over SPI:     0x%x\r\n", (unsigned int)NewEvent.EventParam);
             #endif
           }
 
@@ -205,48 +206,13 @@ ES_Event_t RunSPILeadService(ES_Event_t ThisEvent)
         }
 
         // Always Querry CommandGenerator for new command
+        DB_printf("[leader ]      sending over SPI:     0x%x\r\n", (unsigned int)message2send);
         SPIOperate_SPI1_Send8(message2send);
 
         ES_Timer_InitTimer(SPI_TIMER, SPI_TIMER_MS); // re-start timer
       }
     }
       break;
-
-    case ES_NEW_KEY:
-    {
-      switch (ThisEvent.EventParam) {
-        case 'p':
-        {
-          message2send = 0xD1;
-          DB_printf("\rSend 0xD1 over SPI\r\n");
-        }
-          break;
-        case 'o':
-        {
-          message2send = 0xD2;
-          DB_printf("\rSend 0xD2 over SPI\r\n");
-        }
-          break;
-        case 'i':
-        {
-          message2send = 0xD3;
-          DB_printf("\rSend 0xD3 over SPI\r\n");
-        }
-          break;
-        case 'u':
-        {
-          message2send = 0xD4;
-          DB_printf("\rSend 0xD4 over SPI\r\n");
-        }
-          break;
-        
-        default:
-          // DB_printf("Key not linked to SPI msg: %c\r\n", ThisEvent.EventParam);
-          break;
-      }
-    }
-      break;
-
     default:
       break;
   }

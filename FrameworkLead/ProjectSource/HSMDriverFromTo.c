@@ -133,11 +133,11 @@ ES_Event_t RunDriverFromToSM( ES_Event_t CurrentEvent )
             {
                case ES_START_PLAN : //If event is event one
                 #ifdef VERBOSE_DRIVER
-                DB_printf("[Driver ] Received:     ES_START_PLAN");
+                DB_printf("[Driver ] Received: ES_START_PLAN\r\n");
                 #endif
                   // Execute action function for state one : event one
                   CurrentPlanIndex = (PlanIndex_t)CurrentEvent.EventParam;
-                  ActivePlan = &Plans[CurrentPlanIndex];
+                  ActivePlan = &Plans[CurrentPlanIndex]; // NOTE
 
                   NextState = RUNNING_STEP;//Decide what the next state will be
                   StepCounter = 0; // initialize step counter
@@ -381,31 +381,27 @@ static void DoStepActions (void)
     /* Send Primitive CMD to DCMotorService*/
     // ANNOUNCE WHAT PLAN, STEP, MotorPrimitive, StopCondition and Event2Post HERE
     #ifdef VERBOSE_DRIVER
-        DB_printf("\r[Driver] Plan: %u, Step: %u, Primitive: %u, StopCondition Type: %u, StopCondition Param: %u, Event2Post Type: %u, Event2Post Param: %u\n",
-        (unsigned int)CurrentPlanIndex,
-        (unsigned int)StepCounter,
-        (unsigned int)ActivePlan->Steps[StepCounter].PrimitiveCmd,
-        (unsigned int)ActivePlan->Steps[StepCounter].StoppingCondition.EventType,
-        (unsigned int)ActivePlan->Steps[StepCounter].StoppingCondition.EventParam,
-        (unsigned int)ActivePlan->Steps[StepCounter].PostEvent.EventType,
-        (unsigned int)ActivePlan->Steps[StepCounter].PostEvent.EventParam
-    );
+    DB_printf("\r[Driver ] Plan: %u, Step: %u, Primitive: %u\n", 
+      (unsigned int)CurrentPlanIndex, (unsigned int)StepCounter, (unsigned int)ActivePlan->Steps[StepCounter].PrimitiveCmd);
+
+    DB_printf("\r[Driver ]  StopCondition Type: %u, StopCondition Param: %u, \n", 
+      (unsigned int)ActivePlan->Steps[StepCounter].StoppingCondition.EventType, (unsigned int)ActivePlan->Steps[StepCounter].StoppingCondition.EventParam);
+
+    DB_printf("\r[Driver ]  Event2Post Type: %u, Event2Post Param: %u\n", 
+      (unsigned int)ActivePlan->Steps[StepCounter].PostEvent.EventType, (unsigned int)ActivePlan->Steps[StepCounter].PostEvent.EventParam);
     #endif
     ES_Event_t MotorCmdEvent;
     MotorCmdEvent.EventType = ES_MOTOR_PRIMITIVE;
     MotorCmdEvent.EventParam = ActivePlan->Steps[StepCounter].PrimitiveCmd; // Add parameters if needed
     PostDCMotorService(MotorCmdEvent);
     PostBeaconService(MotorCmdEvent);
-    /* Post Event Sent on Entry */
     if (ES_NO_EVENT != ActivePlan->Steps[StepCounter].PostEvent.EventType)
     {
-        ES_Event_t Event2Post;
-        Event2Post = ActivePlan->Steps[StepCounter].PostEvent;
-        ES_PostAll(Event2Post);
         if (ActivePlan->Steps[StepCounter].PostEvent.EventType == ES_TIMEOUT){
           switch (ActivePlan->Steps[StepCounter].PostEvent.EventParam)
           {
             case GameStartTimer:{
+              DB_printf("\r[Driver ] Started GameStartTimer for %u MS\n", (unsigned int)INITIAL_ROTATE_CCW_MS);
               ES_Timer_InitTimer(GameStartTimer, INITIAL_ROTATE_CCW_MS);
             }
               break;
@@ -417,6 +413,11 @@ static void DoStepActions (void)
               break;
           } 
 
+        } else {
+          /* Post Event Sent on Entry */
+          ES_Event_t Event2Post;
+          Event2Post = ActivePlan->Steps[StepCounter].PostEvent;
+          ES_PostAll(Event2Post);
         }
     }
     

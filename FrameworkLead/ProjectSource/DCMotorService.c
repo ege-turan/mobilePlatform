@@ -111,7 +111,7 @@ typedef enum
 
 #define SPEED_FORWARDS_PERCENT 50
 #define SPEED_BACKWARDS_PERCENT 50
-#define SPEED_ROTATE_PERCENT 30
+#define SPEED_ROTATE_PERCENT 20
 
 
 // #define TESTING_MODE // Set to 1 to enter testing mode on init
@@ -230,6 +230,52 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent)
                 case ES_MOTORS_OFF: _StopRobot(); break;
 
                 case ES_MOTOR_PRIMITIVE: DCMotor_ExecutePrimitive(ThisEvent.EventParam); break;
+
+                case ES_NEW_SPI_CMD_RECEIVED: 
+                {
+                    switch (ThisEvent.EventParam)
+                    {
+                        case LAB8_FWD_FULL:
+                        {
+                            ES_Event_t NewSPIEvent;
+                            NewSPIEvent.EventType  = ES_MOTOR_PRIMITIVE; NewSPIEvent.EventParam = Forwards;
+                            PostDCMotorService(NewSPIEvent);
+                            break;
+                        }
+                        case LAB8_REV_FULL:
+                        {
+                            ES_Event_t NewSPIEvent;
+                            NewSPIEvent.EventType  = ES_MOTOR_PRIMITIVE; NewSPIEvent.EventParam = Backwards;
+                            PostDCMotorService(NewSPIEvent);
+                            break;
+                        }
+                        case LAB8_ROT_CCW_90:
+                        {
+                            ES_Event_t NewSPIEvent;
+                            NewSPIEvent.EventType  = ES_MOTOR_PRIMITIVE; NewSPIEvent.EventParam = RotateCCW;
+                            PostDCMotorService(NewSPIEvent);
+                            break;
+                        }
+                        case LAB8_ROT_CW_90:
+                        {
+                            ES_Event_t NewSPIEvent;
+                            NewSPIEvent.EventType  = ES_MOTOR_PRIMITIVE; NewSPIEvent.EventParam = RotateCW;
+                            PostDCMotorService(NewSPIEvent);
+                            break;
+                        }
+                        case LAB8_STOP:
+                        {
+                            ES_Event_t NewSPIEvent;
+                            NewSPIEvent.EventType  = ES_MOTOR_PRIMITIVE; NewSPIEvent.EventParam = Stop;
+                            PostDCMotorService(NewSPIEvent);
+                            break;
+                        }
+
+                        default:
+                            break;
+                    }
+                    break;
+                }
 
                 default:
                     break;
@@ -568,8 +614,8 @@ void _RotateRobotCCW()
     DB_printf("\rCommand Received: _RotateRobotCCW\r\n");
 #endif
 
-    _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT, Reverse);
-    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT, Forward);
+    _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT/100, Reverse);
+    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT/100, Forward);
 } // TESTED
 
 void _RotateForBeacon()
@@ -627,11 +673,13 @@ void DCMotor_ApplyTrim(int32_t trim, MotorDir_t dir)
     } else if (dir == Reverse)
     {
         base = PWM_PERIOD_TICKS*SPEED_BACKWARDS_PERCENT/100;
-    } else if (dir == RotateCClockWise) {
-        base = PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT/100;
-    } else if (dir == RotateClockWise) {
-        base = PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT/100;
-    }
+    } 
+    // else if (dir == RotateCClockWise) {
+    //     base = PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT/100;
+    // } 
+    // else if (dir == RotateClockWise) {
+    //     base = PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT/100;
+    // }
     int32_t left  = base - trim;
     int32_t right = base + trim;
 
@@ -647,13 +695,14 @@ void DCMotor_ApplyTrim(int32_t trim, MotorDir_t dir)
     } else if (dir == Reverse)
     {
         base = PWM_PERIOD_TICKS*SPEED_BACKWARDS_PERCENT/100;
-    } else if (dir == RotateCClockWise) {
-        _DriveMotor(Motor1ChannelOC, left, Reverse);
-        _DriveMotor(Motor2ChannelOC, right, Forward);
-    } else if (dir == RotateClockWise) {
-        _DriveMotor(Motor1ChannelOC, left, Forward);
-        _DriveMotor(Motor2ChannelOC, right, Reverse);
-    }
+    } 
+    // else if (dir == RotateCClockWise) {
+    //     _DriveMotor(Motor1ChannelOC, left, Reverse);
+    //     _DriveMotor(Motor2ChannelOC, right, Forward);
+    // } else if (dir == RotateClockWise) {
+    //     _DriveMotor(Motor1ChannelOC, left, Forward);
+    //     _DriveMotor(Motor2ChannelOC, right, Reverse);
+    // }
 }
 
 /*-------------------------------------------------------------------------*/

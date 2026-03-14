@@ -24,9 +24,7 @@ ES_Event_t RunDCMotorService(ES_Event_t ThisEvent);
 typedef enum
 {
     Forward = 0,
-    Reverse = 1,
-    RotateCClockWise = 2,
-    RotateClockWise = 3
+    Reverse = 1
 } MotorDir_t;
 
 // Helper
