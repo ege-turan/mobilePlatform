@@ -32,11 +32,13 @@
 #include <sys/attribs.h> // for interrupts
 
 /*----------------------------- Module Defines ----------------------------*/
-#define MIDPOINT_COUNT 300
+#define DEBUG_PRINT_DRIVE_CORRECT
+#define DRIVE_CONTROL_TIMER_MS 10
+#define MIDPOINT_COUNT 1300 //300
 
-#define KP 3
+#define KP 3 // with 3 its okay, with 1 it's better
 #define KI 1
-#define I_MAX 500           // anti-windup integral max
+#define I_MAX 100           // anti-windup integral max
 
 #define LINE_KP 2
 #define LINE_KI 1
@@ -78,6 +80,7 @@ static uint8_t MyPriority;
 static DriveCorrectionState_t CurrentState;
 static int32_t Error = 0;
 static int32_t Integral = 0;
+static int32_t PI_result_val = 0;
 
 static int32_t EncCountL = 0;
 static int32_t EncCountR = 0;
@@ -88,6 +91,7 @@ static int32_t LineIntegral = 0;
 
 static int32_t MidCount = 0;
 static bool UseMidStop = false;
+static bool encON = false;
 
 /*------------------------------ Module Code ------------------------------*/
 /****************************************************************************
@@ -116,7 +120,7 @@ bool InitDriveCorrectionService(uint8_t Priority)
   CurrentState = DC_Idle;
 
   InitDriveCorrectionInterrupts();
-  ES_Timer_InitTimer(DriveCorrectionTimer, 10);
+  ES_Timer_InitTimer(DriveCorrectionTimer, DRIVE_CONTROL_TIMER_MS);
 
   ThisEvent.EventType = ES_INIT;
   return ES_PostToService(MyPriority, ThisEvent);
@@ -176,54 +180,92 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
         }
         break;
         case ES_TIMEOUT:
-          if (ThisEvent.EventParam == SPI_TIMER)
+          if (ThisEvent.EventParam == DriveCorrectionTimer)
           {
-            ES_Timer_InitTimer(DriveCorrectionTimer, 10); // re-start timer
+            ES_Timer_InitTimer(DriveCorrectionTimer, DRIVE_CONTROL_TIMER_MS); // re-start timer
+            #ifdef DEBUG_PRINT_DRIVE_CORRECT
+            if (encON){
+            DB_printf("[leader ]  EncLeft: %u, EncRight: %u, PI_result_val: %d \r\n", (unsigned int)EncCountL, (unsigned int)EncCountR, PI_result_val);
+            }
+            #endif
           }
           break;
-        case ES_START_ENC_FWD:
+        case ES_STOP_DRIVE_CORRECT:
             ResetDriveControl();
+            CurrentState = DC_Idle;
+            DB_printf("[leader ] DriveCorrectionService: DC_Idle\r\n");
+            break;
+        case ES_START_ENC_FWD:
+            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
+            DB_printf("[leader ] Forwards w/ encoder\r\n");
+            // #endif
+            ResetDriveControl();
+            encON = true;
             UseMidStop = false;
             CurrentState = DC_EncFwd;
             break;
         
         case ES_START_ENC_REV:
+            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
+            DB_printf("[leader ] Backwards w/ encoder\r\n");
+            // #endif
             ResetDriveControl();
+            encON = true;
             UseMidStop = false;
             CurrentState = DC_EncRev;
             break;
 
         case ES_START_ENC_FWD_MID:
+            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
+            DB_printf("[leader ] Forwards w/ encoder and mid\r\n");
+            // #endif
             ResetDriveControl();
+            encON = true;
             UseMidStop = true;
             CurrentState = DC_EncFwdMid;
             break;
 
         case ES_START_ENC_REV_MID:
+            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
+            DB_printf("[leader ] Backwards w/ encoder and mid\r\n");
+            // #endif
             ResetDriveControl();
+            encON = true;
             UseMidStop = true;
             CurrentState = DC_EncRevMid;
             break;
 
         case ES_START_LINE_FWD:
+            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
+            DB_printf("[leader ] Forwards w/ line\r\n");
+            // #endif
             ResetDriveControl();
             UseMidStop = false;
             CurrentState = DC_LineFwdMid;
             break;
 
         case ES_START_LINE_REV:
+            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
+            DB_printf("[leader ] Backwards w/ line\r\n");
+            // #endif
             ResetDriveControl();
             UseMidStop = false;
             CurrentState = DC_LineRevMid;
             break;
 
         case ES_START_LINE_FWD_MID:
+            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
+            DB_printf("[leader ] Forwards w/ line and mid\r\n");
+            // #endif
             ResetDriveControl();
             UseMidStop = true;
             CurrentState = DC_LineFwdMid;
             break;
 
         case ES_START_LINE_REV_MID:
+            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
+            DB_printf("[leader ] Backwards w/ line and mid\r\n");
+            // #endif
             ResetDriveControl();
             UseMidStop = true;
             CurrentState = DC_LineRevMid;
@@ -256,6 +298,9 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
         case DC_LineRevMid:
             // controls handled in interrupts
             CheckMidpointStop();
+            break;
+
+        case DC_Idle:
             break;
 
 
@@ -320,7 +365,9 @@ static int32_t PI_Controller(int32_t error)
     if (Integral > I_MAX) Integral = I_MAX;
     if (Integral < -I_MAX) Integral = -I_MAX;
 
-    return KP * error + KI * Integral;
+    PI_result_val = KP * error + KI * Integral;
+    
+    return PI_result_val;
 }
 
 static int32_t Line_PI_Controller(int32_t error)
@@ -353,11 +400,13 @@ static void SetupLineTimer(void)
 static void ResetDriveControl(void)
 {
     Integral = 0;
+    PI_result_val = 0;
     Error = 0;
     EncCountL = 0;
     EncCountR = 0;
     MidCount = 0;
     UseMidStop = false;
+    encON = false;
 
     LineIntegral = 0;
     LineError = 0;
@@ -374,6 +423,7 @@ static void CheckMidpointStop(void)
 
         ES_Event_t stop = {ES_MOTORS_OFF};
         PostDCMotorService(stop);
+        PostDriveCorrectionService((ES_Event_t){ES_STOP_DRIVE_CORRECT});
 
         ES_Event_t done = {ES_COUNT_DONE};
         ES_PostAll(done);   // notify planner

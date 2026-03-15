@@ -109,9 +109,10 @@ typedef enum
 
 // DUTY CYCLES FOR SPEEDS
 
-#define SPEED_FORWARDS_PERCENT 50
-#define SPEED_BACKWARDS_PERCENT 50
-#define SPEED_ROTATE_PERCENT 20
+#define SPEED_FORWARDS_PERCENT 40
+#define SPEED_BACKWARDS_PERCENT 40
+#define SPEED_ROTATE_PERCENT 30
+#define SPEED_RIGHT_OFFSET_PERCENT 0 // SPEED + Offset should NOT exceed 100%
 
 
 // #define TESTING_MODE // Set to 1 to enter testing mode on init
@@ -557,8 +558,8 @@ void _DriveForward50()
     DB_printf("\rCommand Received: _DriveForward50\r\n");
 #endif
 
-    _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS / 2, Forward);
-    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS / 2, Forward);
+    _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS*SPEED_FORWARDS_PERCENT/200, Forward);
+    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*(SPEED_FORWARDS_PERCENT+SPEED_RIGHT_OFFSET_PERCENT)/200, Forward);
 } // TESTED
 
 // Calling this function drives both motors in reverse at 50 percent duty cycle
@@ -568,8 +569,8 @@ void _DriveReverse50()
     DB_printf("\rCommand Received: _DriveReverse50\r\n");
 #endif
 
-    _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS / 2, Reverse);
-    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS / 2, Reverse);
+    _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS*SPEED_FORWARDS_PERCENT/200, Forward);
+    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*(SPEED_FORWARDS_PERCENT+SPEED_RIGHT_OFFSET_PERCENT)/200, Forward);
 } // TESTED
 
 // Calling this function drives both motors forward at 100 percent duty cycle
@@ -580,7 +581,7 @@ void _DriveForward100()
 #endif
 
     _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS*SPEED_FORWARDS_PERCENT/100, Forward);
-    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*SPEED_FORWARDS_PERCENT/100, Forward);
+    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*(SPEED_FORWARDS_PERCENT+SPEED_RIGHT_OFFSET_PERCENT)/100, Forward);
 } // TESTED
 
 // Calling this function drives both motors in reverse at 100 percent duty cycle
@@ -591,7 +592,7 @@ void _DriveReverse100()
 #endif
 
     _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS*SPEED_BACKWARDS_PERCENT/100, Reverse);
-    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*SPEED_BACKWARDS_PERCENT/100, Reverse);
+    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*(SPEED_BACKWARDS_PERCENT+SPEED_RIGHT_OFFSET_PERCENT)/100, Reverse);
 } // TESTED
 
 // Calling this function rotates the entire robot clockwise at 100 percent duty
@@ -603,7 +604,7 @@ void _RotateRobotCW()
 #endif
 
     _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT/100, Forward);
-    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT/100, Reverse);
+    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*(SPEED_ROTATE_PERCENT+SPEED_RIGHT_OFFSET_PERCENT)/100, Reverse);
 } // TESTED
 
 // Calling this function rotates the entire robot clockwise at 100 percent duty
@@ -615,7 +616,7 @@ void _RotateRobotCCW()
 #endif
 
     _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT/100, Reverse);
-    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT/100, Forward);
+    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*(SPEED_ROTATE_PERCENT+SPEED_RIGHT_OFFSET_PERCENT)/100, Forward);
 } // TESTED
 
 void _RotateForBeacon()
@@ -624,29 +625,29 @@ void _RotateForBeacon()
     DB_printf("\rCommand Received: _RotateForBeacon\r\n");
 #endif
 
-    _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS*1/4, Reverse);
-    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*1/4, Forward);
+    _DriveMotor(Motor1ChannelOC, PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT/150, Reverse);
+    _DriveMotor(Motor2ChannelOC, PWM_PERIOD_TICKS*(SPEED_ROTATE_PERCENT+SPEED_RIGHT_OFFSET_PERCENT)/150, Forward);
 } // TESTED
 
 
 
 bool DCMotor_ExecutePrimitive(PrimitiveCmd_t cmd) {
     switch(cmd) {
-        case RotateCW:        _RotateRobotCW(); break;
-        case RotateCCW:       _RotateRobotCCW(); break;
-        case Forwards:        _DriveForward100(); break;
-        case Forwards_slow:   _DriveForward50(); break;
-        case Backwards:       _DriveReverse100(); break;
-        case Backwards_slow:  _DriveReverse50(); break;
-        case Stop:            _StopRobot(); break;
+        case RotateCW:        _RotateRobotCW();   ES_PostAll((ES_Event_t){ES_STOP_DRIVE_CORRECT}); break;
+        case RotateCCW:       _RotateRobotCCW();  ES_PostAll((ES_Event_t){ES_STOP_DRIVE_CORRECT}); break;
+        case Forwards:        _DriveForward100(); ES_PostAll((ES_Event_t){ES_STOP_DRIVE_CORRECT}); break;
+        case Forwards_slow:   _DriveForward50();  ES_PostAll((ES_Event_t){ES_STOP_DRIVE_CORRECT}); break;
+        case Backwards:       _DriveReverse100(); ES_PostAll((ES_Event_t){ES_STOP_DRIVE_CORRECT}); break;
+        case Backwards_slow:  _DriveReverse50();  ES_PostAll((ES_Event_t){ES_STOP_DRIVE_CORRECT}); break;
+        case Stop:            _StopRobot();       ES_PostAll((ES_Event_t){ES_STOP_DRIVE_CORRECT}); break;
         
         // Line following and encoder count course correction
         case Forwards_line_mid:
             ES_PostAll((ES_Event_t){ES_START_LINE_FWD_MID});
             break;
 
-        case Backwards_line:
-            ES_PostAll((ES_Event_t){ES_START_LINE_REV});
+        case Backwards_line_mid:
+            ES_PostAll((ES_Event_t){ES_START_LINE_REV_MID});
             break;
 
         case Forwards_count_mid:
@@ -674,12 +675,6 @@ void DCMotor_ApplyTrim(int32_t trim, MotorDir_t dir)
     {
         base = PWM_PERIOD_TICKS*SPEED_BACKWARDS_PERCENT/100;
     } 
-    // else if (dir == RotateCClockWise) {
-    //     base = PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT/100;
-    // } 
-    // else if (dir == RotateClockWise) {
-    //     base = PWM_PERIOD_TICKS*SPEED_ROTATE_PERCENT/100;
-    // }
     int32_t left  = base - trim;
     int32_t right = base + trim;
 
@@ -688,21 +683,8 @@ void DCMotor_ApplyTrim(int32_t trim, MotorDir_t dir)
     if(left > PWM_PERIOD_TICKS) left = PWM_PERIOD_TICKS;
     if(right > PWM_PERIOD_TICKS) right = PWM_PERIOD_TICKS;
 
-    if (dir == Forward)
-    {
-        _DriveMotor(Motor1ChannelOC, left, dir);
-        _DriveMotor(Motor2ChannelOC, right, dir);
-    } else if (dir == Reverse)
-    {
-        base = PWM_PERIOD_TICKS*SPEED_BACKWARDS_PERCENT/100;
-    } 
-    // else if (dir == RotateCClockWise) {
-    //     _DriveMotor(Motor1ChannelOC, left, Reverse);
-    //     _DriveMotor(Motor2ChannelOC, right, Forward);
-    // } else if (dir == RotateClockWise) {
-    //     _DriveMotor(Motor1ChannelOC, left, Forward);
-    //     _DriveMotor(Motor2ChannelOC, right, Reverse);
-    // }
+    _DriveMotor(Motor1ChannelOC, left, dir);
+    _DriveMotor(Motor2ChannelOC, right, dir);
 }
 
 /*-------------------------------------------------------------------------*/

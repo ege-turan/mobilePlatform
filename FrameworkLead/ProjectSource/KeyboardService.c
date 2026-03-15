@@ -176,19 +176,20 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
           DB_printf("PostedEvent: %u, with param 0x%x\r\n", (unsigned int) KB_Event1.EventType, (unsigned int) KB_Event1.EventParam);
           break;
         }
-        case '5': KB_Event1.EventType  = ES_SIDE_FOUND;       break;
-        case '6': KB_Event1.EventType  = ES_BEACON_DISPENSER; break;
-        case '7': KB_Event1.EventType  = ES_CENTERED;         break;
-        case '8': KB_Event1.EventType  = ES_LINE_PIVOT_L;     break;
-        case '9': KB_Event1.EventType  = ES_LINE_PIVOT_R;     break;
-        case '0': KB_Event1.EventType  = ES_LIMIT_SWITCH;     break;
-        case 'h': KB_Event1.EventType  = ES_COUNT_DONE;       break;
-        case 'u': KB_Event1.EventType  = ES_START_LINE_FWD;   break;
-        case 'i': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = Forwards;  break;
-        case 'j': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = RotateCCW; break;
-        case 'k': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = Backwards; break;
-        case 'l': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = RotateCW;  break;
-        case ',': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = Stop;      break;
+        case '5': KB_Event1.EventType  = ES_SIDE_FOUND;          break;
+        case '6': KB_Event1.EventType  = ES_BEACON_DISPENSER;    break;
+        case '7': KB_Event1.EventType  = ES_CENTERED;            break;
+        case '8': KB_Event1.EventType  = ES_LINE_PIVOT_L;        break;
+        case '9': KB_Event1.EventType  = ES_LINE_PIVOT_R;        break;
+        case '0': KB_Event1.EventType  = ES_LIMIT_SWITCH;        break;
+        case 'h': KB_Event1.EventType  = ES_COUNT_DONE;          break;
+        case 'e': KB_Event1.EventType  = ES_START_ENC_FWD_MID;   break;
+        case 'l': KB_Event1.EventType  = ES_START_LINE_FWD;      break;
+        case 'w': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = Forwards;  break;
+        case 'a': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = RotateCCW; break;
+        case 's': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = Backwards; break;
+        case 'd': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = RotateCW;  break;
+        case 'x': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = Stop;      break;
         
         
         default:

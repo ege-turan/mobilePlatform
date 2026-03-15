@@ -90,7 +90,7 @@ bool Check4Lock(void)
 #endif
 
 
-// #define DEBUG_PRINT
+#define DEBUG_PRINT
 
 
 
@@ -185,7 +185,7 @@ bool Check4TapePivot(void)
           ThisEvent.EventType = ES_LINE_PIVOT_L;
           ES_PostAll(ThisEvent);
   #ifdef DEBUG_PRINT
-          DB_printf("Tape Pivot L Detected!\r\n");
+          DB_printf("[leader ] Tape Pivot L Detected!\r\n");
   #endif
           ReturnVal = true;
       }
@@ -203,7 +203,7 @@ bool Check4TapePivot(void)
           ThisEvent.EventType = ES_LINE_PIVOT_R;
           ES_PostAll(ThisEvent);
   #ifdef DEBUG_PRINT
-          DB_printf("Tape Pivot R Detected!\r\n");
+          DB_printf("[leader ] Tape Pivot R Detected!\r\n");
   #endif
           ReturnVal = true;
       }
@@ -216,6 +216,9 @@ bool Check4TapePivot(void)
     if (ReturnVal && (leftOnLine && rightOnLine)){
         ES_Event_t ThisEvent;
         ThisEvent.EventType = ES_CENTERED_PIVOT;
+  #ifdef DEBUG_PRINT
+          DB_printf("[leader ] Tape Pivot Centered!\r\n");
+  #endif
         ES_PostAll(ThisEvent);
     }
 
@@ -282,7 +285,7 @@ bool Check4TapeFront(void)
           ThisEvent.EventType = ES_LINE_PIVOT_L;
           ES_PostAll(ThisEvent);
   #ifdef DEBUG_PRINT
-          DB_printf("Tape Front L Detected!\r\n");
+          DB_printf("[leader ] Tape Front L Detected!\r\n");
   #endif
           ReturnVal = true;
       }
@@ -300,7 +303,7 @@ bool Check4TapeFront(void)
           ThisEvent.EventType = ES_LINE_PIVOT_R;
           ES_PostAll(ThisEvent);
   #ifdef DEBUG_PRINT
-          DB_printf("Tape Front R Detected!\r\n");
+          DB_printf("[leader ] Tape Front R Detected!\r\n");
   #endif
           ReturnVal = true;
       }
@@ -314,6 +317,9 @@ bool Check4TapeFront(void)
         ES_Event_t ThisEvent;
         ThisEvent.EventType = ES_CENTERED;
         ES_PostAll(ThisEvent);
+  #ifdef DEBUG_PRINT
+          DB_printf("[leader ] Tape Front Centered!\r\n");
+  #endif
     }
 
     LastPinLState = CurrentPinLState; // update the state for next time
@@ -366,7 +372,7 @@ bool Check4Limit(void)
     uint8_t CurrentLimitState = LIMIT_IN;
 
     if ((CurrentLimitState != LastLimitState) && (CurrentLimitState == 0)) {    // when pressed down, sunk low!
-#ifdef DEBUG_LIMIT
+#ifdef DEBUG_PRINT
         DB_printf("Limit (%d) -> TOGGLE posted\n", CurrentLimitState);
 #endif
 

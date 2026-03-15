@@ -30,7 +30,7 @@
 
 
 /*----------------------------- Module Defines ----------------------------*/
-#define DEBUG_PRINT
+// #define DEBUG_PRINT_SPI
 #include "dbprintf.h"
 
 #define SPI1_SS_PIN SPI_RPB15
@@ -97,9 +97,9 @@ bool InitSPILeadService(uint8_t Priority)
   SPISetup_EnableSPI(SPI_SPI1); // enable SPI
   IFS0CLR = _IFS0_INT4IF_MASK;  // clear INT4IF to avoid false flags
 
-#ifdef DEBUG_PRINT
+// #ifdef DEBUG_PRINT_SPI
   DB_printf("SPI1 Initialized\r\n");
-#endif
+// #endif
 
   // Initialize timers and variables
   ES_Timer_InitTimer(SPI_TIMER, SPI_TIMER_MS);
@@ -174,7 +174,9 @@ ES_Event_t RunSPILeadService(ES_Event_t ThisEvent)
     case ES_NEW_SPI_CMD_SEND:
     {
       message2send = (uint8_t)ThisEvent.EventParam;
-      DB_printf("New SPI send Leader:     0x%x\r\n", (unsigned int)message2send);
+      // #ifdef DEBUG_PRINT_SPI
+      DB_printf("[leader ]  new sending over SPI:     0x%x\r\n", (unsigned int)message2send);
+      // #endif
     }
       break;
     case ES_TIMEOUT:
@@ -187,8 +189,9 @@ ES_Event_t RunSPILeadService(ES_Event_t ThisEvent)
         // if (SPIOperate_HasSS1_Risen())
         {
           uint8_t newMessage = (uint8_t)SPIOperate_ReadData(SPI_SPI1);
+          #ifdef DEBUG_PRINT_SPI
           DB_printf("[leader ]     received over SPI:     0x%x\r\n", (unsigned int)newMessage);
-
+          #endif
           // check if message different and not bad command
           if ((newMessage != LastMessage) && (newMessage != CMD_SPI_FOLLOW_INITIAL))
           {
@@ -197,16 +200,18 @@ ES_Event_t RunSPILeadService(ES_Event_t ThisEvent)
             NewEvent.EventParam = newMessage;
             ES_PostAll(NewEvent);
 
-            #ifdef DEBUG_PRINT
-            DB_printf("[leader ] received New over SPI:     0x%x\r\n", (unsigned int)NewEvent.EventParam);
-            #endif
+            // #ifdef DEBUG_PRINT_SPI
+            DB_printf("[leader ] new received over SPI:     0x%x\r\n", (unsigned int)NewEvent.EventParam);
+            // #endif
           }
 
           LastMessage = newMessage;
         }
 
         // Always Querry CommandGenerator for new command
+        #ifdef DEBUG_PRINT_SPI
         DB_printf("[leader ]      sending over SPI:     0x%x\r\n", (unsigned int)message2send);
+        #endif
         SPIOperate_SPI1_Send8(message2send);
 
         ES_Timer_InitTimer(SPI_TIMER, SPI_TIMER_MS); // re-start timer
