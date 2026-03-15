@@ -184,20 +184,25 @@ ES_Event_t RunSPIFollowService(ES_Event_t ThisEvent)
         NewEvent.EventParam = newMessage;
         ES_PostAll(NewEvent);
 
-        #ifdef DEBUG_PRINT
-        DB_printf("New SPI from Leader:     0x%x\r\n", (unsigned int)NewEvent.EventParam);
-        #endif
+        // #ifdef DEBUG_PRINT
+        DB_printf("[follower ] new received over SPI:     0x%x\r\n", (unsigned int)NewEvent.EventParam);
+        // #endif
       }
       LastMessage = newMessage;
 
       // write the next message to be sent into the buffer
       SPIOperate_SPI1_Send8(message2send);
+      #ifdef DEBUG_PRINT
       DB_printf("[follower ]      sending over SPI:     0x%x\r\n", (unsigned int)message2send);
+      #endif
     }
       break;
     case ES_NEW_SPI_CMD_SEND:
     {
       message2send = (uint8_t)ThisEvent.EventParam;
+      // #ifdef DEBUG_PRINT
+      DB_printf("[follower ]  new sending over SPI:     0x%x\r\n", (unsigned int)message2send);
+      // #endif
     }
       break;
 
