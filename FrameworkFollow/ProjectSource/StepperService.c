@@ -38,7 +38,8 @@
 /*----------------------------- Module Defines ----------------------------*/
 // use prescaler of 256 to have bigger pulse width range before overflow
 #define STEP_INTERVAL_MS   10   // bigger --> slower
-// #define STEP_INTERVAL_MS_LOW   4
+#define PWM_PERIOD_MS 1   // fastest possible with ES timer
+#define DUTY_STEPS 5      // 0,20,40,60,80,100%
 
 // #define MOTOR_OUTPUT_ANSEL (ANSELAbits.ANSA2)  // analog/digital mode of RA2, RA2 doesnt have ANSEL
 #define MOTOR_OUTPUT_TRIS  (TRISAbits.TRISA2)  // input/output mode of RA2
@@ -57,6 +58,11 @@
 /*---------------------------- Module Variables ---------------------------*/
 // with the introduction of Gen2, we need a module level Priority variable
 static uint8_t MyPriority;
+
+static uint8_t DutyCycle = 1;     // 0–5
+static uint8_t HighTime = 0;
+static uint8_t LowTime = 0;
+static bool OutputState = false;
 
 /*------------------------------ Module Code ------------------------------*/
 /****************************************************************************
@@ -96,11 +102,6 @@ bool InitStepperService(uint8_t Priority)
   M_FEEDER_EN_TRIS = 0;   // output (EXTRA CONTROL)
   M_FEEDER_EN_LAT  = 0;   // DISABLED
 
-  // Initialize test timer (decomissioned)
-  // ES_Timer_InitTimer(STEPPER_TEST_TIMER, TEST_TIMER_MS);
-  
-  // Initialize step timer (done in states)
-  // ES_Timer_InitTimer(STEPPER_STEP_TIMER, STEP_INTERVAL_MS);
   
   // Initialize variables
 
@@ -175,7 +176,18 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
             DB_printf("StepperService: FEEDER START\r\n");
             M_FEEDER_EN_LAT = 1;   // enable driver
             MOTOR_OUTPUT_LAT = 0;  // ensure starting low
-            ES_Timer_InitTimer(STEPPER_STEP_TIMER, STEP_INTERVAL_MS); // start toggling
+
+            uint8_t period = DUTY_STEPS;
+
+            HighTime = DutyCycle;
+            LowTime = period - DutyCycle;
+
+            OutputState = true;
+            M_FEEDER_EN_LAT = 1;
+
+            ES_Timer_InitTimer(STEPPER_STEP_TIMER, HighTime);
+
+            // ES_Timer_InitTimer(STEPPER_STEP_TIMER, STEP_INTERVAL_MS); // start toggling
         }
         break;
 
@@ -192,11 +204,27 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
         {
             if (ThisEvent.EventParam == STEPPER_STEP_TIMER)
             {
-                // toggle step pin
-                M_FEEDER_EN_LAT ^= 1;
+                if(OutputState)
+                {
+                    M_FEEDER_EN_LAT = 0;
+                    OutputState = false;
+                    if (LowTime > 0)
+                        ES_Timer_InitTimer(STEPPER_STEP_TIMER, LowTime);
+                } else
+                {
+                    M_FEEDER_EN_LAT = 1;
+                    OutputState = true;
 
-                // restart timer for next toggle
-                ES_Timer_InitTimer(STEPPER_STEP_TIMER, STEP_INTERVAL_MS);
+                    if (HighTime > 0)
+                        ES_Timer_InitTimer(STEPPER_STEP_TIMER, HighTime);
+                }
+
+
+                // // toggle step pin
+                // M_FEEDER_EN_LAT ^= 1;
+
+                // // restart timer for next toggle
+                // ES_Timer_InitTimer(STEPPER_STEP_TIMER, STEP_INTERVAL_MS);
             }
         }
         break;
