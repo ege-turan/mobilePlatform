@@ -37,9 +37,7 @@
 
 /*----------------------------- Module Defines ----------------------------*/
 // use prescaler of 256 to have bigger pulse width range before overflow
-#define STEP_INTERVAL_MS   10   // bigger --> slower
-#define PWM_PERIOD_MS 1   // fastest possible with ES timer
-#define DUTY_STEPS 5      // 0,20,40,60,80,100%
+#define FEEDER_DUTY_STEPS 5      // 0,20,40,60,80,100%
 
 // #define MOTOR_OUTPUT_ANSEL (ANSELAbits.ANSA2)  // analog/digital mode of RA2, RA2 doesnt have ANSEL
 #define MOTOR_OUTPUT_TRIS  (TRISAbits.TRISA2)  // input/output mode of RA2
@@ -49,7 +47,6 @@
 #define M_FEEDER_EN_LAT  (LATBbits.LATB12)
 #define M_FEEDER_EN_TRIS (TRISBbits.TRISB12)
 
-#define TEST_TIMER_MS 1000 // in ms (turns on and off every 1 seconds)
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
    relevant to the behavior of this service
@@ -173,11 +170,11 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
 
         case ES_FEEDER_START:
         {
-            DB_printf("StepperService: FEEDER START\r\n");
+            DB_printf("[follower ] StepperService: FEEDER START\r\n");
             M_FEEDER_EN_LAT = 1;   // enable driver
             MOTOR_OUTPUT_LAT = 0;  // ensure starting low
 
-            uint8_t period = DUTY_STEPS;
+            uint8_t period = FEEDER_DUTY_STEPS;
 
             HighTime = DutyCycle;
             LowTime = period - DutyCycle;
@@ -185,46 +182,37 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
             OutputState = true;
             M_FEEDER_EN_LAT = 1;
 
-            ES_Timer_InitTimer(STEPPER_STEP_TIMER, HighTime);
-
-            // ES_Timer_InitTimer(STEPPER_STEP_TIMER, STEP_INTERVAL_MS); // start toggling
+            ES_Timer_InitTimer(FEEDER_PWM_TIMER, HighTime);
         }
         break;
 
         case ES_FEEDER_STOP:
         {
-            DB_printf("StepperService: FEEDER STOP\r\n");
+            DB_printf("[follower ] StepperService: FEEDER STOP\r\n");
             M_FEEDER_EN_LAT = 0;     // disable driver
             MOTOR_OUTPUT_LAT = 0;    // keep step pin low
-            ES_Timer_StopTimer(STEPPER_STEP_TIMER); // stop toggling
+            ES_Timer_StopTimer(FEEDER_PWM_TIMER); // stop toggling
         }
         break;
 
         case ES_TIMEOUT:
         {
-            if (ThisEvent.EventParam == STEPPER_STEP_TIMER)
+            if (ThisEvent.EventParam == FEEDER_PWM_TIMER)
             {
                 if(OutputState)
                 {
                     M_FEEDER_EN_LAT = 0;
                     OutputState = false;
                     if (LowTime > 0)
-                        ES_Timer_InitTimer(STEPPER_STEP_TIMER, LowTime);
+                        ES_Timer_InitTimer(FEEDER_PWM_TIMER, LowTime);
                 } else
                 {
                     M_FEEDER_EN_LAT = 1;
                     OutputState = true;
 
                     if (HighTime > 0)
-                        ES_Timer_InitTimer(STEPPER_STEP_TIMER, HighTime);
+                        ES_Timer_InitTimer(FEEDER_PWM_TIMER, HighTime);
                 }
-
-
-                // // toggle step pin
-                // M_FEEDER_EN_LAT ^= 1;
-
-                // // restart timer for next toggle
-                // ES_Timer_InitTimer(STEPPER_STEP_TIMER, STEP_INTERVAL_MS);
             }
         }
         break;

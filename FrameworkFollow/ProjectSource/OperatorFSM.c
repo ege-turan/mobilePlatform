@@ -58,10 +58,7 @@
 // Agitator
 #define M_AGITATOR_LAT LATBbits.LATB5
 #define M_AGITATOR_TRIS TRISBbits.TRISB5
-// #define AGITATOR_FAKE_PWM_HIGH_MS 100 //in ms for fake pwm using ES_TIMEOUT
-// #define AGITATOR_FAKE_PWM_LOW_MS  100  //in ms for fake pwm using ES_TIMEOUT
-// static bool AgitatorRunning = 0;
-// static bool agitatorPWMHigh = 1;
+#define AGITATOR_DUTY_STEPS 5      // 0,20,40,60,80,100%
 
 // Intake PWM
 #define INTAKE_PWM_FREQ 10000
@@ -100,6 +97,11 @@ static uint8_t gameCounter;
 static uint8_t GameMode;
 static uint8_t Strategy;
 
+static uint8_t DutyCycle = 1;     // 0–5
+static uint8_t HighTime = 0;
+static uint8_t LowTime = 0;
+static bool OutputState = false;
+
 // with the introduction of Gen2, we need a module level Priority var as well
 static uint8_t MyPriority;
 
@@ -132,7 +134,6 @@ bool InitOperatorFSM(uint8_t Priority)
     DB_printf("compiled at %s on %s", __TIME__, __DATE__);
     DB_printf("\n\r");
 
-    //  ES_Timer_InitTimer(AGITATOR_FAKE_PWM_TIMER, AGITATOR_FAKE_PWM_HIGH_MS);
     // put us into the Initial PseudoState
     CurrentState = OperatorInitPState;
     // post the initial transition event
@@ -192,25 +193,6 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
     ReturnEvent.EventType = ES_NO_EVENT;
 
     /********************* GLOBAL GAME TIMER *********************/
-    // if (ThisEvent.EventType == ES_TIMEOUT &&
-    //     ThisEvent.EventParam == AGITATOR_FAKE_PWM_TIMER &&
-    //     agitatorPWMHigh == true)
-    // {
-    //   ES_Timer_InitTimer(AGITATOR_FAKE_PWM_TIMER, AGITATOR_FAKE_PWM_LOW_MS);
-    //   agitatorPWMHigh = false;
-    //   if (AgitatorRunning)
-    //   {
-    //     Agitator_On();
-    //   }
-    // }
-    // if (ThisEvent.EventType == ES_TIMEOUT &&
-    //     ThisEvent.EventParam == AGITATOR_FAKE_PWM_TIMER &&
-    //     agitatorPWMHigh == false)
-    // {
-    //   ES_Timer_InitTimer(AGITATOR_FAKE_PWM_TIMER, AGITATOR_FAKE_PWM_HIGH_MS);
-    //   agitatorPWMHigh = true;
-    //   Agitator_Off();
-    // }
 
     if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == GAME_TIMER)
     {
@@ -249,6 +231,23 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
         {
             // Restart game timer for next interval
             ES_Timer_InitTimer(GAME_TIMER, GAME_TIME_MS);
+        }
+    }
+    if (ThisEvent.EventType == ES_TIMEOUT && ThisEvent.EventParam == AGITATOR_PWM_TIMER)
+    {
+        if(OutputState)
+        {
+            M_AGITATOR_LAT = 0;
+            OutputState = false;
+            if (LowTime > 0)
+                ES_Timer_InitTimer(AGITATOR_PWM_TIMER, LowTime);
+        } else
+        {
+            M_AGITATOR_LAT = 1;
+            OutputState = true;
+
+            if (HighTime > 0)
+                ES_Timer_InitTimer(AGITATOR_PWM_TIMER, HighTime);
         }
     }
 
@@ -293,8 +292,6 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
         /********************* STANDBY *********************/
         case Standby:
         {
-            if ((ThisEvent.EventType == ES_NEW_SPI_CMD_RECEIVED) && (ThisEvent.EventParam == CMD_SPI_INTAKE_ON)) Intake_On();
-            if (ThisEvent.EventType == ES_FEEDER_STOP) Intake_Off();
             switch (ThisEvent.EventType)
             {               
                 case ES_START_DOWN:
@@ -326,6 +323,11 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
                     CurrentState = WaitingForNavigation;
                 }
                 break;
+                
+                case ES_NEW_SPI_CMD_RECEIVED: if(ThisEvent.EventParam == CMD_SPI_INTAKE_ON){Intake_On();} break;
+                case ES_FEEDER_STOP: Intake_Off();     break;
+                case ES_AGITATOR_START: Agitator_On(); break;
+                case ES_AGITATOR_STOP: Agitator_Off(); break;
             }
         }
         break;
@@ -580,12 +582,22 @@ static void Agitator_Init(void)
 
 static void Agitator_On(void)
 {
+    DB_printf("[follower ] Operator FSM: AGITATOR START\r\n");
     M_AGITATOR_LAT = 1;
+    uint8_t period = AGITATOR_DUTY_STEPS;
+
+    HighTime = DutyCycle;
+    LowTime = period - DutyCycle;
+
+    OutputState = true;
+    ES_Timer_InitTimer(AGITATOR_PWM_TIMER, HighTime);
 }
 
 static void Agitator_Off(void)
 {
+    DB_printf("[follower ] Operator FSM: AGITATOR STOP\r\n");
     M_AGITATOR_LAT = 0;
+    ES_Timer_StopTimer(AGITATOR_PWM_TIMER); // stop toggling
 }
 
 //---------------- Intake ------------------

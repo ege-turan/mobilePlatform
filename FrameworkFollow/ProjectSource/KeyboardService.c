@@ -194,8 +194,8 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
                     KB_Event1.EventType = ES_START_LOWERING_ARM;
                     break;
                 }
-                    // case '9': KB_Event1.EventType  = ES_LINE_PIVOT_R;     break;
-                    // case '0': KB_Event1.EventType  = ES_LIMIT_SWITCH;     break;
+                    case '9': KB_Event1.EventType  = ES_AGITATOR_START;     break;
+                    case '0': KB_Event1.EventType  = ES_AGITATOR_STOP;     break;
                     // case 'h': KB_Event1.EventType  = ES_COUNT_DONE;       break;
                     // case 'j': KB_Event1.EventType  = ES_LIMIT_SWITCH;     break;
 
