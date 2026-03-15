@@ -184,7 +184,9 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
         case '0': KB_Event1.EventType  = ES_LIMIT_SWITCH;        break;
         case 'h': KB_Event1.EventType  = ES_COUNT_DONE;          break;
         case 'e': KB_Event1.EventType  = ES_START_ENC_FWD_MID;   break;
-        case 'l': KB_Event1.EventType  = ES_START_LINE_FWD;      break;
+        case 'r': KB_Event1.EventType  = ES_START_ENC_REV_MID;   break;
+        case 'o': KB_Event1.EventType  = ES_START_LINE_FWD;      break;
+        case 'l': KB_Event1.EventType  = ES_START_LINE_REV;      break;
         case 'w': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = Forwards;  break;
         case 'a': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = RotateCCW; break;
         case 's': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = Backwards; break;

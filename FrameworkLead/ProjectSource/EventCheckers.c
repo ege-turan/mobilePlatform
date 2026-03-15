@@ -192,6 +192,9 @@ bool Check4TapePivot(void)
       else {
           leftOnLine = false;
           centered = false;
+  #ifdef DEBUG_PRINT
+          DB_printf("[leader ] Tape Pivot L NOT Detected!\r\n");
+  #endif
       }
     }
         
@@ -210,6 +213,9 @@ bool Check4TapePivot(void)
       else {
           rightOnLine = false;
           centered = false;
+  #ifdef DEBUG_PRINT
+          DB_printf("[leader ] Tape Pivot R NOT Detected!\r\n");
+  #endif
       }
     }
 
@@ -292,6 +298,9 @@ bool Check4TapeFront(void)
       else {
           leftOnLine = false;
           centered = false;
+  #ifdef DEBUG_PRINT
+          DB_printf("[leader ] Tape Front L NOT Detected!\r\n");
+  #endif
       }
     }
         
@@ -310,6 +319,9 @@ bool Check4TapeFront(void)
       else {
           rightOnLine = false;
           centered = false;
+  #ifdef DEBUG_PRINT
+          DB_printf("[leader ] Tape Front R NOT Detected!\r\n");
+  #endif
       }
     }
 
