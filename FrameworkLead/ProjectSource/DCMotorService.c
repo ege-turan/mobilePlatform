@@ -109,9 +109,9 @@ typedef enum
 
 // DUTY CYCLES FOR SPEEDS
 
-#define SPEED_FORWARDS_PERCENT 35
-#define SPEED_BACKWARDS_PERCENT 35
-#define SPEED_ROTATE_PERCENT 25
+#define SPEED_FORWARDS_PERCENT 40
+#define SPEED_BACKWARDS_PERCENT 40
+#define SPEED_ROTATE_PERCENT 30
 #define SPEED_RIGHT_OFFSET_PERCENT 0 // SPEED + Offset should NOT exceed 100%
 
 
@@ -633,29 +633,29 @@ void _RotateForBeacon()
 
 bool DCMotor_ExecutePrimitive(PrimitiveCmd_t cmd) {
     switch(cmd) {
-        case RotateCW:        _RotateRobotCW();   ES_PostAll((ES_Event_t){ES_STOP_DRIVE_CORRECT}); break;
-        case RotateCCW:       _RotateRobotCCW();  ES_PostAll((ES_Event_t){ES_STOP_DRIVE_CORRECT}); break;
-        case Forwards:        _DriveForward100(); ES_PostAll((ES_Event_t){ES_STOP_DRIVE_CORRECT}); break;
-        case Forwards_slow:   _DriveForward50();  ES_PostAll((ES_Event_t){ES_STOP_DRIVE_CORRECT}); break;
-        case Backwards:       _DriveReverse100(); ES_PostAll((ES_Event_t){ES_STOP_DRIVE_CORRECT}); break;
-        case Backwards_slow:  _DriveReverse50();  ES_PostAll((ES_Event_t){ES_STOP_DRIVE_CORRECT}); break;
+        case RotateCW:        _RotateRobotCW();   break;
+        case RotateCCW:       _RotateRobotCCW();  break;
+        case Forwards:        _DriveForward100(); break;
+        case Forwards_slow:   _DriveForward50();  break;
+        case Backwards:       _DriveReverse100(); break;
+        case Backwards_slow:  _DriveReverse50();  break;
         case Stop:            _StopRobot();       ES_PostAll((ES_Event_t){ES_STOP_DRIVE_CORRECT}); break;
         
         // Line following and encoder count course correction
         case Forwards_line_mid:
-            ES_PostAll((ES_Event_t){ES_START_LINE_FWD_MID});
+            ES_PostAll((ES_Event_t){ES_START_LINE_FWD_MID,0});
             break;
 
         case Backwards_line_mid:
-            ES_PostAll((ES_Event_t){ES_START_LINE_REV_MID});
+            ES_PostAll((ES_Event_t){ES_START_LINE_REV_MID,0});
             break;
 
         case Forwards_count_mid:
-            ES_PostAll((ES_Event_t){ES_START_ENC_FWD_MID});
+            ES_PostAll((ES_Event_t){ES_START_ENC_FWD_MID,0});
             break;
 
         case Backwards_count_mid:
-            ES_PostAll((ES_Event_t){ES_START_ENC_REV_MID});
+            ES_PostAll((ES_Event_t){ES_START_ENC_REV_MID,0});
             break;
 
         default: return false; // unknown primitive

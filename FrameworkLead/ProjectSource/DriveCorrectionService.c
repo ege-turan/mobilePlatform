@@ -34,6 +34,7 @@
 /*----------------------------- Module Defines ----------------------------*/
 #define DEBUG_PRINT_DRIVE_CORRECT
 #define DRIVE_CONTROL_TIMER_MS 10
+#define MAX_ENC_COUNT 1300
 #define MIDPOINT_COUNT 1300 //300
 
 #define KP 3 // with 3 its good
@@ -84,6 +85,8 @@ static int32_t PI_result_val = 0;
 
 static int32_t EncCountL = 0;
 static int32_t EncCountR = 0;
+
+static uint32_t DesiredEncCounts = MAX_ENC_COUNT; 
 
 // Line-following PID state
 volatile static int32_t LineError = 0;
@@ -203,7 +206,7 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
         case ES_STOP_DRIVE_CORRECT:
             ResetDriveControl();
             CurrentState = DC_Idle;
-            DB_printf("[leader ] DriveCorrectionService: DC_Idle\r\n");
+            DB_printf("[leader ] DriveCorrectionService: Going to DC_Idle \r\n");
             break;
         case ES_START_ENC_FWD:
             // #ifdef DEBUG_PRINT_DRIVE_CORRECT
@@ -232,17 +235,20 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
             ResetDriveControl();
             encoderModeOn = true;
             UseMidStop = true;
+            DesiredEncCounts = (ThisEvent.EventParam != 0) ? ThisEvent.EventParam : MAX_ENC_COUNT; // Set to event param or MIDPOUNT_COUNT by default
             CurrentState = DC_EncFwdMid;
             break;
 
         case ES_START_ENC_REV_MID:
-            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
-            DB_printf("[leader ] Backwards w/ encoder and mid\r\n");
-            // #endif
             ResetDriveControl();
             encoderModeOn = true;
             UseMidStop = true;
+            DesiredEncCounts = (ThisEvent.EventParam != 0) ? ThisEvent.EventParam : MAX_ENC_COUNT; // Set to event param or MIDPOUNT_COUNT by default
+
             CurrentState = DC_EncRevMid;
+            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
+            DB_printf("[leader ] Backwards w/ encoder and mid. DesiredEncCounts: %u\r\n", DesiredEncCounts);
+            // #endif
             break;
 
         case ES_START_LINE_FWD:
@@ -266,23 +272,25 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
             break;
 
         case ES_START_LINE_FWD_MID:
-            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
-            DB_printf("[leader ] Forwards w/ line and mid\r\n");
-            // #endif
             ResetDriveControl();
             lineFollowModeOn = true;
             UseMidStop = true;
+            DesiredEncCounts = (ThisEvent.EventParam != 0) ? ThisEvent.EventParam : MAX_ENC_COUNT; // Set to event param or MIDPOUNT_COUNT by default
             CurrentState = DC_LineFwdMid;
+            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
+            DB_printf("[leader ] Forwards w/ line and mid. DesiredEncCounts: %u\r\n", DesiredEncCounts);
+            // #endif
             break;
 
         case ES_START_LINE_REV_MID:
-            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
-            DB_printf("[leader ] Backwards w/ line and mid\r\n");
-            // #endif
             ResetDriveControl();
             lineFollowModeOn = true;
             UseMidStop = true;
+            DesiredEncCounts = (ThisEvent.EventParam != 0) ? ThisEvent.EventParam : MAX_ENC_COUNT; // Set to event param or MIDPOUNT_COUNT by default
             CurrentState = DC_LineRevMid;
+            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
+            DB_printf("[leader ] Backwards w/ line and mid. DesiredEncCounts: %u\r\n", DesiredEncCounts);
+            // #endif
             break;
     }
 
@@ -424,6 +432,7 @@ static void ResetDriveControl(void)
     EncCountR = 0;
     MidCount = 0;
     UseMidStop = false;
+    DesiredEncCounts = MAX_ENC_COUNT; 
 
     LineIntegral = 0;
     LineError = 0;
@@ -436,8 +445,9 @@ static void ResetDriveControl(void)
 static void CheckMidpointStop(void)
 {
     int32_t avg = (EncCountL + EncCountR) >> 1;
+    DB_printf("\r Average encoder counts: %u / %u. \r\n", (unsigned int)avg, (unsigned int)DesiredEncCounts);
 
-    if(UseMidStop && avg >= MIDPOINT_COUNT)
+    if(UseMidStop && avg >= DesiredEncCounts)
     {
         UseMidStop = false;   // prevent retrigger
         MidCount = 0;
@@ -446,8 +456,10 @@ static void CheckMidpointStop(void)
         PostDCMotorService(stop);
         PostDriveCorrectionService((ES_Event_t){ES_STOP_DRIVE_CORRECT});
 
-        ES_Event_t done = {ES_COUNT_DONE};
-        ES_PostAll(done);   // notify planner
+        ES_Event_t doneEvent;
+        doneEvent.EventType = ES_COUNT_DONE;
+        doneEvent.EventParam = 0;
+        ES_PostAll(doneEvent);   // notify planner
     }
 }
 

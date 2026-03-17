@@ -54,7 +54,7 @@
 #define BEACON_TIMER_MS 50 // in ms, how often to check for beacon presence
 
 
-// #define VERBOSE_BEACON
+#define VERBOSE_BEACON
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this service.They should be functions
    relevant to the behavior of this service
@@ -71,6 +71,9 @@ static uint8_t MyPriority;
 static volatile uint16_t rollover      = 0;
 static volatile uint32_t periodInTicks = 0;
 static volatile uint32_t lastCapture   = 0;
+
+static bool SPI_SENT = false;
+static bool startLooking4Dispenser = false;
 
 typedef union
 {
@@ -194,6 +197,8 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
       DB_printf("\rES_INIT received in BeaconService, priority: %d\r\n", MyPriority);
     }
     break;
+    
+    case ES_LOOK_4_DISPENSER: startLooking4Dispenser = true; DB_printf("\r BeaconService: Started looking for beacon... \r\n");break;
 
     case ES_TIMEOUT:
     {
@@ -236,7 +241,7 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
         {
             CurrentBeaconState = 0;
             #ifdef VERBOSE_BEACON
-            DB_printf("No Beacon. Freq: %u Hz\r\n", (unsigned int)CurrentBeaconFreq);
+            // DB_printf("No Beacon. Freq: %u Hz\r\n", (unsigned int)CurrentBeaconFreq);
             #endif
         }
 
@@ -256,37 +261,36 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
 
         if ((CurrentBeaconState != 0))// && (CurrentBeaconState != LastBeaconState))
         {
-        //   uint8_t sideDetected;
-        //   if (CheckSideSequence(CurrentBeaconState, &sideDetected))
-        //   {
-        //     // Side detected, post ES_SIDE_FOUND
-        //     ES_Event_t SideEvent;
-        //     SideEvent.EventType = ES_SIDE_FOUND;
-        //     SideEvent.EventParam = (sideDetected == BEACON_G) ? ES_TEAM_GREEN : ES_TEAM_BLUE;
-        //     ES_PostAll(SideEvent);
-        //     // SPI event
-        //     ES_Event_t SPIEvent;
-        //     SPIEvent.EventType = ES_NEW_SPI_CMD_SEND;
-        //     SPIEvent.EventParam = (sideDetected == BEACON_G) ? CMD_SPI_GREEN_TEAM : CMD_SPI_BLUE_TEAM;
-        //     PostSPILeadService(SPIEvent);
-
-        //     #ifdef VERBOSE_BEACON
-        //     DB_printf("Side Found! %s\r\n", (sideDetected == BEACON_G) ? "GREEN" : "BLUE");
-        //     #endif
-        //   }
-          if (CurrentBeaconState == BEACON_G)
+          if (startLooking4Dispenser)
           {
-            DB_printf("Green Sequence Detected: ");
-            ES_Event_t SideEvent;
-            SideEvent.EventType = ES_SIDE_FOUND;
-            SideEvent.EventParam = ES_TEAM_GREEN;
-          }
-          else if (CurrentBeaconState == BEACON_B)
-          {
-            DB_printf("Blue Sequence Detected: ");
-            ES_Event_t SideEvent;
-            SideEvent.EventType = ES_SIDE_FOUND;
-            SideEvent.EventParam = ES_TEAM_BLUE;
+            if (!SPI_SENT)
+            {
+              if (CurrentBeaconState == BEACON_G)
+              {
+                ES_Event_t SideEvent;
+                SideEvent.EventType = ES_SIDE_FOUND;
+                SideEvent.EventParam = 0;
+                ES_PostAll(SideEvent);
+                DB_printf("Green SIDE Detected! ");
+                ES_Event_t SPIEvent;
+                SPIEvent.EventType = ES_NEW_SPI_CMD_SEND;
+                SPIEvent.EventParam = (CurrentBeaconState == BEACON_G) ? CMD_SPI_GREEN_TEAM : CMD_SPI_BLUE_TEAM;
+                PostSPILeadService(SPIEvent);
+                SPI_SENT = true;
+              }
+              else if (CurrentBeaconState == BEACON_B)
+              {
+                ES_Event_t SideEvent;
+                SideEvent.EventType = ES_SIDE_FOUND;
+                SideEvent.EventParam = 0;
+                ES_PostAll(SideEvent);
+                DB_printf("Blue Side Detected! ");
+                ES_Event_t SPIEvent;
+                SPIEvent.EventType = ES_NEW_SPI_CMD_SEND;
+                SPIEvent.EventParam = (CurrentBeaconState == BEACON_G) ? CMD_SPI_GREEN_TEAM : CMD_SPI_BLUE_TEAM;
+                PostSPILeadService(SPIEvent);
+              }
+            }
           }
         }
         LastBeaconState = CurrentBeaconState; // update the state for next time

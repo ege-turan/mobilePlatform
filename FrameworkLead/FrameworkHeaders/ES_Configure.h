@@ -273,7 +273,9 @@ typedef enum
   ES_LINE_PIVOT_L,         /* When the left pivot tape detector is on the tape*/
   ES_LINE_PIVOT_R,         /* When the right pivot tape detector is on the tape*/
   ES_CENTERED_PIVOT,
-  ES_CENTERED,             /* When the two front tape detectors are on the tape*/
+  ES_LINE_FRONT_L,
+  ES_LINE_FRONT_R,
+  ES_CENTERED_FRONT,       /* When the two front tape detectors are on the tape*/
   ES_MOTORS_OFF,
   ES_COUNT_DONE,
   /* Drive Course Correct */
@@ -310,7 +312,9 @@ typedef enum
   ES_PLAN_DONE,
   ES_STEP_DONE,
   ES_BEACON_DISPENSER,
+  ES_LOOK_4_DISPENSER,
   /* Global Events */
+  ES_DRIVER_TIMEOUT,
   ES_LIMIT_SWITCH,
   ES_SIDE_FOUND,
   ES_TEAM_BLUE,
@@ -382,11 +386,11 @@ typedef enum
 // the timer number matches where the timer event will be routed
 // These symbolic names should be changed to be relevant to your application
 
-#define SPI_TIMER 15
-#define RotateRobotTimer 14
-#define BeaconDetectTimer 13
-#define GameStartTimer 12
-#define StartRotateTimer 11
+#define SPI_TIMER            15
+#define RotateRobotTimer     14
+#define BeaconDetectTimer    13
+#define DriverTimer          12
+#define StartRotateTimer     11
 #define DriveCorrectionTimer 10
 
 

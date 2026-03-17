@@ -176,15 +176,15 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
           DB_printf("PostedEvent: %u, with param 0x%x\r\n", (unsigned int) KB_Event1.EventType, (unsigned int) KB_Event1.EventParam);
           break;
         }
-        case '5': KB_Event1.EventType  = ES_SIDE_FOUND;          break;
+        case '5': KB_Event1.EventType  = ES_SIDE_FOUND; KB_Event1.EventParam = 0; break;
         case '6': KB_Event1.EventType  = ES_BEACON_DISPENSER;    break;
-        case '7': KB_Event1.EventType  = ES_CENTERED;            break;
+        case '7': KB_Event1.EventType  = ES_CENTERED_PIVOT;      break;
         case '8': KB_Event1.EventType  = ES_LINE_PIVOT_L;        break;
         case '9': KB_Event1.EventType  = ES_LINE_PIVOT_R;        break;
         case '0': KB_Event1.EventType  = ES_LIMIT_SWITCH;        break;
         case 'h': KB_Event1.EventType  = ES_COUNT_DONE;          break;
-        case 'e': KB_Event1.EventType  = ES_START_ENC_FWD_MID;   break;
-        case 'r': KB_Event1.EventType  = ES_START_ENC_REV_MID;   break;
+        case 'e': KB_Event1.EventType  = ES_START_ENC_FWD_MID; KB_Event1.EventParam = 0;  break;
+        case 'r': KB_Event1.EventType  = ES_START_ENC_REV_MID; KB_Event1.EventParam = 0;  break;
         case 'o': KB_Event1.EventType  = ES_START_LINE_FWD;      break;
         case 'l': KB_Event1.EventType  = ES_START_LINE_REV;      break;
         case 'w': KB_Event1.EventType  = ES_MOTOR_PRIMITIVE; KB_Event1.EventParam = Forwards;  break;

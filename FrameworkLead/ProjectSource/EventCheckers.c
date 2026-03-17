@@ -288,7 +288,7 @@ bool Check4TapeFront(void)
       {
           leftOnLine = true;
           ES_Event_t ThisEvent;
-          ThisEvent.EventType = ES_LINE_PIVOT_L;
+          ThisEvent.EventType = ES_LINE_FRONT_L;
           ES_PostAll(ThisEvent);
   #ifdef DEBUG_PRINT
           DB_printf("[leader ] Tape Front L Detected!\r\n");
@@ -309,7 +309,7 @@ bool Check4TapeFront(void)
       {
           rightOnLine = true;
           ES_Event_t ThisEvent;
-          ThisEvent.EventType = ES_LINE_PIVOT_R;
+          ThisEvent.EventType = ES_LINE_FRONT_R;
           ES_PostAll(ThisEvent);
   #ifdef DEBUG_PRINT
           DB_printf("[leader ] Tape Front R Detected!\r\n");
@@ -327,7 +327,7 @@ bool Check4TapeFront(void)
 
     if (ReturnVal && (leftOnLine && rightOnLine)){
         ES_Event_t ThisEvent;
-        ThisEvent.EventType = ES_CENTERED;
+        ThisEvent.EventType = ES_CENTERED_FRONT;
         ES_PostAll(ThisEvent);
   #ifdef DEBUG_PRINT
           DB_printf("[leader ] Tape Front Centered!\r\n");

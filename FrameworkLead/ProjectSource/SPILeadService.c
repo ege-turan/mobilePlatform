@@ -38,7 +38,7 @@
 #define SPI1_SDI_PIN SPI_RPB11
 #define SPIClkPeriodInNs 10000 // 100 kHz = 10000 ns
 
-#define SPI_TIMER_MS 200
+#define SPI_TIMER_MS 50
 
 
 /*---------------------------- Module Functions ---------------------------*/

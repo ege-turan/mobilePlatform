@@ -329,6 +329,7 @@ static ES_Event_t DuringRunningStep( ES_Event_t Event)
         // implement any entry actions required for this state machine
         /* Execute the first step */
         DoStepActions();
+        DB_printf("\r[Driver ]                     Next step is step #%u \n", (unsigned int)StepCounter);
 
         // after that start any lower level machines that run in this state
         //StartLowerLevelSM( Event );
@@ -352,9 +353,11 @@ static ES_Event_t DuringRunningStep( ES_Event_t Event)
             return ReturnEvent;
         }
         if ((Event.EventType == ActivePlan->Steps[StepCounter].StoppingCondition.EventType) &&
-            (Event.EventParam == ActivePlan->Steps[StepCounter].StoppingCondition.EventParam))
+            ((Event.EventParam == ActivePlan->Steps[StepCounter].StoppingCondition.EventParam)||(ActivePlan->Steps[StepCounter].StoppingCondition.EventParam == 0)))
         {
           StepCounter++;
+          DB_printf("\r[Driver ]  StopCondition met! Next step is step #%u \n", (unsigned int)StepCounter);
+
           if (StepCounter >= ActivePlan->NumSteps)
           {
             // All steps done, post step complete to this SM to transition
@@ -384,11 +387,11 @@ static void DoStepActions (void)
     DB_printf("\r[Driver ] Plan: %u, Step: %u, Primitive: %u\n", 
       (unsigned int)CurrentPlanIndex, (unsigned int)StepCounter, (unsigned int)ActivePlan->Steps[StepCounter].PrimitiveCmd);
 
-    DB_printf("\r[Driver ]  StopCondition Type: %u, StopCondition Param: %u, \n", 
-      (unsigned int)ActivePlan->Steps[StepCounter].StoppingCondition.EventType, (unsigned int)ActivePlan->Steps[StepCounter].StoppingCondition.EventParam);
+    // DB_printf("\r[Driver ]  StopCondition Type: %u, StopCondition Param: %u, \n", 
+    //   (unsigned int)ActivePlan->Steps[StepCounter].StoppingCondition.EventType, (unsigned int)ActivePlan->Steps[StepCounter].StoppingCondition.EventParam);
 
-    DB_printf("\r[Driver ]  Event2Post Type: %u, Event2Post Param: %u\n", 
-      (unsigned int)ActivePlan->Steps[StepCounter].PostEvent.EventType, (unsigned int)ActivePlan->Steps[StepCounter].PostEvent.EventParam);
+    // DB_printf("\r[Driver ]  Event2Post Type: %u, Event2Post Param: %u\n", 
+    //   (unsigned int)ActivePlan->Steps[StepCounter].PostEvent.EventType, (unsigned int)ActivePlan->Steps[StepCounter].PostEvent.EventParam);
     #endif
     ES_Event_t MotorCmdEvent;
     MotorCmdEvent.EventType = ES_MOTOR_PRIMITIVE;
@@ -397,22 +400,18 @@ static void DoStepActions (void)
     PostBeaconService(MotorCmdEvent);
     if (ES_NO_EVENT != ActivePlan->Steps[StepCounter].PostEvent.EventType)
     {
-        if (ActivePlan->Steps[StepCounter].PostEvent.EventType == ES_TIMEOUT){
-          switch (ActivePlan->Steps[StepCounter].PostEvent.EventParam)
-          {
-            case GameStartTimer:{
-              DB_printf("\r[Driver ] Started GameStartTimer for %u MS\n", (unsigned int)INITIAL_ROTATE_CCW_MS);
-              ES_Timer_InitTimer(GameStartTimer, INITIAL_ROTATE_CCW_MS);
-            }
-              break;
-            case StartRotateTimer:{
-              ES_Timer_InitTimer(StartRotateTimer, INITIAL_ROTATE_CW_MS);
-            }
-              break;
-            default: 
-              break;
-          } 
+        if (ActivePlan->Steps[StepCounter].PostEvent.EventType == ES_DRIVER_TIMEOUT){
+          uint16_t time_ms = ActivePlan->Steps[StepCounter].PostEvent.EventParam;
+          ES_Timer_InitTimer(DriverTimer, time_ms);
+          DB_printf("\r[Driver ]  Started timer: %u, for %u ms \n", (unsigned int) DriverTimer, time_ms);
 
+        } else if ((ActivePlan->Steps[StepCounter].PostEvent.EventType == ES_NEW_SPI_CMD_SEND) &&
+                  (ActivePlan->Steps[StepCounter].PostEvent.EventParam == CMD_SPI_INTAKE_ON)){
+          ES_Timer_InitTimer(DriverTimer, INTAKE_WAIT_MS);
+          DB_printf("\r[Driver ]  Started timer: %u, for %u ms \n", (unsigned int) DriverTimer, INTAKE_WAIT_MS);
+          ES_Event_t Event2Post;
+          Event2Post = ActivePlan->Steps[StepCounter].PostEvent;
+          ES_PostAll(Event2Post);
         } else {
           /* Post Event Sent on Entry */
           ES_Event_t Event2Post;
