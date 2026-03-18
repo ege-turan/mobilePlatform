@@ -59,7 +59,11 @@ static uint8_t MyPriority;
 static uint8_t DutyCycle = 1;     // 0–5
 static uint8_t HighTime = 0;
 static uint8_t LowTime = 0;
+static uint32_t ForwardsTimeMs = 3000;
+static uint32_t BackwardsTimeMs = 50;
+static bool forwards = true;
 static bool OutputState = false;
+static bool feederOn = false;
 
 /*------------------------------ Module Code ------------------------------*/
 /****************************************************************************
@@ -171,8 +175,7 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
         case ES_FEEDER_START:
         {
             DB_printf("[follower ] StepperService: FEEDER START\r\n");
-            M_FEEDER_EN_LAT = 1;   // enable driver
-            MOTOR_OUTPUT_LAT = 0;  // ensure starting low
+            feederOn = true;
 
             uint8_t period = FEEDER_DUTY_STEPS;
 
@@ -180,18 +183,22 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
             LowTime = period - DutyCycle;
 
             OutputState = true;
-            M_FEEDER_EN_LAT = 1;
+            M_FEEDER_EN_LAT = 1; MOTOR_OUTPUT_LAT = 0; // forwards
 
             ES_Timer_InitTimer(FEEDER_PWM_TIMER, HighTime);
+
+            forwards = true;
+            ES_Timer_InitTimer(FEEDER_UNSTALL_TIMER, ForwardsTimeMs);
         }
         break;
 
         case ES_FEEDER_STOP:
         {
             DB_printf("[follower ] StepperService: FEEDER STOP\r\n");
-            M_FEEDER_EN_LAT = 0;     // disable driver
-            MOTOR_OUTPUT_LAT = 0;    // keep step pin low
-            ES_Timer_StopTimer(FEEDER_PWM_TIMER); // stop toggling
+            feederOn = false;
+            M_FEEDER_EN_LAT = 0; MOTOR_OUTPUT_LAT = 0; // STOP
+            ES_Timer_StopTimer(FEEDER_PWM_TIMER);     // stop toggling
+            ES_Timer_StopTimer(FEEDER_UNSTALL_TIMER); // stop unstall timer
         }
         break;
 
@@ -201,17 +208,40 @@ ES_Event_t RunStepperService(ES_Event_t ThisEvent)
             {
                 if(OutputState)
                 {
-                    M_FEEDER_EN_LAT = 0;
+                    M_FEEDER_EN_LAT = 0; MOTOR_OUTPUT_LAT = 0; // STOP
                     OutputState = false;
                     if (LowTime > 0)
                         ES_Timer_InitTimer(FEEDER_PWM_TIMER, LowTime);
                 } else
                 {
-                    M_FEEDER_EN_LAT = 1;
+                    if(forwards)
+                    {
+                        if (feederOn) {M_FEEDER_EN_LAT = 1; MOTOR_OUTPUT_LAT = 0;}// forwards
+                    }
+                    else
+                    {
+                        if (feederOn) {M_FEEDER_EN_LAT = 0; MOTOR_OUTPUT_LAT = 1;} // backwards
+                    }
+
                     OutputState = true;
 
                     if (HighTime > 0)
                         ES_Timer_InitTimer(FEEDER_PWM_TIMER, HighTime);
+                }
+            } else if (ThisEvent.EventParam == FEEDER_UNSTALL_TIMER)
+            {
+                forwards = !forwards; // toggle direction
+                if (forwards)
+                {
+                    DB_printf("[follower ] StepperService: UNSTALL TIMER, FORWARDS\r\n");
+                    if (feederOn) {M_FEEDER_EN_LAT = 1; MOTOR_OUTPUT_LAT = 0;}// forwards
+                    ES_Timer_InitTimer(FEEDER_UNSTALL_TIMER, ForwardsTimeMs);
+                }
+                else
+                {
+                    DB_printf("[follower ] StepperService: UNSTALL TIMER, BACKWARDS\r\n");
+                    if (feederOn) {M_FEEDER_EN_LAT = 0; MOTOR_OUTPUT_LAT = 1;} // backwards
+                    ES_Timer_InitTimer(FEEDER_UNSTALL_TIMER, BackwardsTimeMs);
                 }
             }
         }

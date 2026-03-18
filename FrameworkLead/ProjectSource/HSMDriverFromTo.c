@@ -412,6 +412,13 @@ static void DoStepActions (void)
           ES_Event_t Event2Post;
           Event2Post = ActivePlan->Steps[StepCounter].PostEvent;
           ES_PostAll(Event2Post);
+        } else if ((ActivePlan->Steps[StepCounter].PostEvent.EventType == ES_NEW_SPI_CMD_SEND) &&
+                  (ActivePlan->Steps[StepCounter].PostEvent.EventParam == CMD_SPI_DROPOFF_REACHED)){
+          ES_Timer_InitTimer(DriverTimer, LOWER_BUCKET_WAIT_MS);
+          DB_printf("\r[Driver ]  Started timer: %u, for %u ms \n", (unsigned int) DriverTimer, LOWER_BUCKET_WAIT_MS);
+          ES_Event_t Event2Post;
+          Event2Post = ActivePlan->Steps[StepCounter].PostEvent;
+          ES_PostAll(Event2Post);
         } else {
           /* Post Event Sent on Entry */
           ES_Event_t Event2Post;

@@ -5,7 +5,8 @@
 #include "ES_Framework.h"
 
 
-#define INTAKE_WAIT_MS 500
+#define INTAKE_WAIT_MS 1000
+#define LOWER_BUCKET_WAIT_MS 1000
 
 typedef enum {
     RotateCW,
@@ -39,6 +40,7 @@ typedef struct {
 typedef enum {
     PLAN_STARTPOS2LOADINGDOCK = 0,
     PLAN_LOADINGDOCK2BUCKET1,
+    PLAN_BUCKET1_2_BUCKET2,
     /* NUM_PLANS tells how many plans there are. Line below goes last always */
     NUM_PLANS
 } PlanIndex_t;

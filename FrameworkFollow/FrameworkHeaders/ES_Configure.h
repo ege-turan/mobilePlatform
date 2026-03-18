@@ -64,7 +64,7 @@
     // the name of the run function
     #define SERV_1_RUN RunStepperService
     // How big should this services Queue be?
-    #define SERV_1_QUEUE_SIZE 10
+    #define SERV_1_QUEUE_SIZE 15
 #endif
 
 /****************************************************************************/
@@ -271,6 +271,7 @@ typedef enum
 
     ES_ARM_LOWERED,
     ES_ARM_RELEASED,
+    ES_ARM_REST,
 
     ES_FEEDER_START,
     ES_FEEDER_STOP,
@@ -334,8 +335,8 @@ typedef enum
 #define TIMER3_RESP_FUNC TIMER_UNUSED
 #define TIMER4_RESP_FUNC TIMER_UNUSED
 #define TIMER5_RESP_FUNC TIMER_UNUSED
-#define TIMER6_RESP_FUNC TIMER_UNUSED
-#define TIMER7_RESP_FUNC TIMER_UNUSED
+#define TIMER6_RESP_FUNC PostStepperService // Hardcoded timer to unstall feeder
+#define TIMER7_RESP_FUNC PostOperatorFSM // Hardcoded timer to indicate completed intake
 #define TIMER8_RESP_FUNC PostDropoffLoweringArmFSM
 #define TIMER9_RESP_FUNC PostOperatorFSM
 #define TIMER10_RESP_FUNC PostStepperService
@@ -360,5 +361,7 @@ typedef enum
 #define FEEDER_PWM_TIMER 10
 #define AGITATOR_PWM_TIMER 9
 #define ARM_MOVE_TIMER 8
+#define INTAKE_COMPLETE_TIMER 7
+#define FEEDER_UNSTALL_TIMER 6
 
 #endif /* ES_CONFIGURE_H */

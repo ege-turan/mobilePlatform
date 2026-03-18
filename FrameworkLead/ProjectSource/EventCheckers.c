@@ -185,7 +185,7 @@ bool Check4TapePivot(void)
           ThisEvent.EventType = ES_LINE_PIVOT_L;
           ES_PostAll(ThisEvent);
   #ifdef DEBUG_PRINT
-          DB_printf("[leader ] Tape Pivot L Detected!\r\n");
+          // DB_printf("[leader ] Tape Pivot L Detected!\r\n");
   #endif
           ReturnVal = true;
       }
@@ -193,7 +193,7 @@ bool Check4TapePivot(void)
           leftOnLine = false;
           centered = false;
   #ifdef DEBUG_PRINT
-          DB_printf("[leader ] Tape Pivot L NOT Detected!\r\n");
+          // DB_printf("[leader ] Tape Pivot L NOT Detected!\r\n");
   #endif
       }
     }
@@ -206,7 +206,7 @@ bool Check4TapePivot(void)
           ThisEvent.EventType = ES_LINE_PIVOT_R;
           ES_PostAll(ThisEvent);
   #ifdef DEBUG_PRINT
-          DB_printf("[leader ] Tape Pivot R Detected!\r\n");
+          // DB_printf("[leader ] Tape Pivot R Detected!\r\n");
   #endif
           ReturnVal = true;
       }
@@ -214,7 +214,7 @@ bool Check4TapePivot(void)
           rightOnLine = false;
           centered = false;
   #ifdef DEBUG_PRINT
-          DB_printf("[leader ] Tape Pivot R NOT Detected!\r\n");
+          // DB_printf("[leader ] Tape Pivot R NOT Detected!\r\n");
   #endif
       }
     }
@@ -291,7 +291,7 @@ bool Check4TapeFront(void)
           ThisEvent.EventType = ES_LINE_FRONT_L;
           ES_PostAll(ThisEvent);
   #ifdef DEBUG_PRINT
-          DB_printf("[leader ] Tape Front L Detected!\r\n");
+          // DB_printf("[leader ] Tape Front L Detected!\r\n");
   #endif
           ReturnVal = true;
       }
@@ -299,7 +299,7 @@ bool Check4TapeFront(void)
           leftOnLine = false;
           centered = false;
   #ifdef DEBUG_PRINT
-          DB_printf("[leader ] Tape Front L NOT Detected!\r\n");
+          // DB_printf("[leader ] Tape Front L NOT Detected!\r\n");
   #endif
       }
     }
@@ -312,7 +312,7 @@ bool Check4TapeFront(void)
           ThisEvent.EventType = ES_LINE_FRONT_R;
           ES_PostAll(ThisEvent);
   #ifdef DEBUG_PRINT
-          DB_printf("[leader ] Tape Front R Detected!\r\n");
+          // DB_printf("[leader ] Tape Front R Detected!\r\n");
   #endif
           ReturnVal = true;
       }
@@ -320,7 +320,7 @@ bool Check4TapeFront(void)
           rightOnLine = false;
           centered = false;
   #ifdef DEBUG_PRINT
-          DB_printf("[leader ] Tape Front R NOT Detected!\r\n");
+          // DB_printf("[leader ] Tape Front R NOT Detected!\r\n");
   #endif
       }
     }

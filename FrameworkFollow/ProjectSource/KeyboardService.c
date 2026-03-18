@@ -196,7 +196,7 @@ ES_Event_t RunKeyboardService(ES_Event_t ThisEvent)
                 }
                     case '9': KB_Event1.EventType  = ES_AGITATOR_START;     break;
                     case '0': KB_Event1.EventType  = ES_AGITATOR_STOP;     break;
-                    // case 'h': KB_Event1.EventType  = ES_COUNT_DONE;       break;
+                    case 'p': KB_Event1.EventType  = ES_ARM_REST;       break;
                     // case 'j': KB_Event1.EventType  = ES_LIMIT_SWITCH;     break;
 
                 default:

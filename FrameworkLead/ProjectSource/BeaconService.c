@@ -248,15 +248,15 @@ ES_Event_t RunBeaconService(ES_Event_t ThisEvent)
         // event detected, so post detected event
         if ((CurrentBeaconState != 0) && (CurrentBeaconState != LastBeaconState))
         {
-          #ifdef VERBOSE_BEACON
-          DB_printf("Beacon Detected! Freq: %u Hz. State: %u\r\n", (unsigned int)CurrentBeaconFreq, CurrentBeaconState);
-          #endif
-          if (CurrentBeaconState == BEACON_G || CurrentBeaconState == BEACON_B)
-          {
-            ES_Event_t NewEvent;
-            NewEvent.EventType = ES_BEACON_DISPENSER;
-            ES_PostAll(NewEvent);
-          }
+        //   #ifdef VERBOSE_BEACON
+        //   // DB_printf("Beacon Detected! Freq: %u Hz. State: %u\r\n", (unsigned int)CurrentBeaconFreq, CurrentBeaconState);
+        //   #endif
+        //   if (CurrentBeaconState == BEACON_G || CurrentBeaconState == BEACON_B)
+        //   {
+        //     ES_Event_t NewEvent;
+        //     NewEvent.EventType = ES_BEACON_DISPENSER;
+        //     ES_PostAll(NewEvent);
+        //   }
         } 
 
         if ((CurrentBeaconState != 0))// && (CurrentBeaconState != LastBeaconState))

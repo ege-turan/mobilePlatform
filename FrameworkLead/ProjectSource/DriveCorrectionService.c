@@ -194,9 +194,9 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
             ES_Timer_InitTimer(DriveCorrectionTimer, DRIVE_CONTROL_TIMER_MS); // re-start timer
             // DB_printf("Hello?\r\n");
             #ifdef DEBUG_PRINT_DRIVE_CORRECT
-            if (encoderModeOn){
-            DB_printf("[leader ]  EncLeft: %u, EncRight: %u, PI_result_val: %d \r\n", (unsigned int)EncCountL, (unsigned int)EncCountR, PI_result_val);
-            }
+            // if (encoderModeOn){
+            // DB_printf("[leader ]  EncLeft: %u, EncRight: %u, PI_result_val: %d \r\n", (unsigned int)EncCountL, (unsigned int)EncCountR, PI_result_val);
+            // }
             if (lineFollowModeOn){
             DB_printf("[leader ]  frontLeft: %u, frontRight: %u, line_PI_result_val: %d \r\n", (unsigned int)LineFrontL, (unsigned int)LineFrontR, line_PI_result_val);
             }
@@ -229,14 +229,14 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
             break;
 
         case ES_START_ENC_FWD_MID:
-            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
-            DB_printf("[leader ] Forwards w/ encoder and mid\r\n");
-            // #endif
             ResetDriveControl();
             encoderModeOn = true;
             UseMidStop = true;
             DesiredEncCounts = (ThisEvent.EventParam != 0) ? ThisEvent.EventParam : MAX_ENC_COUNT; // Set to event param or MIDPOUNT_COUNT by default
             CurrentState = DC_EncFwdMid;
+            // #ifdef DEBUG_PRINT_DRIVE_CORRECT
+            DB_printf("[leader ] Forwards w/ encoder and mid. DesiredEncCounts: %u\r\n", DesiredEncCounts);
+            // #endif
             break;
 
         case ES_START_ENC_REV_MID:
@@ -445,7 +445,7 @@ static void ResetDriveControl(void)
 static void CheckMidpointStop(void)
 {
     int32_t avg = (EncCountL + EncCountR) >> 1;
-    DB_printf("\r Average encoder counts: %u / %u. \r\n", (unsigned int)avg, (unsigned int)DesiredEncCounts);
+    // DB_printf("\r Average encoder counts: %u / %u. \r\n", (unsigned int)avg, (unsigned int)DesiredEncCounts);
 
     if(UseMidStop && avg >= DesiredEncCounts)
     {

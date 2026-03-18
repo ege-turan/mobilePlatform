@@ -21,10 +21,10 @@ const PlanStep_t StartPos2LoadingDockSeq[] = {
 //  STEP(primitive command,      stopEvent type, stopEvent param,    postEvent type,       postEvent param   ),
     STEP(RotateCCW,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     2200             ),
     STEP(RotateCW,               ES_SIDE_FOUND,                0,    ES_LOOK_4_DISPENSER,   0                ),
-    STEP(RotateCW,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     200              ),
+    STEP(RotateCW,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     150              ),
     STEP(Forwards,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     SIX_SEC          ),
     STEP(RotateCCW,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     1700             ),
-    STEP(Forwards,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     1950             ),
+    STEP(Forwards,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     2050             ),
     STEP(Backwards,              ES_COUNT_DONE,                0,    ES_START_ENC_REV_MID,  260              ),
     STEP(RotateCCW,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     TIME_90_DEG_MS   ),
     STEP(Backwards,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     4500             ),
@@ -36,9 +36,35 @@ const PlanStep_t StartPos2LoadingDockSeq[] = {
     STEP(Stop,                   ES_ERROR,                     0,    ES_PLAN_DONE,          0                )
 };
 
+// const PlanStep_t StartPos2LoadingDockSeq[] = { // testing driving to bucket
+// //  STEP(primitive command,      stopEvent type, stopEvent param,    postEvent type,       postEvent param   ),
+//     STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_NEW_SPI_CMD_SEND,   CMD_SPI_INTAKE_ON),
+//     STEP(Backwards_line_mid,     ES_LIMIT_SWITCH,              0,    ES_NO_EVENT,           0                ),
+//     STEP(Stop,                   ES_ERROR,                     0,    ES_PLAN_DONE,          0                )
+// };
+
 const PlanStep_t LoadingDock2Bucket1Seq[] = {
-    STEP(Forwards,               ES_COUNT_DONE,              0,    ES_START_ENC_REV_MID, 300           ),
-    STEP(Stop,                   ES_ERROR,                   0,    ES_PLAN_DONE,         0             )
+    STEP(Backwards,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     300              ),
+    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  275              ),
+    STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_NEW_SPI_CMD_SEND,   CMD_SPI_DROPOFF_REACHED),
+    STEP(RotateCW,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     50               ),
+    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  50               ),
+    STEP(Stop,                   ES_ERROR,                     0,    ES_PLAN_DONE,          0                )
+};
+
+const PlanStep_t Bucket1_2_Bucket2Seq[] = {
+    STEP(Backwards,              ES_COUNT_DONE,                0,    ES_START_ENC_REV_MID,  150              ),
+    STEP(RotateCW,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     TIME_90_DEG_MS   ),
+    STEP(Backwards,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     1500             ),
+    STEP(Forwards_count_mid,     ES_CENTERED_PIVOT,            0,    ES_NO_EVENT,           0                ),
+    STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     HALF_SEC         ),
+    STEP(Forwards_count_mid,     ES_CENTERED_PIVOT,            0,    ES_NO_EVENT,           0                ),
+    STEP(RotateCCW,              ES_CENTERED_FRONT,            0,    ES_NO_EVENT,           0                ),
+    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  25               ),
+    STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_NEW_SPI_CMD_SEND,   CMD_SPI_DROPOFF_REACHED),
+    STEP(RotateCW,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     50               ),
+    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  50               ),
+    STEP(Stop,                   ES_ERROR,                     0,    ES_PLAN_DONE,          0                )
 };
 
 const Plan_t Plans[NUM_PLANS] =
@@ -53,6 +79,12 @@ const Plan_t Plans[NUM_PLANS] =
     {
         .Steps = LoadingDock2Bucket1Seq,
         .NumSteps = sizeof(LoadingDock2Bucket1Seq)/sizeof(PlanStep_t)
+    },
+
+    [PLAN_BUCKET1_2_BUCKET2] =
+    {
+        .Steps = Bucket1_2_Bucket2Seq,
+        .NumSteps = sizeof(Bucket1_2_Bucket2Seq)/sizeof(PlanStep_t)
     }
 };
 

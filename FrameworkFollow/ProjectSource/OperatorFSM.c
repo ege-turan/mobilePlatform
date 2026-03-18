@@ -47,9 +47,10 @@
 #define GAME_COUNT 10
 
 // Timers
-#define GAME_TIME_MS 21800
-#define INTAKE_PACE_MS 10000
-#define DROPOFF_PACE_MS 7000
+#define GAME_TIME_MS     21800
+#define INTAKE_PACE_MS   10000
+#define HARD_CODED_INTAKE_COMPLETE_MS 4500
+#define DROPOFF_PACE_MS  15000
 
 // Pins
 #define DIN_GAMEMODE PORTBbits.RB4
@@ -101,6 +102,7 @@ static uint8_t DutyCycle = 1;     // 0–5
 static uint8_t HighTime = 0;
 static uint8_t LowTime = 0;
 static bool OutputState = false;
+static bool agitatorOn = false;
 
 // with the introduction of Gen2, we need a module level Priority var as well
 static uint8_t MyPriority;
@@ -243,8 +245,11 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
                 ES_Timer_InitTimer(AGITATOR_PWM_TIMER, LowTime);
         } else
         {
-            M_AGITATOR_LAT = 1;
-            OutputState = true;
+            if(agitatorOn)
+            {
+                M_AGITATOR_LAT = 1;
+                OutputState = true;
+            }
 
             if (HighTime > 0)
                 ES_Timer_InitTimer(AGITATOR_PWM_TIMER, HighTime);
@@ -296,7 +301,7 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
             {               
                 case ES_START_DOWN:
                 {
-                    carrying = 0;
+                    carrying = 1; // starting with 1 cargo for testing
                     DB_printf("\rStandby, ES_StART_DOWN ");
 
                     // Read Game Mode from RB4
@@ -342,6 +347,7 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
                     if (ThisEvent.EventParam == CMD_SPI_INTAKE_ON)
                     {
                         ES_Timer_InitTimer(INTAKE_PACE_TIMER, INTAKE_PACE_MS);
+                        ES_Timer_InitTimer(INTAKE_COMPLETE_TIMER, HARD_CODED_INTAKE_COMPLETE_MS);
                         DB_printf("\rWaitingForNavigation CMD_SPI_INTAKE_ON ");
 
                         CurrentState = Intaking;
@@ -352,6 +358,7 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
                     }
                     else if (ThisEvent.EventParam == CMD_SPI_DROPOFF_REACHED)
                     {
+                        DB_printf("\rWaitingForNavigation CMD_SPI_DROPOFF_REACHED, starting DROPOFF_PACE_TIMER\r\n ");
                         ES_Timer_InitTimer(DROPOFF_PACE_TIMER, DROPOFF_PACE_MS);
 
                         ES_Event_t armEvent;
@@ -419,6 +426,22 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
                         Intake_Off(); // <- also turn off intake on timeout
                         CurrentState = WaitingForNavigation;
                     }
+                    if (ThisEvent.EventParam == INTAKE_COMPLETE_TIMER)
+                    {
+                        Intake_Off();
+                        // Start Raising the arm and send command that it's loaded
+                        // Raise arm
+                        ES_Event_t armEvent;
+                        armEvent.EventType = ES_START_RAISING_ARM;
+                        PostDropoffLoweringArmFSM(armEvent);
+                        CurrentState = RaisingDropoff;
+
+                        // Send Loaded Command to SPI
+                        ES_Event_t completeEvent;
+                        completeEvent.EventType  = ES_NEW_SPI_CMD_SEND;
+                        completeEvent.EventParam = CMD_SPI_LOADED;
+                        PostSPIFollowService(completeEvent);
+                    }
                 }
                 break;
             }
@@ -447,8 +470,9 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
                     }
                     else // carrying > 0
                     {
-                        // Stop pacing timer and move to DroppingOff state
-                        ES_Timer_StopTimer(DROPOFF_PACE_TIMER);
+                        DB_printf("\rLoweringDropoff, ES_ARM_LOWERED, going to DroppingOff state\r\n ");
+                        // // Stop pacing timer and move to DroppingOff state
+                        // ES_Timer_StopTimer(DROPOFF_PACE_TIMER);
                         CurrentState = DroppingOff;
 
                         // create an event ES_FEEDER_START and post it to StepperService
@@ -512,6 +536,32 @@ ES_Event_t RunOperatorFSM(ES_Event_t ThisEvent)
 
                             CurrentState = WaitingForNavigation;
                         }
+                    }
+                }
+                break;
+                case ES_TIMEOUT:
+                {
+                    if (ThisEvent.EventParam == DROPOFF_PACE_TIMER)
+                    {
+                        DB_printf("\rDroppingOff, DROPOFF_PACE_TIMER timeout, going to RaisingDropoff state\r\n ");
+                        // Stop feeder and agitator
+                        ES_Event_t feederStopEvent;
+                        feederStopEvent.EventType = ES_FEEDER_STOP;
+                        PostStepperService(feederStopEvent);
+                        Agitator_Off();
+
+                        // Notify SPI that dropoff is unloaded
+                        ES_Event_t unloadEvent;
+                        unloadEvent.EventType  = ES_NEW_SPI_CMD_SEND;
+                        unloadEvent.EventParam = CMD_SPI_UNLOADED;
+                        PostSPIFollowService(unloadEvent);
+
+                        // // Raise arm back up
+                        // ES_Event_t armEvent;
+                        // armEvent.EventType = ES_START_RAISING_ARM;
+                        // PostDropoffLoweringArmFSM(armEvent);
+
+                        CurrentState = WaitingForNavigation;
                     }
                 }
                 break;
@@ -583,6 +633,7 @@ static void Agitator_Init(void)
 static void Agitator_On(void)
 {
     DB_printf("[follower ] Operator FSM: AGITATOR START\r\n");
+    agitatorOn = true;
     M_AGITATOR_LAT = 1;
     uint8_t period = AGITATOR_DUTY_STEPS;
 
@@ -597,6 +648,7 @@ static void Agitator_Off(void)
 {
     DB_printf("[follower ] Operator FSM: AGITATOR STOP\r\n");
     M_AGITATOR_LAT = 0;
+    agitatorOn = false;
     ES_Timer_StopTimer(AGITATOR_PWM_TIMER); // stop toggling
 }
 
