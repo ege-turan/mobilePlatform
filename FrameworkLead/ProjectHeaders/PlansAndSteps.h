@@ -5,7 +5,7 @@
 #include "ES_Framework.h"
 
 
-#define INTAKE_WAIT_MS 400
+#define INTAKE_WAIT_MS 500
 
 typedef enum {
     RotateCW,

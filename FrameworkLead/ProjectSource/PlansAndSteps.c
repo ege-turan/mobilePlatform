@@ -10,40 +10,35 @@
 #define THREE_SEC (ONE_SEC * 3)
 #define FOUR_SEC  (ONE_SEC * 4)
 #define FIVE_SEC  (ONE_SEC * 5)
+#define SIX_SEC   (ONE_SEC * 6)
 #define TIME_90_DEG_MS 1850
+
+#define STEP(primCmd, stopCondType, stopCondParam, postEventType, postEventParam) \
+    { .PrimitiveCmd = primCmd, .StoppingCondition = { .EventType = stopCondType, .EventParam = stopCondParam }, .PostEvent = { .EventType = postEventType, .EventParam = postEventParam } }
 
 // NORMAL GAME PLANS
 const PlanStep_t StartPos2LoadingDockSeq[] = {
-    { .PrimitiveCmd = RotateCCW,           .StoppingCondition = { .EventType = ES_TIMEOUT, .EventParam = DriverTimer },   .PostEvent = { .EventType = ES_DRIVER_TIMEOUT, .EventParam = 2200 } },
-    { .PrimitiveCmd = RotateCW,            .StoppingCondition = { .EventType = ES_SIDE_FOUND, .EventParam = 0 },          .PostEvent = { .EventType = ES_LOOK_4_DISPENSER, .EventParam = 0 } },
-    { .PrimitiveCmd = Forwards,            .StoppingCondition = { .EventType = ES_TIMEOUT, .EventParam = DriverTimer },   .PostEvent = { .EventType = ES_DRIVER_TIMEOUT, .EventParam = TWO_SEC } },
-    { .PrimitiveCmd = RotateCCW,           .StoppingCondition = { .EventType = ES_TIMEOUT, .EventParam = DriverTimer },   .PostEvent = { .EventType = ES_DRIVER_TIMEOUT, .EventParam = 1600 } },
-    { .PrimitiveCmd = Forwards,            .StoppingCondition = { .EventType = ES_TIMEOUT, .EventParam = DriverTimer },   .PostEvent = { .EventType = ES_DRIVER_TIMEOUT, .EventParam = 1800 } },
-    { .PrimitiveCmd = Backwards,           .StoppingCondition = { .EventType = ES_COUNT_DONE, .EventParam = 0 },          .PostEvent = { .EventType = ES_START_ENC_REV_MID, .EventParam = 265 } },
-    { .PrimitiveCmd = RotateCCW,           .StoppingCondition = { .EventType = ES_TIMEOUT, .EventParam = DriverTimer },   .PostEvent = { .EventType = ES_DRIVER_TIMEOUT, .EventParam = TIME_90_DEG_MS } },
-    { .PrimitiveCmd = Backwards_count_mid, .StoppingCondition = { .EventType = ES_CENTERED_PIVOT, .EventParam = 0 },      .PostEvent = { .EventType = ES_NO_EVENT, .EventParam = 0 } },
-    { .PrimitiveCmd = Stop,                .StoppingCondition = { .EventType = ES_TIMEOUT, .EventParam = DriverTimer },   .PostEvent = { .EventType = ES_DRIVER_TIMEOUT, .EventParam = HALF_SEC } },
-    { .PrimitiveCmd = Backwards_count_mid, .StoppingCondition = { .EventType = ES_CENTERED_PIVOT, .EventParam = 0 },      .PostEvent = { .EventType = ES_NO_EVENT, .EventParam = 0 } },
-    { .PrimitiveCmd = Stop,                .StoppingCondition = { .EventType = ES_TIMEOUT, .EventParam = DriverTimer },   .PostEvent = { .EventType = ES_DRIVER_TIMEOUT, .EventParam = HALF_SEC } },
-    { .PrimitiveCmd = RotateCCW,           .StoppingCondition = { .EventType = ES_CENTERED_FRONT, .EventParam = 0 },      .PostEvent = { .EventType = ES_NO_EVENT, .EventParam = 0 } },
-    { .PrimitiveCmd = Stop,                .StoppingCondition = { .EventType = ES_TIMEOUT, .EventParam = DriverTimer },   .PostEvent = { .EventType = ES_NEW_SPI_CMD_SEND, .EventParam = CMD_SPI_INTAKE_ON } }, // This postEvent also start a timer to wait for the intake to start
-    { .PrimitiveCmd = Backwards_line_mid,  .StoppingCondition = { .EventType = ES_LIMIT_SWITCH, .EventParam = 0 },        .PostEvent = { .EventType = ES_NO_EVENT, .EventParam = 0 } },
-    { .PrimitiveCmd = Stop,                .StoppingCondition = { .EventType = ES_ERROR, .EventParam = 0 },               .PostEvent = { .EventType = ES_PLAN_DONE, .EventParam = 0 } }
+//  STEP(primitive command,      stopEvent type, stopEvent param,    postEvent type,       postEvent param   ),
+    STEP(RotateCCW,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     2200             ),
+    STEP(RotateCW,               ES_SIDE_FOUND,                0,    ES_LOOK_4_DISPENSER,   0                ),
+    STEP(RotateCW,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     200              ),
+    STEP(Forwards,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     SIX_SEC          ),
+    STEP(RotateCCW,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     1700             ),
+    STEP(Forwards,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     1950             ),
+    STEP(Backwards,              ES_COUNT_DONE,                0,    ES_START_ENC_REV_MID,  260              ),
+    STEP(RotateCCW,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     TIME_90_DEG_MS   ),
+    STEP(Backwards,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     4500             ),
+    STEP(Forwards_count_mid,     ES_CENTERED_PIVOT,            0,    ES_NO_EVENT,           0                ),
+    STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     HALF_SEC         ),
+    STEP(RotateCCW,              ES_CENTERED_FRONT,            0,    ES_NO_EVENT,           0                ),
+    STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_NEW_SPI_CMD_SEND,   CMD_SPI_INTAKE_ON),
+    STEP(Backwards_line_mid,     ES_LIMIT_SWITCH,              0,    ES_NO_EVENT,           0                ),
+    STEP(Stop,                   ES_ERROR,                     0,    ES_PLAN_DONE,          0                )
 };
-// const PlanStep_t StartPos2LoadingDockSeq[] = {
-//     { .PrimitiveCmd = RotateCCW, .StoppingCondition = { .EventType = ES_TIMEOUT, .EventParam = GameStartTimer }, .PostEvent = { .EventType = ES_TIMEOUT, .EventParam = GameStartTimer } },
-//     { .PrimitiveCmd = RotateCW, .StoppingCondition = { .EventType = ES_SIDE_FOUND, .EventParam = 0 }, .PostEvent = { .EventType = ES_NO_EVENT, .EventParam = 0 } },
-//     { .PrimitiveCmd = Forwards, .StoppingCondition = { .EventType = ES_LINE_PIVOT_L, .EventParam = 0 }, .PostEvent = { .EventType = ES_NO_EVENT, .EventParam = 0 } },
-//     { .PrimitiveCmd = RotateCCW, .StoppingCondition = { .EventType = ES_CENTERED, .EventParam = 0 }, .PostEvent = { .EventType = ES_NO_EVENT, .EventParam = 0 } },
-//     { .PrimitiveCmd = Forwards, .StoppingCondition = { .EventType = ES_LINE_PIVOT_L, .EventParam = 0 }, .PostEvent = { .EventType = ES_NO_EVENT, .EventParam = 0 } },
-//     { .PrimitiveCmd = RotateCCW, .StoppingCondition = { .EventType = ES_LINE_PIVOT_R, .EventParam = 0 }, .PostEvent = { .EventType = ES_NO_EVENT, .EventParam = 0 } },
-//     { .PrimitiveCmd = Backwards, .StoppingCondition = { .EventType = ES_TIMEOUT, .EventParam = StartRotateTimer }, .PostEvent = { .EventType = ES_NEW_SPI_CMD_SEND, .EventParam = CMD_SPI_INTAKE_ON } },
-//     { .PrimitiveCmd = Stop, .StoppingCondition = { .EventType = ES_ERROR, .EventParam = 0 }, .PostEvent = { .EventType = ES_PLAN_DONE, .EventParam = 0 } }
-// };
 
 const PlanStep_t LoadingDock2Bucket1Seq[] = {
-    { Forwards,       {ES_LINE_PIVOT_L, 0}, {ES_NEW_SPI_CMD_SEND, CMD_SPI_DROPOFF_REACHED}},
-    { Stop,           {ES_ERROR, 0},        {ES_PLAN_DONE, 0} }
+    STEP(Forwards,               ES_COUNT_DONE,              0,    ES_START_ENC_REV_MID, 300           ),
+    STEP(Stop,                   ES_ERROR,                   0,    ES_PLAN_DONE,         0             )
 };
 
 const Plan_t Plans[NUM_PLANS] =
