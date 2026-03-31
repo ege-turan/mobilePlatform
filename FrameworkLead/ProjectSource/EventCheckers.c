@@ -183,6 +183,7 @@ bool Check4TapePivot(void)
           leftOnLine = true;
           ES_Event_t ThisEvent;
           ThisEvent.EventType = ES_LINE_PIVOT_L;
+          ThisEvent.EventParam = 0;
           ES_PostAll(ThisEvent);
   #ifdef DEBUG_PRINT
           // DB_printf("[leader ] Tape Pivot L Detected!\r\n");
@@ -204,6 +205,7 @@ bool Check4TapePivot(void)
           rightOnLine = true;
           ES_Event_t ThisEvent;
           ThisEvent.EventType = ES_LINE_PIVOT_R;
+          ThisEvent.EventParam = 0;
           ES_PostAll(ThisEvent);
   #ifdef DEBUG_PRINT
           // DB_printf("[leader ] Tape Pivot R Detected!\r\n");
