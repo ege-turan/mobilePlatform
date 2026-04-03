@@ -220,7 +220,16 @@ ES_Event_t RunMasterSM( ES_Event_t CurrentEvent )
                     MakeTransition = true;
                     EntryEventKind.EventType = ES_ENTRY;
                     break;
-                
+                case ES_NEW_SPI_CMD_RECEIVED:
+                    if (CurrentEvent.EventParam == CMD_SPI_END){
+                        #ifdef VERBOSE_TOPHSM
+                        DB_printf("[Planner] Received CMD_SPI_END \r\n");
+                        #endif
+                        NextState = STANDBY_PLANNER;
+                        MakeTransition = true;
+                        EntryEventKind.EventType = ES_ENTRY;
+                    }
+                    break;
                 // repeat cases as required for relevant events
                 default:
                     break;

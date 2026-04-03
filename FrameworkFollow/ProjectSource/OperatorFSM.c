@@ -70,7 +70,7 @@
 
 #define INTAKE_PWM_PSC PWM_PS_1
 #define INTAKE_PWM_PERIOD 2000
-#define INTAKE_PWM_DUTY 25 // as percentage
+#define INTAKE_PWM_DUTY 30 // as percentage
 
 /*---------------------------- Module Functions ---------------------------*/
 /* prototypes for private functions for this machine.They should be functions

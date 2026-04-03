@@ -23,7 +23,10 @@ typedef enum {
     DC_EncRev,
 
     DC_EncFwdMid,
-    DC_EncRevMid
+    DC_EncRevMid,
+
+    DC_EncCCW,
+    DC_EncCW
 
 } DriveCorrectionState_t;
 

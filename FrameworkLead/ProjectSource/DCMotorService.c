@@ -109,9 +109,9 @@ typedef enum
 
 // DUTY CYCLES FOR SPEEDS
 
-#define SPEED_FORWARDS_PERCENT 40
-#define SPEED_BACKWARDS_PERCENT 40
-#define SPEED_ROTATE_PERCENT 30
+#define SPEED_FORWARDS_PERCENT 45
+#define SPEED_BACKWARDS_PERCENT 45
+#define SPEED_ROTATE_PERCENT 32
 #define SPEED_RIGHT_OFFSET_PERCENT 0 // SPEED + Offset should NOT exceed 100%
 
 
@@ -656,6 +656,15 @@ bool DCMotor_ExecutePrimitive(PrimitiveCmd_t cmd) {
 
         case Backwards_count_mid:
             ES_PostAll((ES_Event_t){ES_START_ENC_REV_MID,0});
+            break;
+        
+        case RotateCW_count:
+            _RotateRobotCW();
+            ES_PostAll((ES_Event_t){ES_START_ENC_CW,0});
+            break;
+        case RotateCCW_count:
+            _RotateRobotCCW();
+            ES_PostAll((ES_Event_t){ES_START_ENC_CCW,0});
             break;
 
         default: return false; // unknown primitive

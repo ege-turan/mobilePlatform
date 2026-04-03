@@ -16,23 +16,28 @@
 #define FIVE_SEC  (ONE_SEC * 5)
 #define SIX_SEC   (ONE_SEC * 6)
 #define TIME_90_DEG_MS 1850
+#define ENC_90_DEG_COUNTS 128
+#define ENC_SHORT_MOVE_TO_BUCKET_COUNTS 45
+#define ENC_RETREAT_FROM_BUCKET_COUNTS 150
+#define ENC_BACK_WALL_TO_BUCKET_COUNTS 295
 
 #define STEP(primCmd, stopCondType, stopCondParam, postEventType, postEventParam) \
     { .PrimitiveCmd = primCmd, .StoppingCondition = { .EventType = stopCondType, .EventParam = stopCondParam }, .PostEvent = { .EventType = postEventType, .EventParam = postEventParam } }
+// STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     SIX_SEC          ),
 
 // NORMAL GAME PLANS
 #ifdef START_FROM_HOME
 const PlanStep_t StartPos2LoadingDockSeq[] = {
 //  STEP(primitive command,      stopEvent type, stopEvent param,    postEvent type,       postEvent param   ),
-    STEP(RotateCCW,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     2200             ),
+    STEP(RotateCCW,              ES_COUNT_DONE,                0,    ES_START_ENC_CCW,      ENC_90_DEG_COUNTS + 30),
     STEP(RotateCW,               ES_SIDE_FOUND,                0,    ES_LOOK_4_DISPENSER,   0                ),
-    STEP(RotateCW,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     80               ),
-    STEP(Forwards,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     SIX_SEC          ),
-    STEP(RotateCCW,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     1800             ),
-    STEP(Forwards,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     2500             ),
+    STEP(RotateCW,               ES_COUNT_DONE,                0,    ES_START_ENC_CW,       18               ),
+    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  800              ),
+    STEP(RotateCCW,              ES_COUNT_DONE,                0,    ES_START_ENC_CCW,      ENC_90_DEG_COUNTS),
+    STEP(Forwards,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     1900             ),    
     STEP(Backwards,              ES_COUNT_DONE,                0,    ES_START_ENC_REV_MID,  260              ),
-    STEP(RotateCCW,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     TIME_90_DEG_MS   ),
-    STEP(Backwards,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     4600             ),
+    STEP(RotateCCW,              ES_COUNT_DONE,                0,    ES_START_ENC_CCW,      ENC_90_DEG_COUNTS),
+    STEP(Backwards,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     4000             ),
     STEP(Forwards_count_mid,     ES_CENTERED_PIVOT,            0,    ES_NO_EVENT,           0                ),
     STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     HALF_SEC         ),
     STEP(RotateCCW,              ES_CENTERED_FRONT,            0,    ES_NO_EVENT,           0                ),
@@ -81,17 +86,16 @@ const PlanStep_t LoadingDock2Bucket1Seq[] = {
     STEP(Backwards,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     300              ),
     STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  275              ),
     STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_NEW_SPI_CMD_SEND,   CMD_SPI_DROPOFF_REACHED),
-    STEP(RotateCW,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     50               ),
-    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  50               ),
+    // STEP(RotateCW,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     50               ),
+    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  ENC_SHORT_MOVE_TO_BUCKET_COUNTS),
     STEP(Stop,                   ES_ERROR,                     0,    ES_PLAN_DONE,          0                )
 };
 
 const PlanStep_t Bucket1_2_Bucket3Seq[] = {
 //  STEP(primitive command,      stopEvent type, stopEvent param,    postEvent type,        postEvent param   ),
-    STEP(Backwards,              ES_COUNT_DONE,                0,    ES_START_ENC_REV_MID,  150              ),
-    STEP(RotateCCW,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     75               ),
-    STEP(RotateCW,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     TIME_90_DEG_MS   ),
-    STEP(Backwards,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     1500             ),
+    STEP(Backwards,              ES_COUNT_DONE,                0,    ES_START_ENC_REV_MID,  ENC_RETREAT_FROM_BUCKET_COUNTS),
+    STEP(RotateCW,               ES_COUNT_DONE,                0,    ES_START_ENC_CW,       ENC_90_DEG_COUNTS),
+    STEP(Backwards,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     ONE_SEC          ),
     STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     HALF_SEC         ),
     STEP(Forwards_count_mid,     ES_CENTERED_PIVOT,            0,    ES_NEW_SPI_CMD_SEND,   CMD_SPI_RELEASE_DROPOFF),
     STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_NO_EVENT,           0                ),
@@ -99,27 +103,29 @@ const PlanStep_t Bucket1_2_Bucket3Seq[] = {
     STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     HALF_SEC         ),
     STEP(Forwards_count_mid,     ES_CENTERED_PIVOT,            0,    ES_NO_EVENT,           0                ),
     STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     HALF_SEC         ),
-    // STEP(RotateCCW,              ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     TIME_90_DEG_MS   ),
+    // STEP(RotateCCW,              ES_COUNT_DONE,                0,    ES_START_ENC_CCW,      ENC_90_DEG_COUNTS),
     STEP(RotateCCW,              ES_CENTERED_FRONT,            0,    ES_NO_EVENT,           0                ),
-    STEP(Backwards_count_mid,    ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     TWO_SEC          ),
-    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  300              ),
+    STEP(Backwards_count_mid,    ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     2500             ),
+    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  ENC_BACK_WALL_TO_BUCKET_COUNTS),
+    // STEP(RotateCCW,              ES_COUNT_DONE,                0,    ES_START_ENC_CCW,      20               ),
     STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_NEW_SPI_CMD_SEND,   CMD_SPI_DROPOFF_REACHED),
-    STEP(RotateCW,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     50               ),
-    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  50               ),
+    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  ENC_SHORT_MOVE_TO_BUCKET_COUNTS ),
     STEP(Stop,                   ES_ERROR,                     0,    ES_PLAN_DONE,          0                )
 };
 
 const PlanStep_t Bucket3_2_Bucket2Seq[] = {
 //  STEP(primitive command,      stopEvent type, stopEvent param,    postEvent type,        postEvent param   ),
-    STEP(Backwards,              ES_COUNT_DONE,                0,    ES_START_ENC_REV_MID,  150              ),
-    STEP(RotateCCW,              ES_TIMEOUT,         DriverTimer,    ES_NEW_SPI_CMD_SEND,   CMD_SPI_RELEASE_DROPOFF),
-    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  280              ),
-    STEP(RotateCW,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     TIME_90_DEG_MS   ),
-    STEP(Backwards_count_mid,    ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     THREE_SEC        ),
-    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  300              ),
+    STEP(Backwards,              ES_COUNT_DONE,                0,    ES_START_ENC_REV_MID,  ENC_RETREAT_FROM_BUCKET_COUNTS),
+    STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_NEW_SPI_CMD_SEND,   CMD_SPI_RELEASE_DROPOFF),
+    STEP(RotateCCW,              ES_COUNT_DONE,                0,    ES_START_ENC_CCW,      ENC_90_DEG_COUNTS),
+    // STEP(RotateCCW,              ES_CENTERED_FRONT,            0,    ES_NO_EVENT,           0                ),
+    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  290              ),
+    STEP(RotateCW,               ES_COUNT_DONE,                0,    ES_START_ENC_CW,       ENC_90_DEG_COUNTS),
+    STEP(Backwards_count_mid,    ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     2500             ),
+    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  ENC_BACK_WALL_TO_BUCKET_COUNTS              ),
+    // STEP(RotateCCW,              ES_COUNT_DONE,                0,    ES_START_ENC_CCW,      20               ),
     STEP(Stop,                   ES_TIMEOUT,         DriverTimer,    ES_NEW_SPI_CMD_SEND,   CMD_SPI_DROPOFF_REACHED),
-    STEP(RotateCW,               ES_TIMEOUT,         DriverTimer,    ES_DRIVER_TIMEOUT,     50               ),
-    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  50               ),
+    STEP(Forwards,               ES_COUNT_DONE,                0,    ES_START_ENC_FWD_MID,  ENC_SHORT_MOVE_TO_BUCKET_COUNTS ),
     STEP(Stop,                   ES_ERROR,                     0,    ES_PLAN_DONE,          0                )
 };
 

@@ -292,6 +292,15 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
             DB_printf("[leader ] Backwards w/ line and mid. DesiredEncCounts: %u\r\n", DesiredEncCounts);
             // #endif
             break;
+
+        case ES_START_ENC_CCW:
+        case ES_START_ENC_CW:
+            ResetDriveControl();
+            encoderModeOn = true;
+            UseMidStop = true;
+            DesiredEncCounts = (ThisEvent.EventParam != 0) ? ThisEvent.EventParam : MAX_ENC_COUNT; 
+            CurrentState = DC_EncCCW; // just run in reverse with PID to turn in place CCW
+            break;
     }
 
   switch(CurrentState)    // apply control loop
@@ -319,6 +328,11 @@ ES_Event_t RunDriveCorrectionService(ES_Event_t ThisEvent)
         case DC_LineFwdMid:
         case DC_LineRevMid:
             // controls handled in interrupts
+            CheckMidpointStop();
+            break;
+
+        case DC_EncCCW:
+        case DC_EncCW:
             CheckMidpointStop();
             break;
 

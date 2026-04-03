@@ -59,8 +59,8 @@ static uint8_t MyPriority;
 static uint8_t DutyCycle = 1;     // 0–5
 static uint8_t HighTime = 0;
 static uint8_t LowTime = 0;
-static uint32_t ForwardsTimeMs = 3000;
-static uint32_t BackwardsTimeMs = 50;
+static uint32_t ForwardsTimeMs = 800;
+static uint32_t BackwardsTimeMs = 20;
 static bool forwards = true;
 static bool OutputState = false;
 static bool feederOn = false;
